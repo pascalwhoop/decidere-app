@@ -121,7 +121,7 @@ export default function RootLayout({
     },
     "featureList": [
       "Calculate net salary after taxes",
-      "Compare up to 4 countries side-by-side",
+      "Compare up to 8 countries side-by-side",
       "Detailed tax breakdown",
       "Effective and marginal tax rates",
       "Currency conversion",

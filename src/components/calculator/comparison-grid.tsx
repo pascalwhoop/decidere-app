@@ -19,7 +19,7 @@ import { UnsupportedCurrencyError } from "@/lib/errors"
 import { findBestCountryByNet } from "@/lib/comparison-utils"
 import { detectUserCountry } from "@/lib/detect-country"
 
-const MAX_COUNTRIES = 4
+const MAX_COUNTRIES = 8
 
 function createCountryState(index: number, country = "", gross_annual = ""): CountryColumnState {
   return {

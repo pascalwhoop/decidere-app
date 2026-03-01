@@ -8,7 +8,7 @@ import { test, expect, Page } from '@playwright/test'
  *  - Adding/editing/removing countries via wizard
  *  - "Best" badge on highest net income
  *  - Pin salary sync across columns
- *  - Max 4 countries enforcement
+ *  - Max 8 countries enforcement
  *  - Living costs section in wizard
  *  - URL state persistence and restoration
  *  - Responsive layout
@@ -203,11 +203,12 @@ test.describe('Comparison table view', () => {
     await expect(pinBtn).toBeVisible()
   })
 
-  // ── Section 7: Max 4 countries ────────────────────────────────────────────
+  // ── Section 7: Max 8 countries ────────────────────────────────────────────
 
-  test('"Add Destination" is disabled when 4 countries are shown', async ({ page }) => {
+  test('"Add Destination" is disabled when 8 countries are shown', async ({ page }) => {
     const addBtn = page.locator('button:has-text("Add Destination")')
-    for (const country of ['Germany', 'France', 'Spain']) {
+    const countries = ['Germany', 'France', 'Spain', 'Italy', 'Netherlands', 'United Kingdom', 'Portugal']
+    for (const country of countries) {
       if (await addBtn.isDisabled().catch(() => false)) break
       await addCountry(page, country)
     }

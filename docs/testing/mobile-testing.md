@@ -74,7 +74,7 @@ Choose from presets or use "Responsive":
 #### Desktop View (≥ 768px)
 
 **Header**
-- [ ] Full header with "Add up to 4 countries..." text
+- [ ] Full header with "Add up to 8 countries..." text
 - [ ] "Save" button shows text
 - [ ] "Share" button shows text
 - [ ] "Add Country" button shows full text
@@ -111,7 +111,7 @@ Choose from presets or use "Responsive":
 1. Tap the "+" button in the tabs
 2. **Expected**: New tab appears and becomes active
 3. **Expected**: New country form is shown
-4. **Expected**: Can add up to 4 countries
+4. **Expected**: Can add up to 8 countries
 
 ### Switching Between Countries (Mobile)
 1. Add 2+ countries with different data
@@ -270,7 +270,7 @@ Test these specific viewport widths:
 - [ ] Can still add countries
 - [ ] Layout looks good
 
-### Maximum Countries (4)
+### Maximum Countries (8)
 - [ ] "+" button disappears
 - [ ] All tabs visible (scroll if needed)
 - [ ] Can switch between all tabs
