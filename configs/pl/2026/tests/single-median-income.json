@@ -1,0 +1,26 @@
+{
+  "name": "Single filer at median income - 84,000 PLN",
+  "description": "Standard employment contract, single filer earning 7,000 PLN/month. Representative of median Polish salary.",
+  "inputs": {
+    "gross_annual": 84000,
+    "filing_status": "single"
+  },
+  "expected": {
+    "net": 61222,
+    "effective_rate": 0.2712,
+    "breakdown": {
+      "total_social_contributions": 11516,
+      "health_insurance": 6524,
+      "income_tax": 4738
+    }
+  },
+  "tolerance": 5,
+  "tolerance_percent": 0.005,
+  "sources": [
+    {
+      "description": "Manual calculation: ZUS = 84,000 * 13.71% = 11,516.40; Health = (84,000 - 11,516.40) * 9% = 6,523.52; Taxable = 84,000 - 11,516.40 - 3,000 = 69,483.60; PIT = 69,483.60 * 12% - 3,600 = 4,738.03; Net = 84,000 - 11,516.40 - 6,523.52 - 4,738.03 = 61,222.04",
+      "url": "https://taxsummaries.pwc.com/poland/individual/taxes-on-personal-income",
+      "retrieved_at": "2026-02-28"
+    }
+  ]
+}

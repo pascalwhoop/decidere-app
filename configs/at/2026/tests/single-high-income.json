@@ -1,0 +1,25 @@
+{
+  "name": "Single - High income (EUR 6,000/month x 14)",
+  "description": "High-income employee earning EUR 84,000 annually, standard region, no children. Monthly salary exceeds SV cap for regular payments.",
+  "inputs": {
+    "gross_annual": 84000,
+    "region": "standard"
+  },
+  "expected": {
+    "net": 53887,
+    "effective_rate": 0.358,
+    "breakdown": {
+      "income_tax": 15054,
+      "social_security": 15059
+    }
+  },
+  "tolerance": 50,
+  "tolerance_percent": 0.01,
+  "sources": [
+    {
+      "description": "Verified against karriere.at Brutto-Netto-Rechner 2026 (EUR 6,000/month x 14 = EUR 84,000)",
+      "url": "https://www.karriere.at/brutto/6000",
+      "retrieved_at": "2026-02-28"
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "name": "Helsinki - High income (75k, no church)",
+  "description": "75,000 EUR salary in Helsinki, no church membership. Between vero.fi 70k (25.0%) and 100k reference points.",
+  "inputs": {
+    "gross_annual": 75000,
+    "municipality": "helsinki",
+    "church_member": false
+  },
+  "expected": {
+    "net": 49919,
+    "effective_rate": 0.33441,
+    "breakdown": {
+      "state_tax": 16084,
+      "municipal_tax": 3610,
+      "tyel_pension": 5475,
+      "unemployment_insurance": 668,
+      "health_care_contribution": 825,
+      "daily_allowance_contribution": 660,
+      "work_income_tax_credit": 2400
+    }
+  },
+  "tolerance": 50,
+  "tolerance_percent": 0.005,
+  "sources": [
+    {
+      "url": "https://www.vero.fi/en/individuals/tax-cards-and-tax-returns/income/earned-income/tax-rates-on-pay-pensions-and-benefits/",
+      "description": "Vero.fi tax rate examples 2026: 25.0% at 70k (Helsinki, church member)",
+      "retrieved_at": "2026-02-28"
+    }
+  ]
+}

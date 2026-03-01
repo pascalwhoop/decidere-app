@@ -12,6 +12,7 @@ export default defineConfig({
       '.cache',
       'tests/e2e/**', // Exclude Playwright E2E tests - they run separately
       '.worktrees/**', // Exclude git worktrees
+      '.claude/worktrees/**', // Exclude Claude worktrees
       '.cursor/**', // Exclude Cursor worktrees
     ],
   },

@@ -1,16 +1,21 @@
 {
   "name": "Median income single earner",
-  "description": "Employee earning €35,000 annually. Benefits from 2026 rate reduction, employment tax credit with €65 bonus, and INPS contribution cut.",
+  "description": "Employee earning €35,000 annually. INPS contributions (3.19% after 6pp cuneo fiscale cut) are deducted from gross BEFORE calculating IRPEF. Benefits from 2026 rate reduction (33% vs 35%), employment tax credit with €65 bonus, and €1,000 fixed deduction.",
   "inputs": {
     "gross_annual": 35000,
     "region_level_1": "marche"
   },
   "expected": {
-    "net": 25615,
-    "effective_rate": 0.2681
+    "net": 26012,
+    "effective_rate": 0.2568
   },
   "tolerance": 50,
   "sources": [
+    {
+      "description": "INPS employee contributions are deducted from gross before IRPEF calculation (TaxRaven)",
+      "url": "https://www.taxraven.com/",
+      "retrieved_at": "2026-01-23"
+    },
     {
       "description": "2026 reduced rate (33% vs 35%) plus employment credit with €65 bonus",
       "url": "https://www.lexology.com/library/detail.aspx?g=25386883-69ba-499e-a085-f7a5342877ee",

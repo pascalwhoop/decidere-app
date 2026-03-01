@@ -24,7 +24,7 @@ meta:
 
     Key characteristics:
     - Progressive national income tax with 6 brackets (19% to 47%) — unchanged from 2025
-    - Personal allowance of €5,550 (applied as tax credit) — unchanged from 2025
+    - Personal allowance of €5,550 (deducted from taxable income) — unchanged from 2025
     - Social Security employee contribution: 6.50% up to maximum base (€61,214.40/year)
       - Contingencias comunes: 4.70%
       - Desempleo: 1.55%
@@ -62,8 +62,8 @@ notices:
   - id: "personal_allowance"
     title: "Personal Allowance (Mínimo Personal)"
     body: |
-      The personal allowance of €5,550 is applied as a tax credit (not a deduction from income).
-      The credit reduces your final tax liability by the tax that would be paid on €5,550.
+      The personal allowance of €5,550 is deducted from gross income (after Social Security contributions)
+      before calculating income tax. This reduces your taxable income for IRPF purposes.
     severity: "info"
 
   - id: "beckham_law_available"
@@ -133,43 +133,17 @@ parameters:
       rate: 0.0024
 
 calculations:
-  # Taxable income (for standard case, same as gross)
-  - id: taxable_income
-    type: identity
-    value: "@gross_annual"
-
-  # National income tax (state portion only)
-  - id: national_income_tax
-    type: bracket_tax
-    base: "$taxable_income"
-    brackets: "$national_tax_brackets"
-    category: income_tax
-    label: "National Income Tax (IRPF - State)"
-    description: "Progressive national income tax at state level"
-
-  # Personal allowance tax credit
-  # Calculate the tax that would be paid on the personal allowance amount
-  - id: personal_allowance_tax_credit_amount
-    type: bracket_tax
-    base: "$personal_allowance"
-    brackets: "$national_tax_brackets"
-
-  - id: personal_allowance_credit
-    type: credit
-    amount: "$personal_allowance_tax_credit_amount"
-    refundable: false
-    category: credit
-    label: "Personal Allowance Credit"
-    description: "Tax credit based on personal allowance (Mínimo Personal) of €5,550"
-
-  # Social Security contributions
-  # Employee pays 6.50% up to maximum base
+  # Social Security contribution base (capped at max)
+  # This must be calculated FIRST before any income tax, as SS is deducted from gross before IRPF
   - id: social_security_base
     type: min
     values:
       - "@gross_annual"
       - "$social_security_max_base"
 
+  # Social Security contributions
+  # Employee pays 6.50% up to maximum base
+  # These are deducted from gross BEFORE calculating income tax
   - id: social_security_contribution
     type: mul
     values:
@@ -178,6 +152,31 @@ calculations:
     category: contribution
     label: "Social Security Contribution"
     description: "Employee Social Security contribution (6.50% up to €61,214.40)"
+
+  # Taxable income for IRPF = Gross minus Social Security contributions
+  # This is the correct tax base per Spanish tax law
+  - id: taxable_income_before_allowances
+    type: sub
+    values:
+      - "@gross_annual"
+      - "$social_security_contribution"
+
+  # Taxable income after personal allowance
+  - id: taxable_income
+    type: sub
+    values:
+      - "$taxable_income_before_allowances"
+      - "$personal_allowance"
+
+  # National income tax (state portion only)
+  # Applied to taxable income (gross minus SS minus personal allowance)
+  - id: national_income_tax
+    type: bracket_tax
+    base: "$taxable_income"
+    brackets: "$national_tax_brackets"
+    category: income_tax
+    label: "National Income Tax (IRPF - State)"
+    description: "Progressive national income tax at state level"
 
   # Solidarity contribution (for income above max SS base)
   # Progressive bracket rates: 0.19%, 0.21%, 0.24% (employee portion)
@@ -198,21 +197,13 @@ calculations:
     label: "Solidarity Contribution"
     description: "Progressive solidarity contribution on income above Social Security max base"
 
-  # Total tax before credits
-  - id: total_tax_before_credits
-    type: sum
-    values:
-      - "$national_income_tax"
-
-  # Tax after credits (cannot be negative)
+  # National tax liability (already reduced by personal allowance deduction)
+  # No additional credits applied in base config
   - id: tax_after_credits
     type: max
     values:
       - 0
-      - type: sub
-        values:
-          - "$total_tax_before_credits"
-          - "$personal_allowance_tax_credit_amount"
+      - "$national_income_tax"
 
   # Total deductions (tax + social security + solidarity)
   - id: total_deductions
@@ -245,5 +236,4 @@ outputs:
       - "$national_income_tax"
       - "$social_security_contribution"
       - "$solidarity_contribution"
-    credits:
-      - "$personal_allowance_credit"
+    credits: []

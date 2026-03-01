@@ -1,0 +1,27 @@
+{
+  "name": "Scotland - Median income (£50,000)",
+  "description": "Scottish taxpayer earning £50,000 - in the Scottish Higher rate band (42%). Pays approximately £1,496 more income tax than rest of UK at this level.",
+  "variant": "scotland",
+  "inputs": {
+    "gross_annual": 50000,
+    "filing_status": "single"
+  },
+  "expected": {
+    "net": 38024,
+    "effective_rate": 0.23953,
+    "breakdown": {
+      "income_tax": 8982,
+      "national_insurance": 2994
+    }
+  },
+  "tolerance": 50,
+  "tolerance_percent": 0.005,
+  "sources": [
+    {
+      "description": "Manual calculation using Scottish 2026/27 tax bands. Cross-checked with Scottish Government factsheet comparison table showing -£1,496 vs rUK at £50k.",
+      "url": "https://www.gov.scot/publications/scottish-income-tax-technical-factsheet/",
+      "date": "2026-02-28",
+      "notes": "PA: £12,570. Taxable: £37,430. Scottish tax: £3,967 * 19% = £753.73, £12,989 * 20% = £2,597.80, £14,136 * 21% = £2,968.56, £6,338 * 42% = £2,661.96. Total IT: £8,982.05. NI: £37,430 * 8% = £2,994.40. Total: £11,976.45. Net: £38,023.55. Scottish Govt table confirms -£1,496 vs rUK."
+    }
+  ]
+}

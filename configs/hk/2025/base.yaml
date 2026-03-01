@@ -1,0 +1,321 @@
+meta:
+  country: "hk"
+  year: 2025
+  currency: "HKD"
+  version: "1.0.0"
+  sources:
+    - url: "https://www.gov.hk/en/residents/taxes/taxfiling/taxrates/salariesrates.htm"
+      description: "GovHK Official Salaries Tax Rates for 2025/26"
+      retrieved_at: "2026-02-28"
+    - url: "https://taxsummaries.pwc.com/hong-kong-sar/individual/taxes-on-personal-income"
+      description: "PwC Hong Kong SAR Individual Tax Summary - 2025/26 rates and brackets"
+      retrieved_at: "2026-02-28"
+    - url: "https://www.ird.gov.hk/eng/pdf/pam39e.pdf"
+      description: "IRD Salaries Tax Guide (PAM39) with worked examples for 2025/26"
+      retrieved_at: "2026-02-28"
+    - url: "https://taxsummaries.pwc.com/hong-kong-sar/individual/deductions"
+      description: "PwC Hong Kong SAR Individual Deductions and Allowances"
+      retrieved_at: "2026-02-28"
+    - url: "https://www.pkf-hk.com/insights/articles/17-frequently-asked-questions-for-personal-tax-2025/"
+      description: "PKF Hong Kong - 17 FAQ for Personal Tax 2025 with rates and allowances"
+      retrieved_at: "2026-02-28"
+  updated_at: "2026-02-28"
+  notes: |
+    Hong Kong Year of Assessment 2025/26 (1 April 2025 to 31 March 2026).
+
+    Hong Kong uses a TERRITORIAL tax system - only income sourced in Hong Kong is taxable.
+    There is no worldwide taxation, no capital gains tax, no VAT/GST, and no inheritance tax.
+    This makes Hong Kong one of the most tax-friendly jurisdictions globally for expats.
+
+    Key features:
+    - Salaries tax computed two ways; taxpayer pays the LOWER of:
+      (a) Progressive rates (2% to 17%) on net chargeable income (after allowances)
+      (b) Two-tiered standard rate (15% on first HK$5M, 16% remainder) on net income (no allowances)
+    - Mandatory Provident Fund (MPF): 5% employee contribution, capped at HK$18,000/year
+    - Personal allowances reduce taxable income (basic HK$132,000; married HK$264,000)
+    - No local/state/provincial income taxes
+
+    For expats on employment visas (Section 11 of Immigration Ordinance):
+    - MPF exemption if stay <= 13 months OR member of overseas retirement scheme
+    - Otherwise same tax treatment as local workers
+    - No special expat tax regime; the low standard rate cap (15%) IS the expat-friendly feature
+
+    This calculator assumes the taxpayer is subject to MPF. Expats exempt from MPF
+    should enter gross income and note that their actual take-home will be slightly higher
+    (up to HK$18,000/year difference from no MPF deduction, but also no MPF tax deduction).
+
+notices:
+  - id: "salary_input"
+    title: "Annual Gross Salary"
+    body: |
+      Enter your total annual gross salary from Hong Kong employment before any deductions.
+      Include all cash compensation: base salary, bonuses, commissions, and allowances.
+      Housing benefits provided by employers are taxed separately and should generally
+      not be included here (the taxable value of employer-provided housing is computed
+      differently under HK tax law).
+    severity: "info"
+
+  - id: "territorial_taxation"
+    title: "Territorial Taxation"
+    body: |
+      Hong Kong only taxes income sourced in or derived from Hong Kong. If you earn
+      income from overseas sources, that income is NOT subject to Hong Kong salaries tax,
+      regardless of whether you are a Hong Kong resident. This is Hong Kong's biggest
+      advantage for internationally mobile professionals.
+    severity: "info"
+
+  - id: "standard_rate_cap"
+    title: "Standard Rate Cap (15%)"
+    body: |
+      Your tax is automatically computed both ways: progressive rates (with personal
+      allowances) and the two-tiered standard rate (15%/16%, without personal allowances).
+      You pay whichever is lower. For most earners below approximately HK$2 million,
+      progressive rates are lower. Very high earners benefit from the standard rate cap.
+    severity: "info"
+
+  - id: "mpf_note"
+    title: "Mandatory Provident Fund (MPF)"
+    body: |
+      MPF is a mandatory retirement savings scheme. Employees contribute 5% of monthly
+      income, capped at HK$1,500/month (HK$18,000/year). Employees earning less than
+      HK$7,100/month are exempt from employee contributions. MPF mandatory contributions
+      are tax-deductible (up to HK$18,000). Expats on short-term employment visas (13
+      months or less) or members of overseas retirement schemes may be exempt from MPF.
+    severity: "info"
+
+  - id: "tax_reduction_note"
+    title: "One-Off Tax Reduction Not Included"
+    body: |
+      The government periodically offers one-off tax reductions (e.g., 100% reduction
+      capped at HK$3,000 proposed for 2025/26). These temporary measures are NOT
+      included in this calculator as they are subject to legislative approval and
+      change annually.
+    severity: "warning"
+
+inputs:
+  gross_annual:
+    type: number
+    required: true
+    min: 0
+    label: "Annual Gross Salary"
+    description: "Your total yearly salary from Hong Kong employment before any deductions (in HKD)"
+
+  filing_status:
+    type: enum
+    required: true
+    default: "single"
+    label: "Filing Status"
+    description: "Your tax filing status determines which personal allowance applies"
+    options:
+      single:
+        label: "Single"
+        description: "Unmarried individual (basic allowance HK$132,000)"
+      married:
+        label: "Married"
+        description: "Married person's allowance HK$264,000 (joint assessment or married person's allowance claimed)"
+
+parameters:
+  # Progressive salaries tax brackets (on Net Chargeable Income) - 2025/26
+  progressive_tax_brackets:
+    - threshold: 0
+      rate: 0.02        # First HK$50,000 at 2%
+    - threshold: 50000
+      rate: 0.06        # Next HK$50,000 at 6%
+    - threshold: 100000
+      rate: 0.10        # Next HK$50,000 at 10%
+    - threshold: 150000
+      rate: 0.14        # Next HK$50,000 at 14%
+    - threshold: 200000
+      rate: 0.17        # Remainder at 17%
+
+  # Two-tiered standard rate (on Net Income, i.e., without personal allowances) - 2025/26
+  standard_rate: 0.15
+  standard_rate_tier2: 0.16
+  standard_rate_tier1_cap: 5000000  # First HK$5,000,000 at 15%
+
+  # Personal allowances - 2025/26
+  basic_allowance: 132000
+  married_allowance: 264000
+
+  # MPF parameters
+  mpf_rate: 0.05
+  mpf_monthly_cap: 1500          # HK$1,500 per month
+  mpf_annual_cap: 18000          # HK$18,000 per year (1500 * 12)
+  mpf_monthly_min_income: 7100   # Below this, employee exempt from MPF
+  mpf_annual_min_income: 85200   # Annualized minimum (7100 * 12)
+  mpf_max_deduction: 18000       # Tax-deductible maximum for mandatory contributions
+
+calculations:
+  # ============================================================================
+  # MPF CONTRIBUTION
+  # ============================================================================
+  # Employee contributes 5%, capped at HK$18,000/year
+  # Exempt if monthly income below HK$7,100 (annual HK$85,200)
+
+  - id: mpf_contribution_raw
+    type: percent_of
+    base: "@gross_annual"
+    rate: "$mpf_rate"
+
+  - id: mpf_contribution_capped
+    type: min
+    values:
+      - "$mpf_contribution_raw"
+      - "$mpf_annual_cap"
+
+  # If income below minimum threshold, employee MPF = 0
+  - id: mpf_employee
+    type: conditional
+    condition:
+      type: lt
+      left: "@gross_annual"
+      right: "$mpf_annual_min_income"
+    then: 0
+    else: "$mpf_contribution_capped"
+    category: contribution
+    label: "MPF Contribution"
+    description: "Mandatory Provident Fund employee contribution (5%, capped at HK$18,000/year)"
+
+  # ============================================================================
+  # DEDUCTIONS (MPF mandatory contributions are tax-deductible)
+  # ============================================================================
+
+  - id: mpf_deduction
+    type: min
+    values:
+      - "$mpf_employee"
+      - "$mpf_max_deduction"
+
+  # ============================================================================
+  # NET INCOME AND NET CHARGEABLE INCOME
+  # ============================================================================
+  # Net Income = Assessable Income - Allowable Deductions (used for standard rate)
+  # Net Chargeable Income = Net Income - Personal Allowances (used for progressive rate)
+
+  - id: net_income
+    type: sub
+    values:
+      - "@gross_annual"
+      - "$mpf_deduction"
+
+  # Personal allowance based on filing status
+  - id: personal_allowance
+    type: switch
+    on: "@filing_status"
+    cases:
+      single: "$basic_allowance"
+      married: "$married_allowance"
+
+  - id: net_chargeable_income_raw
+    type: sub
+    values:
+      - "$net_income"
+      - "$personal_allowance"
+
+  # Net chargeable income cannot be negative
+  - id: net_chargeable_income
+    type: max
+    values:
+      - 0
+      - "$net_chargeable_income_raw"
+
+  # ============================================================================
+  # TAX CALCULATION METHOD 1: PROGRESSIVE RATES
+  # ============================================================================
+  # Applied to Net Chargeable Income (after allowances)
+
+  - id: tax_progressive
+    type: bracket_tax
+    base: "$net_chargeable_income"
+    brackets: "$progressive_tax_brackets"
+
+  # ============================================================================
+  # TAX CALCULATION METHOD 2: TWO-TIERED STANDARD RATE
+  # ============================================================================
+  # Applied to Net Income (no allowances deducted)
+  # 15% on first HK$5,000,000, 16% on remainder
+
+  - id: net_income_nonneg
+    type: max
+    values:
+      - 0
+      - "$net_income"
+
+  # Amount within tier 1 (first HK$5M)
+  - id: standard_rate_tier1_amount
+    type: min
+    values:
+      - "$net_income_nonneg"
+      - "$standard_rate_tier1_cap"
+
+  - id: standard_rate_tier1_tax
+    type: mul
+    values:
+      - "$standard_rate_tier1_amount"
+      - "$standard_rate"
+
+  # Amount in tier 2 (above HK$5M)
+  - id: standard_rate_tier2_amount
+    type: max
+    values:
+      - 0
+      - type: sub
+        values:
+          - "$net_income_nonneg"
+          - "$standard_rate_tier1_cap"
+
+  - id: standard_rate_tier2_tax
+    type: mul
+    values:
+      - "$standard_rate_tier2_amount"
+      - "$standard_rate_tier2"
+
+  - id: tax_standard
+    type: sum
+    values:
+      - "$standard_rate_tier1_tax"
+      - "$standard_rate_tier2_tax"
+
+  # ============================================================================
+  # FINAL TAX (lower of progressive or standard rate)
+  # ============================================================================
+
+  - id: salaries_tax
+    type: min
+    values:
+      - "$tax_progressive"
+      - "$tax_standard"
+    category: income_tax
+    label: "Salaries Tax"
+    description: "Hong Kong salaries tax (lower of progressive rates or standard rate)"
+
+  # ============================================================================
+  # NET ANNUAL INCOME
+  # ============================================================================
+
+  - id: net_annual
+    type: sub
+    values:
+      - "@gross_annual"
+      - "$salaries_tax"
+      - "$mpf_employee"
+
+outputs:
+  gross: "@gross_annual"
+  net: "$net_annual"
+
+  effective_rate:
+    type: div
+    values:
+      - type: sub
+        values:
+          - "@gross_annual"
+          - "$net_annual"
+      - "@gross_annual"
+
+  breakdown:
+    taxes:
+      - "$salaries_tax"
+    contributions:
+      - "$mpf_employee"
+    credits: []

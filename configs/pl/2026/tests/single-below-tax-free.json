@@ -1,0 +1,26 @@
+{
+  "name": "Single filer below tax-free amount - 28,000 PLN",
+  "description": "Income below tax-free threshold. After social contributions and KUP, taxable income is below 30,000 PLN so PIT = 0. Only ZUS + health apply.",
+  "inputs": {
+    "gross_annual": 28000,
+    "filing_status": "single"
+  },
+  "expected": {
+    "net": 21987,
+    "effective_rate": 0.21476,
+    "breakdown": {
+      "total_social_contributions": 3839,
+      "health_insurance": 2175,
+      "income_tax": 0
+    }
+  },
+  "tolerance": 5,
+  "tolerance_percent": 0.005,
+  "sources": [
+    {
+      "description": "Manual calculation: ZUS = 28,000 * 13.71% = 3,838.80; Health = (28,000 - 3,838.80) * 9% = 2,174.51; Taxable = 24,161.20 - 3,000 = 21,161.20; PIT = max(0, 21,161.20 * 12% - 3,600) = 0 (below tax-free); Net = 28,000 - 3,838.80 - 2,174.51 = 21,986.69",
+      "url": "https://taxsummaries.pwc.com/poland/individual/taxes-on-personal-income",
+      "retrieved_at": "2026-02-28"
+    }
+  ]
+}

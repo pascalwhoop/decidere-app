@@ -1,0 +1,22 @@
+{
+  "name": "Key Employee - 150k (high earner)",
+  "description": "Key employee regime at 150,000 EUR. Large savings vs progressive taxation which would be ~42% effective rate.",
+  "variant": "key-employee",
+  "inputs": {
+    "gross_annual": 150000,
+    "municipality": "helsinki",
+    "church_member": false
+  },
+  "expected": {
+    "net": 100055,
+    "effective_rate": 0.33297,
+    "breakdown": {
+      "total_income_tax": 37500,
+      "tyel_pension": 10950,
+      "unemployment_insurance": 1335,
+      "yle_tax": 160
+    }
+  },
+  "tolerance": 10,
+  "tolerance_percent": 0.005
+}

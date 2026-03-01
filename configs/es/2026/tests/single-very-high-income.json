@@ -6,8 +6,8 @@
     "filing_status": "single"
   },
   "expected": {
-    "net": 276131,
-    "effective_rate": 0.4477
+    "net": 279555,
+    "effective_rate": 0.4409
   },
   "tolerance": 100,
   "tolerance_percent": 0.01,

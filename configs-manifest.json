@@ -7,6 +7,18 @@
         },
         "2025": {
           "variants": []
+        },
+        "2026": {
+          "variants": []
+        }
+      }
+    },
+    "at": {
+      "years": {
+        "2026": {
+          "variants": [
+            "zuzugsfreibetrag"
+          ]
         }
       }
     },
@@ -15,6 +27,12 @@
         "2025": {
           "variants": [
             "non-resident"
+          ]
+        },
+        "2026": {
+          "variants": [
+            "non-resident",
+            "working-holiday"
           ]
         }
       }
@@ -118,6 +136,15 @@
         }
       }
     },
+    "fi": {
+      "years": {
+        "2026": {
+          "variants": [
+            "key-employee"
+          ]
+        }
+      }
+    },
     "fr": {
       "years": {
         "2025": {
@@ -134,6 +161,27 @@
       }
     },
     "gb": {
+      "years": {
+        "2025": {
+          "variants": []
+        },
+        "2026": {
+          "variants": [
+            "scotland"
+          ]
+        }
+      }
+    },
+    "gr": {
+      "years": {
+        "2026": {
+          "variants": [
+            "article-5c"
+          ]
+        }
+      }
+    },
+    "hk": {
       "years": {
         "2025": {
           "variants": []
@@ -172,6 +220,11 @@
       "years": {
         "2025": {
           "variants": []
+        },
+        "2026": {
+          "variants": [
+            "non-resident"
+          ]
         }
       }
     },
@@ -185,6 +238,15 @@
         "2026": {
           "variants": [
             "flat-tax"
+          ]
+        }
+      }
+    },
+    "mx": {
+      "years": {
+        "2026": {
+          "variants": [
+            "non-resident"
           ]
         }
       }
@@ -224,6 +286,22 @@
       "years": {
         "2025": {
           "variants": []
+        },
+        "2026": {
+          "variants": [
+            "non-resident"
+          ]
+        }
+      }
+    },
+    "pl": {
+      "years": {
+        "2026": {
+          "variants": [
+            "b2b-flat-tax",
+            "b2b-ryczalt-it",
+            "return-relief"
+          ]
         }
       }
     },

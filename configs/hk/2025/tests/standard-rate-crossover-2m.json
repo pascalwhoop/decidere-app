@@ -1,0 +1,25 @@
+{
+  "name": "Near standard rate crossover - HK$2,000,000 single",
+  "description": "At HK$2M, progressive and standard rates are very close. Progressive is still slightly lower. This tests the boundary of the standard rate cap mechanism.",
+  "inputs": {
+    "gross_annual": 2000000,
+    "filing_status": "single"
+  },
+  "expected": {
+    "net": 1685500,
+    "effective_rate": 0.15725,
+    "breakdown": {
+      "salaries_tax": 296500,
+      "mpf_employee": 18000
+    }
+  },
+  "tolerance": 1,
+  "tolerance_percent": 0.001,
+  "sources": [
+    {
+      "description": "Manual calculation: MPF capped at 18000. Net income = 1982000. NCI = 1982000 - 132000 = 1850000. Progressive: 16000 + 1650000*17% = 16000 + 280500 = 296500. Standard: 1982000 * 15% = 297300. Tax = min(296500, 297300) = 296500 (progressive barely wins).",
+      "url": "https://www.gov.hk/en/residents/taxes/taxfiling/taxrates/salariesrates.htm",
+      "retrieved_at": "2026-02-28"
+    }
+  ]
+}

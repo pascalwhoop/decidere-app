@@ -1,0 +1,27 @@
+{
+  "name": "Under-26 worker with PIT exemption - 72,000 PLN",
+  "description": "Young worker (under 26) fully exempt from PIT on employment income up to 85,528 PLN. ZUS and health still apply.",
+  "inputs": {
+    "gross_annual": 72000,
+    "filing_status": "single",
+    "under_26": true
+  },
+  "expected": {
+    "net": 56537,
+    "effective_rate": 0.21476,
+    "breakdown": {
+      "total_social_contributions": 9871,
+      "health_insurance": 5592,
+      "income_tax": 0
+    }
+  },
+  "tolerance": 5,
+  "tolerance_percent": 0.005,
+  "sources": [
+    {
+      "description": "Manual calculation: ZUS = 72,000 * 13.71% = 9,871.20; Health = (72,000 - 9,871.20) * 9% = 5,591.59; Under-26 exempt = min(72,000, 85,528) = 72,000; income_after_social = 62,128.80; income_after_exemption = max(0, 62,128.80 - 72,000) = 0; Taxable = 0; PIT = 0; Net = 72,000 - 9,871.20 - 5,591.59 = 56,537.21",
+      "url": "https://www.accace.com/tax-guideline-for-poland/",
+      "retrieved_at": "2026-02-28"
+    }
+  ]
+}

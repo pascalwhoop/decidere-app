@@ -1,11 +1,12 @@
 "use client"
 
 import * as React from "react"
-import { Calculator, History, Settings, HelpCircle, Globe, Home } from "lucide-react"
+import { Calculator, History, Settings, HelpCircle, Home } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 
 import ModeToggle from "@/components/mode-toggle"
+import { DecidereLogo } from "@/components/decidere-logo"
 import packageJson from "../../package.json"
 import {
   Sidebar,
@@ -62,12 +63,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
               <Link href="/">
-                <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                  <Globe className="size-4" />
-                </div>
+                <DecidereLogo className="size-8 rounded-lg shadow-sm shrink-0" />
                 <div className="flex flex-col gap-0.5 leading-none">
-                  <span className="font-semibold">NetCalc</span>
-                  <span className="text-xs">Gross to Net</span>
+                  <span className="font-semibold">Decidere</span>
+                  <span className="text-xs">Decide where to live</span>
                 </div>
               </Link>
             </SidebarMenuButton>

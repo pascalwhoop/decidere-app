@@ -1,0 +1,32 @@
+{
+  "name": "Single, Low Income (JPY 3M), Age 30, Tokyo",
+  "description": "Low income single worker - tests enhanced basic deduction tier (850,000 for employment income 1.32M-3.36M) and lower brackets",
+  "inputs": {
+    "gross_annual": 3000000,
+    "age": 30,
+    "filing_status": "single",
+    "num_dependents_19_22": 0
+  },
+  "expected": {
+    "employment_income": 2020000,
+    "health_insurance_annual": 147750,
+    "pension_annual": 274500,
+    "employment_insurance_annual": 15000,
+    "longterm_care_annual": 0,
+    "childcare_support_annual": 3450,
+    "total_social_insurance": 440700,
+    "basic_deduction_national": 850000,
+    "taxable_income_national": 729300,
+    "national_income_tax_base": 36465,
+    "reconstruction_surtax": 765,
+    "total_national_income_tax": 37230,
+    "taxable_income_resident": 1149300,
+    "resident_tax_income_levy": 114930,
+    "resident_tax_percapita_levy": 5000,
+    "total_resident_tax": 119930,
+    "net": 2402140,
+    "effective_rate": 0.1993
+  },
+  "tolerance": 100,
+  "tolerance_percent": 0.001
+}

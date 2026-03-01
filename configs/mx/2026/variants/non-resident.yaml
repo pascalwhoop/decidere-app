@@ -1,0 +1,128 @@
+meta:
+  variant: "non-resident"
+  label: "Non-Resident"
+  description: |
+    Tax rates for non-residents (no-residentes) working in Mexico. Non-residents are
+    subject to simplified withholding rates on Mexican-source employment income:
+    the first MXN 125,900 is exempt, 15% applies up to MXN 1,000,000, and 30% above.
+    No IMSS contributions apply if no Mexican employer relationship exists.
+    No employment subsidy is available for non-residents.
+  base: "../base.yaml"
+  sources:
+    - url: "https://taxsummaries.pwc.com/mexico/individual/taxes-on-personal-income"
+      description: "PwC Mexico - Non-resident tax rates 2026"
+      retrieved_at: "2026-02-28"
+    - url: "https://www.grantthornton.global/en/insights/articles/expatriate-tax-Mexico/"
+      description: "Grant Thornton - Mexico expatriate tax guide"
+      retrieved_at: "2026-02-28"
+  updated_at: "2026-02-28"
+  notes: |
+    Non-resident taxation applies when:
+    - You do NOT have your home (casa habitacion) in Mexico
+    - Mexico is NOT your center of vital interests
+    - You spend fewer than 183 days in Mexico in a 12-month period
+
+    Important for digital nomads and remote workers:
+    - If you work remotely from Mexico for a foreign employer and are not a Mexican
+      tax resident, you may still owe Mexican tax on income earned while physically
+      present in Mexico (source-based taxation)
+    - The 183-day rule uses a rolling 12-month period, not the calendar year
+    - Temporary resident visa holders working for foreign companies are typically
+      not subject to Mexican IMSS contributions
+    - Income from sources outside Mexico is NOT taxable for non-residents
+
+    Non-residents do not have access to the employment subsidy or personal deductions.
+    The withholding is considered final tax (no annual return required).
+
+notices:
+  - id: "non_resident_rules"
+    title: "Non-Resident Tax Rules"
+    body: |
+      Non-residents pay simplified withholding rates on Mexican-source employment income.
+      The first MXN 125,900 earned in a 12-month period is exempt. Income from MXN 125,900
+      to MXN 1,000,000 is taxed at 15%, and income above MXN 1,000,000 is taxed at 30%.
+      This is a final withholding tax - no annual return is required.
+    severity: "info"
+
+  - id: "digital_nomad_warning"
+    title: "Digital Nomads: Tax Residency Matters"
+    body: |
+      If you live in Mexico on a temporary resident visa and work remotely for a foreign
+      employer, your tax obligations depend on your residency status. If you stay more
+      than 183 days in a 12-month period, or if Mexico becomes your center of vital
+      interests (e.g., more than 50% of income from Mexican sources), you may be
+      considered a tax resident and subject to the full progressive ISR rates instead.
+      Consult a Mexican tax advisor to determine your status.
+    severity: "warning"
+
+  - id: "no_imss"
+    title: "IMSS Not Applicable"
+    body: |
+      Non-residents working for foreign employers without a Mexican employer relationship
+      are generally not subject to IMSS social security contributions. If you have a
+      Mexican employer, IMSS contributions would apply separately.
+    severity: "info"
+
+parameters:
+  # Non-resident withholding brackets 2026
+  non_resident_brackets:
+    - threshold: 0
+      rate: 0
+    - threshold: 125900
+      rate: 0.15
+    - threshold: 1000000
+      rate: 0.30
+
+calculations:
+  # Remove employment subsidy calculations
+  - id: qualifies_for_subsidy
+    type: identity
+    value: 0
+
+  - id: raw_employment_subsidy
+    type: identity
+    value: 0
+
+  - id: employment_subsidy
+    type: identity
+    value: 0
+    category: credit
+    label: "Employment Subsidy"
+    description: "Not available for non-residents"
+
+  # Override ISR with non-resident withholding
+  - id: isr_before_subsidy
+    type: bracket_tax
+    base: "$taxable_income"
+    brackets: "$non_resident_brackets"
+    category: income_tax
+    label: "Non-Resident Withholding Tax"
+    description: "Flat withholding rates for non-residents (exempt/15%/30%)"
+
+  - id: isr_after_subsidy
+    type: identity
+    value: "$isr_before_subsidy"
+
+  # Remove IMSS for non-residents without Mexican employer
+  - id: imss_contributable_salary
+    type: identity
+    value: 0
+
+  - id: imss_base_contribution
+    type: identity
+    value: 0
+
+  - id: salary_above_three_uma
+    type: identity
+    value: 0
+
+  - id: imss_surtax_contribution
+    type: identity
+    value: 0
+
+  - id: imss_total
+    type: identity
+    value: 0
+    category: contribution
+    label: "IMSS Social Security"
+    description: "Not applicable for non-residents without Mexican employer"

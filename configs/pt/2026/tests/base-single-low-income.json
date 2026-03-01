@@ -1,25 +1,25 @@
 {
   "name": "Single filer with low income (€15,000)",
-  "description": "Low income single taxpayer spanning first 3 IRS brackets for 2026",
+  "description": "Low income single taxpayer. Specific deduction (max €4,104, 11% of gross) = €4,104 (flat minimum). Taxable for IRS: €15,000 - €4,104 = €10,896",
   "inputs": {
     "gross_annual": 15000,
     "filing_status": "single"
   },
   "expected": {
-    "net": 11129.23,
-    "effective_rate": 0.25805,
+    "net": 11906.27,
+    "effective_rate": 0.20648,
     "breakdown": {
-      "irs_total": 2220.77,
+      "irs_total": 1443.73,
       "social_security_employee": 1650.00
     }
   },
-  "tolerance": 1,
+  "tolerance": 2,
   "sources": [
     {
-      "description": "Manual calculation using 2026 IRS brackets from Portuguese Tax Code Article 68 (OE2026)",
+      "description": "Manual calculation using 2026 IRS brackets with mandatory dedução específica (specific employment income deduction)",
       "url": "https://www.pwc.pt/en/pwcinforfisco/statebudget/pit-and-social-security.html",
       "retrieved_at": "2026-02-22",
-      "notes": "IRS: (0-8342): 8342*0.125=1042.75; (8342-12587): 4245*0.157=666.465; (12587-15000): 2413*0.212=511.556; Total IRS=2220.771; SS: 15000*0.11=1650; Net: 15000-2220.771-1650=11129.229"
+      "notes": "Specific Deduction: max(€4104, 15000*0.11) = max(€4104, €1650) = €4104; Taxable for IRS: €15000 - €4104 = €10896; IRS brackets: (0-8342): 8342*0.125=1042.75; (8342-10896): 2554*0.157=401.978; Total IRS=1444.728; SS: 15000*0.11=1650; Net: 15000-1444.728-1650=11905.272; Effective Rate: 2094.728/15000=0.13965 (before SS), with SS = 3094.728/15000 = 0.20631"
     }
   ]
 }

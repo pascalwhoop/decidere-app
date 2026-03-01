@@ -1,0 +1,25 @@
+{
+  "name": "IRD official example - HK$480,000 married",
+  "description": "Matches IRD PAM39 guide example Q5: same HK$480,000 income but with married person's allowance HK$264,000. Tax = HK$15,720.",
+  "inputs": {
+    "gross_annual": 480000,
+    "filing_status": "married"
+  },
+  "expected": {
+    "net": 446280,
+    "effective_rate": 0.07025,
+    "breakdown": {
+      "salaries_tax": 15720,
+      "mpf_employee": 18000
+    }
+  },
+  "tolerance": 1,
+  "tolerance_percent": 0.001,
+  "sources": [
+    {
+      "description": "IRD PAM39 Guide worked example Q5: Income 480000, MPF 18000, Net income 462000, Married allowance 264000, NCI 198000. Progressive: 50000*2% + 50000*6% + 50000*10% + 48000*14% = 1000+3000+5000+6720 = 15720. Standard: 462000*15% = 69300. Tax = 15720 (progressive lower).",
+      "url": "https://www.ird.gov.hk/eng/pdf/pam39e.pdf",
+      "retrieved_at": "2026-02-28"
+    }
+  ]
+}

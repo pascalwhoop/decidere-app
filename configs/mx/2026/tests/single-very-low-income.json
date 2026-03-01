@@ -1,0 +1,26 @@
+{
+  "name": "Single filer at very low income - subsidy caps ISR (MXN 80,000/year)",
+  "description": "Employee earning MXN 80,000 annually (~MXN 6,667/month). Employment subsidy fully offsets ISR. Only IMSS contributions remain.",
+  "inputs": {
+    "gross_annual": 80000,
+    "filing_status": "single"
+  },
+  "expected": {
+    "net": 78100,
+    "effective_rate": 0.02375,
+    "breakdown": {
+      "isr_before_subsidy": 4666,
+      "employment_subsidy": 4666,
+      "imss_total": 1900
+    }
+  },
+  "tolerance": 10,
+  "tolerance_percent": 0.005,
+  "sources": [
+    {
+      "description": "Calculated using 2026 ISR annual table. Subsidy capped at ISR owed (MXN 4,666 < MXN 6,435 annual subsidy).",
+      "url": "https://taxsummaries.pwc.com/mexico/individual/taxes-on-personal-income",
+      "retrieved_at": "2026-02-28"
+    }
+  ]
+}

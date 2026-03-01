@@ -140,8 +140,8 @@ export const ValueOrExprSchema: z.ZodType<string | number | AnyInlineExpr> =
 
 export const ConditionConfigSchema = z.object({
   type: z.enum(['gt', 'lt', 'gte', 'lte', 'eq', 'neq']),
-  left: z.union([z.string(), z.number()]),
-  right: z.union([z.string(), z.number()]),
+  left: z.union([z.string(), z.number(), z.boolean()]),
+  right: z.union([z.string(), z.number(), z.boolean()]),
 })
 
 export const PhaseoutConfigSchema = z.object({

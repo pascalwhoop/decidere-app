@@ -1,0 +1,319 @@
+meta:
+  country: "mx"
+  year: 2026
+  currency: "MXN"
+  version: "1.0.0"
+  sources:
+    - url: "https://taxsummaries.pwc.com/mexico/individual/taxes-on-personal-income"
+      description: "PwC Mexico Tax Summary - 2026 ISR rates and brackets"
+      retrieved_at: "2026-02-28"
+    - url: "https://www.sat.gob.mx/minisitio/NormatividadRMFyRGCE/documentos2026/rmf/anexos/Anexo-8-RMF-2026_DOF-28122025.pdf"
+      description: "SAT Official Annex 8 - 2026 ISR tax tables (Resoluccion Miscelanea Fiscal)"
+      retrieved_at: "2026-02-28"
+    - url: "https://www.oecd.org/content/dam/oecd/en/topics/policy-sub-issues/income-support-redistribution-and-work-incentives/TaxBEN-Mexico-latest.pdf"
+      description: "OECD Tax and Benefit Policy Descriptions for Mexico 2025 - IMSS employee contributions"
+      retrieved_at: "2026-02-28"
+    - url: "https://help.nativeteams.com/mexico-payroll-changes-2026"
+      description: "Mexico payroll changes 2026 - employment subsidy and IMSS updates"
+      retrieved_at: "2026-02-28"
+    - url: "https://www.ascg.mx/medios/overview-of-payroll-management-in-mexico-for-2026/"
+      description: "Overview of payroll management in Mexico for 2026 - UMA, IMSS, ISR updates"
+      retrieved_at: "2026-02-28"
+  updated_at: "2026-02-28"
+  notes: |
+    This configuration covers the standard Mexican income tax system (ISR - Impuesto Sobre
+    la Renta) for tax-resident employees in 2026, including IMSS social security contributions
+    and the employment subsidy (subsidio al empleo) for low-income workers.
+
+    Key characteristics for 2026:
+    - Progressive ISR with 11 brackets from 1.92% to 35%
+    - ISR tables updated for accumulated inflation exceeding 10%
+    - IMSS employee contributions: ~2.375% base rate + 0.4% surtax above 3 UMA
+    - IMSS contribution salary cap: 25 UMA daily (MXN 1,070,578.75/year)
+    - Employment subsidy of MXN 536.21/month for employees earning below MXN 11,492.66/month
+    - UMA 2026: MXN 117.31/day, MXN 3,566.22/month, MXN 42,794.64/year
+
+    Key assumptions:
+    - Taxpayer is a salaried employee (not self-employed or RESICO)
+    - Tax resident of Mexico (subject to worldwide income taxation)
+    - Standard zone (not Northern Border Free Zone)
+    - No personal deductions claimed (medical, education, etc.)
+    - Annual calculation (ISR uses cumulative December/annual table)
+
+    Currency: All amounts in Mexican Pesos (MXN).
+    Approximate exchange rate: 1 USD = 20.5 MXN (February 2026).
+
+notices:
+  - id: "salary_input"
+    title: "Annual Gross Salary"
+    body: |
+      Enter your total annual gross salary before any deductions, in Mexican Pesos (MXN).
+      Include aguinaldo (Christmas bonus) and any other taxable compensation.
+      The standard aguinaldo is at least 15 days of salary, paid before December 20.
+    severity: "info"
+
+  - id: "tax_resident"
+    title: "Tax Residency"
+    body: |
+      This calculator is for Mexican tax residents. You are considered a tax resident if:
+      - You have your home (casa habitacion) in Mexico, or
+      - Mexico is your center of vital interests (more than 50% of income from Mexico), or
+      - You are a Mexican federal/state employee posted abroad.
+      Non-residents should use the "non-resident" variant.
+    severity: "info"
+
+  - id: "imss_simplified"
+    title: "IMSS Contributions (Simplified)"
+    body: |
+      Employee IMSS social security contributions include sickness/maternity insurance,
+      disability/life insurance, and retirement (cesantia y vejez). The rate shown is a
+      simplified model. Actual contributions depend on your SBC (Salario Base de Cotizacion),
+      which integrates bonuses and benefits into the contribution base. Contributions are
+      capped at 25 times the daily UMA (MXN 117.31 in 2026).
+    severity: "info"
+
+  - id: "employment_subsidy"
+    title: "Employment Subsidy (Subsidio al Empleo)"
+    body: |
+      Low-income workers earning below MXN 11,492.66/month (MXN 137,911.92/year) receive
+      an employment subsidy of MXN 536.21/month that offsets their ISR withholding. This
+      effectively reduces or eliminates income tax for the lowest earners. The subsidy
+      cannot exceed the ISR owed and does not generate a refund.
+    severity: "info"
+
+  - id: "non_resident_variant"
+    title: "Non-Resident Tax Rates Available"
+    body: |
+      If you are a non-resident for Mexican tax purposes, different rates apply:
+      the first MXN 125,900 of employment income is exempt, with 15% on income up to
+      MXN 1,000,000 and 30% above that. See the "non-resident" variant.
+    severity: "info"
+
+  - id: "currency_note"
+    title: "Currency: Mexican Pesos (MXN)"
+    body: |
+      All amounts are in Mexican Pesos. As of February 2026, the approximate exchange
+      rate is 1 USD = 20.5 MXN. For example, a salary of MXN 500,000 is roughly
+      USD 24,400 per year.
+    severity: "info"
+
+inputs:
+  gross_annual:
+    type: number
+    required: true
+    min: 0
+    label: "Annual Gross Salary (MXN)"
+    description: "Your total yearly salary before any deductions, in Mexican Pesos. Include aguinaldo and taxable benefits."
+
+  filing_status:
+    type: enum
+    required: true
+    default: "single"
+    label: "Filing Status"
+    options:
+      single:
+        label: "Single"
+        description: "Individual tax filing (standard)"
+      married:
+        label: "Married"
+        description: "Married individual (Mexico taxes individually; no joint filing changes base rates)"
+
+parameters:
+  # ===========================================================================
+  # ISR Annual Tax Table 2026 (from SAT Annex 8 / PwC)
+  # Uses base_amount (cuota fija) + marginal rate on excess over lower limit
+  # ===========================================================================
+  isr_brackets:
+    - threshold: 0
+      base_amount: 0
+      rate: 0.0192
+    - threshold: 10135.12
+      base_amount: 194.59
+      rate: 0.0640
+    - threshold: 86022.12
+      base_amount: 5051.37
+      rate: 0.1088
+    - threshold: 151176.20
+      base_amount: 12140.13
+      rate: 0.1600
+    - threshold: 175735.67
+      base_amount: 16069.64
+      rate: 0.1792
+    - threshold: 210403.70
+      base_amount: 22282.14
+      rate: 0.2136
+    - threshold: 424353.98
+      base_amount: 67981.92
+      rate: 0.2352
+    - threshold: 668840.15
+      base_amount: 125485.07
+      rate: 0.3000
+    - threshold: 1276925.99
+      base_amount: 307910.81
+      rate: 0.3200
+    - threshold: 1702567.98
+      base_amount: 444116.23
+      rate: 0.3400
+    - threshold: 5107703.93
+      base_amount: 1601862.46
+      rate: 0.3500
+
+  # ===========================================================================
+  # IMSS Employee Contribution Parameters 2026
+  # ===========================================================================
+  # Employee pays:
+  #   Sickness & Maternity: 0.625% of wage + 0.4% of excess above 3 UMA
+  #   Disability & Life: 0.625% of wage
+  #   Retirement (Cesantia y Vejez): 1.125% of wage
+  # Total base rate: 2.375%
+  # All capped at 25 * daily UMA * 365
+  imss_base_rate: 0.02375
+  imss_surtax_rate: 0.004
+  uma_daily: 117.31
+  uma_annual: 42794.64
+  imss_cap_uma_multiple: 25
+  imss_three_uma_annual: 128383.92  # 3 * 42,794.64
+
+  # IMSS annual cap = 25 * 117.31 * 365
+  imss_annual_cap: 1070578.75
+
+  # ===========================================================================
+  # Employment Subsidy (Subsidio al Empleo) 2026
+  # ===========================================================================
+  # Monthly subsidy of MXN 536.21 for employees earning below MXN 11,492.66/month
+  employment_subsidy_monthly: 536.21
+  employment_subsidy_annual: 6434.52
+  employment_subsidy_income_threshold_annual: 137911.92  # 11,492.66 * 12
+
+calculations:
+  # ===========================================================================
+  # TAXABLE INCOME
+  # ===========================================================================
+  - id: taxable_income
+    type: identity
+    value: "@gross_annual"
+
+  # ===========================================================================
+  # ISR (INCOME TAX)
+  # ===========================================================================
+  - id: isr_before_subsidy
+    type: bracket_tax
+    base: "$taxable_income"
+    brackets: "$isr_brackets"
+    category: income_tax
+    label: "ISR (Income Tax)"
+    description: "Impuesto Sobre la Renta - progressive federal income tax"
+
+  # ===========================================================================
+  # EMPLOYMENT SUBSIDY (Subsidio al Empleo)
+  # ===========================================================================
+  # Only applies if gross annual income is below the threshold
+  # The subsidy cannot exceed the ISR owed (non-refundable)
+  - id: qualifies_for_subsidy
+    type: conditional
+    condition:
+      type: lte
+      left: "@gross_annual"
+      right: "$employment_subsidy_income_threshold_annual"
+    then: 1
+    else: 0
+
+  - id: raw_employment_subsidy
+    type: mul
+    values:
+      - "$employment_subsidy_annual"
+      - "$qualifies_for_subsidy"
+
+  # Subsidy cannot exceed ISR owed
+  - id: employment_subsidy
+    type: min
+    values:
+      - "$raw_employment_subsidy"
+      - "$isr_before_subsidy"
+    category: credit
+    label: "Employment Subsidy"
+    description: "Subsidio al empleo - tax credit for low-income workers (MXN 536.21/month)"
+
+  # ISR after subsidy
+  - id: isr_after_subsidy
+    type: max
+    values:
+      - 0
+      - type: sub
+        values:
+          - "$isr_before_subsidy"
+          - "$employment_subsidy"
+
+  # ===========================================================================
+  # IMSS EMPLOYEE CONTRIBUTIONS
+  # ===========================================================================
+  # Base contributions: 2.375% on min(salary, cap)
+  - id: imss_contributable_salary
+    type: min
+    values:
+      - "@gross_annual"
+      - "$imss_annual_cap"
+
+  - id: imss_base_contribution
+    type: mul
+    values:
+      - "$imss_contributable_salary"
+      - "$imss_base_rate"
+
+  # Surtax: 0.4% on salary between 3 UMA and cap
+  - id: salary_above_three_uma
+    type: max
+    values:
+      - 0
+      - type: sub
+        values:
+          - "$imss_contributable_salary"
+          - "$imss_three_uma_annual"
+
+  - id: imss_surtax_contribution
+    type: mul
+    values:
+      - "$salary_above_three_uma"
+      - "$imss_surtax_rate"
+
+  - id: imss_total
+    type: sum
+    values:
+      - "$imss_base_contribution"
+      - "$imss_surtax_contribution"
+    category: contribution
+    label: "IMSS Social Security"
+    description: "Employee social security contributions (sickness, disability, retirement)"
+
+  # ===========================================================================
+  # TOTAL DEDUCTIONS AND NET
+  # ===========================================================================
+  - id: total_deductions
+    type: sum
+    values:
+      - "$isr_after_subsidy"
+      - "$imss_total"
+
+  - id: net_annual
+    type: sub
+    values:
+      - "@gross_annual"
+      - "$total_deductions"
+
+outputs:
+  gross: "@gross_annual"
+  net: "$net_annual"
+  effective_rate:
+    type: div
+    values:
+      - type: sub
+        values:
+          - "@gross_annual"
+          - "$net_annual"
+      - "@gross_annual"
+  breakdown:
+    taxes:
+      - "$isr_before_subsidy"
+      - "$imss_total"
+    credits:
+      - "$employment_subsidy"

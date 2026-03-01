@@ -9,7 +9,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 
-const GITHUB_REPO = "pascalwhoop/universalNetCalc"
+const GITHUB_REPO = "pascalwhoop/decidere"
 
 export function BugReportButton() {
   const handleClick = () => {

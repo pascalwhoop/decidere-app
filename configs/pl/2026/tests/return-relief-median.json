@@ -1,0 +1,27 @@
+{
+  "name": "Return Relief at 120,000 PLN - PIT fully exempt",
+  "description": "New resident using return relief. At 120,000 PLN, the relief + tax-free amount fully eliminates PIT.",
+  "variant": "return-relief",
+  "inputs": {
+    "gross_annual": 120000,
+    "filing_status": "single"
+  },
+  "expected": {
+    "net": 94229,
+    "effective_rate": 0.21476,
+    "breakdown": {
+      "total_social_contributions": 16452,
+      "health_insurance": 9319,
+      "income_tax": 0
+    }
+  },
+  "tolerance": 5,
+  "tolerance_percent": 0.005,
+  "sources": [
+    {
+      "description": "Manual calculation: ZUS = 120,000 * 13.71% = 16,452; Health = 103,548 * 9% = 9,319.32; Exempt = 85,528; income_after_exemption = 103,548 - 85,528 = 18,020; Taxable = 18,020 - 3,000 = 15,020; PIT = 15,020 * 12% - 3,600 = max(0, -1,797.60) = 0; Net = 120,000 - 16,452 - 9,319.32 = 94,228.68",
+      "url": "https://saregofinance.pl/ulga-na-powrot-tax-relief/",
+      "retrieved_at": "2026-02-28"
+    }
+  ]
+}

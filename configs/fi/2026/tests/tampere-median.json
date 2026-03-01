@@ -1,0 +1,25 @@
+{
+  "name": "Tampere - Median income (50k, no church)",
+  "description": "50,000 EUR salary in Tampere (7.60% municipal tax), no church membership. Tests regional variation.",
+  "inputs": {
+    "gross_annual": 50000,
+    "municipality": "tampere",
+    "church_member": false
+  },
+  "expected": {
+    "net": 35909,
+    "effective_rate": 0.28183,
+    "breakdown": {
+      "state_tax": 8604,
+      "municipal_tax": 3432,
+      "tyel_pension": 3650,
+      "unemployment_insurance": 445,
+      "health_care_contribution": 550,
+      "daily_allowance_contribution": 440,
+      "work_income_tax_credit": 3189,
+      "yle_tax": 160
+    }
+  },
+  "tolerance": 50,
+  "tolerance_percent": 0.005
+}

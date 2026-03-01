@@ -25,17 +25,39 @@ meta:
     - Brackets updated by 3.51% vs 2025 (automatic indexation mechanism)
     - Rates for 2nd to 5th brackets reduced by 0.3 percentage points vs 2025
     - Social security contributions (TSU): 11% employee, 23.75% employer
+    - Mandatory specific employment income deduction (dedução específica): max(€4,104, 11% of gross)
     - Tax rates apply to rendimento coletável (taxable income after specific deductions)
-    - For simplicity, this calculator uses gross income directly
 
-    Changes from 2025:
+    Tax Calculation Flow (CORRECTED):
+    1. Calculate specific deduction: max(€4,104 flat, 11% of gross) → dedução específica
+    2. Calculate taxable income for IRS: Gross - Specific Deduction
+    3. For married filing: divide taxable income by quotient (2) for bracket calculation
+    4. Apply progressive IRS brackets to the per-quotient taxable amount
+    5. For married filing: multiply result back by quotient to get total IRS
+    6. Add mandatory social security employee contribution (11% of gross)
+    7. Net = Gross - Total IRS - Social Security
+
+    CRITICAL FIX (2026):
+    The 2026 configuration now correctly implements the mandatory dedução específica
+    (specific employment income deduction). Previously, IRS was incorrectly applied to
+    the full gross salary. Under Portuguese tax law (IRS Code), all employment income
+    must reduce taxable income by the greater of:
+    - €4,104 (flat minimum deduction)
+    - 11% of gross annual salary (employee TSU contribution)
+
+    This deduction significantly reduces tax liability, especially for high earners where
+    11% of gross exceeds the €4,104 flat amount. The fix brings calculated taxes into
+    alignment with official Portuguese Tax Authority (AT) calculations.
+
+    Other Changes from 2025:
     - All bracket thresholds increased by 3.51% (inflation adjustment)
     - Rates for brackets 2-5 reduced by 0.3pp (relief for middle class)
     - Minimum subsistence level (mínimo de existência) updated to €12,880
 
     Note: The NHR (Non-Habitual Resident) regime ended in 2024 and was replaced
     by IFICI (Tax Incentive for Scientific Research and Innovation). See the
-    'ifici' variant for the special 20% flat rate regime.
+    'ifici' variant for the special 20% flat rate regime. IFICI also applies the
+    specific deduction before calculating the flat 20% rate.
 
 notices:
   - id: "salary_input"
@@ -125,14 +147,36 @@ calculations:
       married_joint: 2
     default: 1
 
+  # Calculate 11% social security employee contribution (used for specific deduction calc)
+  - id: social_security_employee_amount
+    type: percent_of
+    base: "@gross_annual"
+    rate: "$social_security_employee_rate"
+
+  # Calculate specific deduction (dedução específica): max(€4,104 flat, 11% of gross)
+  # This is mandatory deduction for employment income before calculating IRS
+  # Source: Portuguese Tax Code - Specific deduction for employment income (rendimentos de trabalho)
+  - id: specific_deduction
+    type: max
+    values:
+      - 4104
+      - "$social_security_employee_amount"
+
+  # Calculate taxable income for IRS: Gross - Specific Deduction
+  - id: taxable_income_before_quotient
+    type: sub
+    values:
+      - "@gross_annual"
+      - "$specific_deduction"
+
   # For married joint filing, divide income by quotient
   - id: taxable_income_per_quotient
     type: div
     values:
-      - "@gross_annual"
+      - "$taxable_income_before_quotient"
       - "$quotient"
 
-  # Calculate IRS on the quotient amount
+  # Calculate IRS on the quotient amount (of the reduced taxable income)
   - id: irs_per_quotient
     type: bracket_tax
     base: "$taxable_income_per_quotient"
@@ -148,7 +192,8 @@ calculations:
     label: "IRS (Income Tax)"
     description: "Imposto sobre o Rendimento das Pessoas Singulares"
 
-  # Social Security (Segurança Social) - Employee contribution
+  # Social Security (Segurança Solar) - Employee contribution
+  # This is calculated separately from the specific deduction (both are mandatory)
   - id: social_security_employee
     type: percent_of
     base: "@gross_annual"

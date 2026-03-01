@@ -1,0 +1,26 @@
+{
+  "name": "Income above ACC cap",
+  "description": "Individual earning NZD 200,000 per year (top tax bracket, ACC levy capped at NZD 156,641)",
+  "inputs": {
+    "gross_annual": 200000
+  },
+  "expected": {
+    "net": 140181.28,
+    "effective_rate": 0.2991,
+    "breakdown": {
+      "income_tax": 57077.50,
+      "acc_levy": 2741.22,
+      "ietc_credit": 0
+    }
+  },
+  "tolerance": 10,
+  "tolerance_percent": 0.005,
+  "sources": [
+    {
+      "description": "Calculated using 2026-27 PAYE rates, ACC levy (1.75%), and IETC from IRD",
+      "url": "https://www.ird.govt.nz/income-tax/income-tax-for-individuals/tax-codes-and-tax-rates-for-individuals/tax-rates-for-individuals",
+      "retrieved_at": "2026-02-28",
+      "notes": "PAYE: All 5 brackets including top 39% rate above $180,000. ACC: Capped at 1.75% of $156,641 = $2,741.22. IETC: $0 (income above $70,000)."
+    }
+  ]
+}

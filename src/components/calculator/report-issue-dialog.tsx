@@ -145,7 +145,7 @@ ${JSON.stringify(result.breakdown, null, 2)}
 ---
 *Reported via calculator interface*`)
 
-    const githubUrl = `https://github.com/pascalwhoop/universalNetCalc/issues/new?title=${title}&body=${body}&labels=calculation-issue`
+    const githubUrl = `https://github.com/pascalwhoop/decidere/issues/new?title=${title}&body=${body}&labels=calculation-issue`
 
     window.open(githubUrl, "_blank")
     onOpenChange(false)

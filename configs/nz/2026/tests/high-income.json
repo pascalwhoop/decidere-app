@@ -1,0 +1,26 @@
+{
+  "name": "High income below ACC cap",
+  "description": "Individual earning NZD 120,000 per year (no IETC, ACC levy not yet capped)",
+  "inputs": {
+    "gross_annual": 120000
+  },
+  "expected": {
+    "net": 88422.50,
+    "effective_rate": 0.2631,
+    "breakdown": {
+      "income_tax": 29477.50,
+      "acc_levy": 2100,
+      "ietc_credit": 0
+    }
+  },
+  "tolerance": 10,
+  "tolerance_percent": 0.005,
+  "sources": [
+    {
+      "description": "Calculated using 2026-27 PAYE rates, ACC levy (1.75%), and IETC from IRD",
+      "url": "https://www.ird.govt.nz/income-tax/income-tax-for-individuals/tax-codes-and-tax-rates-for-individuals/tax-rates-for-individuals",
+      "retrieved_at": "2026-02-28",
+      "notes": "PAYE: Brackets at 10.5%, 17.5%, 30%, 33% (income below top bracket). ACC: 1.75% on full income (below cap of $156,641). IETC: $0 (income above $70,000)."
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "name": "Non-Resident, High Income (JPY 15M), Age 50",
+  "description": "Non-resident flat rate on high income - tests social insurance caps with long-term care",
+  "variant": "non-resident",
+  "inputs": {
+    "gross_annual": 15000000,
+    "age": 50,
+    "filing_status": "single",
+    "num_dependents_19_22": 0
+  },
+  "expected": {
+    "national_income_tax_base": 3063000,
+    "total_national_income_tax": 3063000,
+    "health_insurance_annual": 738750,
+    "pension_annual": 713700,
+    "employment_insurance_annual": 75000,
+    "longterm_care_annual": 121500,
+    "childcare_support_annual": 17250,
+    "total_social_insurance": 1666200,
+    "total_resident_tax": 0,
+    "net": 10270800,
+    "effective_rate": 0.3153
+  },
+  "tolerance": 100,
+  "tolerance_percent": 0.001
+}

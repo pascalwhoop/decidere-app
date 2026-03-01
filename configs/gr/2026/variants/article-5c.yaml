@@ -1,0 +1,86 @@
+meta:
+  variant: "article-5c"
+  label: "Article 5C - 50% Tax Exemption"
+  description: |
+    Special tax regime for individuals transferring tax residence to Greece (Article 5C of Law 4172/2013).
+    Provides a 50% income tax exemption on employment and business income earned in Greece for up to 7 years.
+
+    Eligibility requirements:
+    - Not a Greek tax resident for 5 of the 6 years (or 7 of 8 years) prior to application
+    - Transfer tax residence to Greece
+    - Provide services in Greece via employment or business activity
+    - Declare intention to stay in Greece for at least 2 years
+    - Come from an EU/EEA country or a country with tax cooperation agreement with Greece
+    - Employment must fill a "new job position"
+
+    Benefits:
+    - 50% exemption from income tax on Greek employment/business income
+    - Solidarity contribution exemption (already abolished for all since 2023)
+    - Exempt from deemed income calculations
+    - Duration: 7 consecutive tax years
+
+    Note: Social security contributions (EFKA) are NOT reduced under this regime;
+    only income tax is halved.
+  base: "../base.yaml"
+  sources:
+    - url: "https://www.taxlaw.gr/en/practice-areas/tax-law/5c-tax-regime-special-regime-of-taxation-for-income-from-employment-and-business-activity-earned-in-greece-by-individuals-who-transfer-their-tax-residence-to-greece/"
+      description: "TaxLaw.gr - Article 5C Tax Regime detailed explanation"
+      retrieved_at: "2026-03-01"
+    - url: "https://taxsummaries.pwc.com/greece/individual/other-tax-credits-and-incentives"
+      description: "PwC - Greece Article 5C incentive details"
+      retrieved_at: "2026-03-01"
+    - url: "https://assets.kpmg.com/content/dam/kpmg/gr/pdf/2024/11/gr-special-tax-regimes-2024.pdf"
+      description: "KPMG - Greece Special Tax Regimes (Article 5C details)"
+      retrieved_at: "2026-03-01"
+    - url: "https://www.nestia.gr/blog/special-tax-regimes-in-greece-2026-a-guide-for-expats-retirees"
+      description: "Nestia - Special Tax Regimes in Greece 2026 guide"
+      retrieved_at: "2026-03-01"
+  updated_at: "2026-03-01"
+
+notices:
+  - id: "article_5c_eligibility"
+    title: "Eligibility Check Required"
+    body: |
+      This variant assumes you qualify for the Article 5C regime. Key requirements:
+      - You were NOT a Greek tax resident for 5 of the 6 years before your application
+      - You are transferring your tax residence TO Greece
+      - You are working in Greece under a new employment contract or starting a business
+      - You come from an EU/EEA country or a country with a tax cooperation agreement
+      - The employment must fill a NEW job position
+
+      Consult with a Greek tax advisor to confirm eligibility before relying on this calculation.
+    severity: "warning"
+  - id: "article_5c_calculation"
+    title: "How the 50% Exemption Works"
+    body: |
+      Enter your FULL gross annual salary. The calculator automatically applies the 50%
+      income tax exemption:
+
+      Example: If your gross salary is EUR 60,000, income tax is calculated on only
+      EUR 30,000 (50%). EFKA social security contributions still apply on the full salary.
+    severity: "info"
+  - id: "article_5c_duration"
+    title: "7-Year Benefit Period"
+    body: |
+      The Article 5C exemption lasts for 7 consecutive tax years from the year
+      of application. There is no possibility of extension beyond 7 years.
+    severity: "info"
+
+calculations:
+  # Override taxable income: only 50% of employment income is subject to income tax
+  - id: taxable_income
+    type: mul
+    values:
+      - "@gross_annual"
+      - 0.50
+    description: "Only 50% of employment income is taxable under Article 5C"
+
+  # Display the tax-exempt amount
+  - id: article_5c_exemption
+    type: mul
+    values:
+      - "@gross_annual"
+      - 0.50
+    category: deduction
+    label: "Article 5C Tax Exemption (50%)"
+    description: "50% of employment income exempt from income tax under Article 5C"

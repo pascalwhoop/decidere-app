@@ -1,0 +1,26 @@
+{
+  "name": "Zuzugsfreibetrag - High income researcher (EUR 6,000/month x 14)",
+  "description": "Researcher earning EUR 84,000 with 30% Zuzugsfreibetrag tax relief, standard region",
+  "variant": "zuzugsfreibetrag",
+  "inputs": {
+    "gross_annual": 84000,
+    "region": "standard"
+  },
+  "expected": {
+    "net": 62743,
+    "effective_rate": 0.253,
+    "breakdown": {
+      "income_tax": 6198,
+      "social_security": 15059
+    }
+  },
+  "tolerance": 50,
+  "tolerance_percent": 0.01,
+  "sources": [
+    {
+      "description": "Manually calculated: 30% ZZFB reduces taxable fraction to 70%, SV on full gross. Compared to base case net of EUR 53,887 - saving of ~EUR 8,856",
+      "url": "https://artus.at/en/blog/tax-benefits-for-international-researchers-and-scientists-moving-to-austria/",
+      "retrieved_at": "2026-02-28"
+    }
+  ]
+}

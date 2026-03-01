@@ -1,0 +1,24 @@
+{
+  "name": "Very low income - below MPF minimum (HK$60,000)",
+  "description": "Monthly income HK$5,000 is below HK$7,100 MPF minimum, so employee MPF contribution is zero. Also below basic allowance, so zero tax.",
+  "inputs": {
+    "gross_annual": 60000,
+    "filing_status": "single"
+  },
+  "expected": {
+    "net": 60000,
+    "effective_rate": 0.0,
+    "breakdown": {
+      "salaries_tax": 0,
+      "mpf_employee": 0
+    }
+  },
+  "tolerance": 1,
+  "sources": [
+    {
+      "description": "Manual calculation: Monthly income HK$5,000 < HK$7,100 minimum, so employee MPF = 0. Net income = 60000. NCI = 60000 - 132000 = 0 (negative, clamped). Tax = 0.",
+      "url": "https://fastlanehr.hk/mpf-maximum-contribution/",
+      "retrieved_at": "2026-02-28"
+    }
+  ]
+}

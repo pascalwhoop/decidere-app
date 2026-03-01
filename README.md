@@ -1,8 +1,8 @@
-# Universal Net Calculator
+# Decidere
 
-Calculate accurate after-tax income for multiple countries using config-driven tax rules.
+Decide where to live. Starting with accurate after-tax income calculations across 15+ countries.
 
-> 💡 Now with latest 2026 data!
+> Decidere (Latin: "to cut away options") — the act of moving from deliberation to action.
 
 ## Quick Start
 

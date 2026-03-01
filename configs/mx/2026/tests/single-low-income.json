@@ -1,0 +1,26 @@
+{
+  "name": "Single filer at low income (MXN 120,000/year)",
+  "description": "Employee earning MXN 120,000 annually (~MXN 10,000/month). Qualifies for employment subsidy. ISR partially offset by subsidio al empleo.",
+  "inputs": {
+    "gross_annual": 120000,
+    "filing_status": "single"
+  },
+  "expected": {
+    "net": 114836,
+    "effective_rate": 0.04303,
+    "breakdown": {
+      "isr_before_subsidy": 8748,
+      "employment_subsidy": 6435,
+      "imss_total": 2850
+    }
+  },
+  "tolerance": 10,
+  "tolerance_percent": 0.005,
+  "sources": [
+    {
+      "description": "Calculated using 2026 ISR annual table from SAT Annex 8 and IMSS employee rates from OECD",
+      "url": "https://taxsummaries.pwc.com/mexico/individual/taxes-on-personal-income",
+      "retrieved_at": "2026-02-28"
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "name": "B2B Ryczalt IT at 360,000 PLN - senior IT contractor",
+  "description": "Senior IT contractor on B2B ryczalt 12%, earning 30,000 PLN/month. Revenue above 300k health tier.",
+  "variant": "b2b-ryczalt-it",
+  "inputs": {
+    "gross_annual": 360000,
+    "filing_status": "single"
+  },
+  "expected": {
+    "net": 278056,
+    "effective_rate": 0.22762,
+    "breakdown": {
+      "total_social_contributions": 23121,
+      "health_insurance": 16620,
+      "income_tax": 42203
+    }
+  },
+  "tolerance": 10,
+  "tolerance_percent": 0.005,
+  "sources": [
+    {
+      "description": "Manual calculation: Fixed ZUS = 23,121; Health = 16,620 (above 300k tier); Health deduction = 16,620 * 50% = 8,310; Taxable = 360,000 - 8,310 = 351,690; Tax = 351,690 * 12% = 42,202.80; Net = 360,000 - 23,121 - 16,620 - 42,202.80 = 278,056.20",
+      "url": "https://www.podatki.wtf/?lang=en",
+      "retrieved_at": "2026-02-28"
+    }
+  ]
+}

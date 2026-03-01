@@ -1,0 +1,17 @@
+{
+  "name": "Working Holiday Maker - AUD 80,000",
+  "description": "WHM (visa 417/462) crossing into the 30% bracket above $45,000",
+  "variant": "working-holiday",
+  "inputs": {
+    "gross_annual": 80000
+  },
+  "expected": {
+    "net": 62750,
+    "effective_rate": 0.215625,
+    "breakdown": {
+      "income_tax": 17250
+    }
+  },
+  "tolerance": 5,
+  "tolerance_percent": 0.005
+}

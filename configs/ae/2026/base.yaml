@@ -1,0 +1,125 @@
+meta:
+  country: "ae"
+  year: 2026
+  currency: "AED"
+  version: "1.0.0"
+  sources:
+    - url: "https://taxsummaries.pwc.com/united-arab-emirates/individual/taxes-on-personal-income"
+      description: "PwC Tax Summary - UAE Individual Taxes (Last reviewed 26 August 2025, confirmed no personal income tax)"
+      retrieved_at: "2026-02-28"
+    - url: "https://taxsummaries.pwc.com/united-arab-emirates/individual/other-taxes"
+      description: "PwC Tax Summary - UAE Individual Other Taxes (Last reviewed 09 February 2026)"
+      retrieved_at: "2026-02-28"
+    - url: "https://bpion.com/uae-taxation-in-2026/"
+      description: "UAE Taxation in 2026 - confirms zero personal income tax on employment income"
+      retrieved_at: "2026-02-28"
+    - url: "https://u.ae/en/information-and-services/jobs/insurance/unemployment-insurance-scheme"
+      description: "UAE Official Portal - Unemployment Insurance Scheme (ILOE)"
+      retrieved_at: "2026-02-28"
+  updated_at: "2026-02-28"
+  notes: |
+    The United Arab Emirates does not levy personal income tax on employment income.
+    This remains unchanged for 2026. No income tax on salaries, bonuses, equity
+    compensation, or any other employment income.
+
+    Natural persons conducting business with turnover exceeding AED 1,000,000 are
+    subject to 9% corporate tax, but wages and personal investment income are excluded.
+    This configuration applies to standard employment income only.
+
+    Key 2026 updates:
+    - Tax procedure amendments (Federal Decree-Law No. 17 of 2025) took effect Jan 1, 2026,
+      but these affect VAT/CT administration, not personal income.
+    - VAT amendments (Federal Decree-Law No. 16 of 2025) simplify compliance procedures.
+    - E-invoicing for B2B/B2G transactions begins phased rollout in July 2026.
+    - Domestic Minimum Top-up Tax (15%) continues for large MNEs (Pillar Two), does not
+      affect individuals.
+    - Small Business Relief for corporate tax extended through Dec 31, 2026 (revenue < AED 3M).
+    - ILOE unemployment insurance remains mandatory (AED 5-10/month per employee), but is
+      too small to materially affect net salary calculations.
+
+notices:
+  - id: "no_income_tax"
+    title: "No Personal Income Tax"
+    body: |
+      The UAE does not impose personal income tax on employment income in 2026.
+      Your net salary equals your gross salary. However, employees may have
+      other deductions (health insurance, end-of-service gratuity) that are
+      employer-specific and not captured here.
+    severity: "info"
+
+  - id: "unemployment_insurance"
+    title: "Mandatory Unemployment Insurance (ILOE)"
+    body: |
+      All private and federal government sector employees must subscribe to the
+      Involuntary Loss of Employment (ILOE) insurance scheme. The cost is AED 5/month
+      (basic salary up to AED 16,000) or AED 10/month (basic salary above AED 16,000).
+      This is a flat fee paid by the employee, not a percentage of salary, and is not
+      included in this calculation due to its negligible impact (AED 60-120/year).
+    severity: "info"
+
+  - id: "business_income"
+    title: "Business Income Taxation"
+    body: |
+      If you conduct business activities with turnover exceeding AED 1,000,000,
+      you may be subject to 9% corporate tax on profits above AED 375,000. Small
+      Business Relief (0% rate) is available for revenue under AED 3,000,000 through
+      December 31, 2026. This calculator does not apply to business income - it is
+      for employment income only.
+    severity: "warning"
+
+  - id: "social_security_nationals"
+    title: "Social Security for UAE/GCC Nationals"
+    body: |
+      UAE and GCC nationals are subject to social security contributions (GPSSA).
+      Employee contribution is 5% (or 11% for those employed after Oct 31, 2023).
+      This calculator shows the default case for expat employees who are not subject
+      to social security contributions.
+    severity: "info"
+
+inputs:
+  gross_annual:
+    type: number
+    required: true
+    min: 0
+    label: "Annual Gross Salary"
+    description: "Your total yearly salary in AED before any employer-specific deductions"
+
+  filing_status:
+    type: enum
+    required: true
+    default: "single"
+    label: "Filing Status"
+    description: "Not used for tax calculation, but required for system consistency"
+    options:
+      single:
+        label: "Single"
+        description: "Individual taxpayer"
+      married:
+        label: "Married"
+        description: "Married taxpayer"
+
+parameters:
+  # No tax parameters needed - UAE has no personal income tax
+  # This section is required by schema but can be empty
+  zero_tax_rate: 0.0
+
+calculations:
+  # Net income equals gross income (no taxation)
+  - id: net_annual
+    type: identity
+    value: "@gross_annual"
+
+outputs:
+  gross: "@gross_annual"
+  net: "$net_annual"
+
+  # Effective rate is 0% (no taxation)
+  effective_rate:
+    type: identity
+    value: 0.0
+
+  # Empty breakdown - no taxes, contributions, or credits
+  breakdown:
+    taxes: []
+    contributions: []
+    credits: []

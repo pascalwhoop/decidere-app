@@ -1,0 +1,32 @@
+{
+  "name": "Very High Income (JPY 20M), Single, Age 50",
+  "description": "Very high income - tests higher brackets, social insurance caps, long-term care, and childcare support contribution",
+  "inputs": {
+    "gross_annual": 20000000,
+    "age": 50,
+    "filing_status": "single",
+    "num_dependents_19_22": 0
+  },
+  "expected": {
+    "employment_income": 18050000,
+    "health_insurance_annual": 821490,
+    "pension_annual": 713700,
+    "employment_insurance_annual": 100000,
+    "longterm_care_annual": 135108,
+    "childcare_support_annual": 19182,
+    "total_social_insurance": 1789480,
+    "basic_deduction_national": 580000,
+    "taxable_income_national": 15680520,
+    "national_income_tax_base": 3638571,
+    "reconstruction_surtax": 76409,
+    "total_national_income_tax": 3714980,
+    "taxable_income_resident": 15830520,
+    "resident_tax_income_levy": 1583052,
+    "resident_tax_percapita_levy": 5000,
+    "total_resident_tax": 1588052,
+    "net": 12907488,
+    "effective_rate": 0.3546
+  },
+  "tolerance": 100,
+  "tolerance_percent": 0.001
+}

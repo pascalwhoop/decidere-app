@@ -1,0 +1,215 @@
+meta:
+  variant: "non-resident"
+  label: "Non-Resident (20.42% Flat Rate)"
+  description: "Flat 20.42% withholding tax for non-residents with Japan-source employment income"
+  base: "base.yaml"
+  sources:
+    - url: "https://taxsummaries.pwc.com/japan/individual/taxes-on-personal-income"
+      description: "PwC Japan - Non-resident tax rate (20.42% flat)"
+      retrieved_at: "2026-02-28"
+    - url: "https://www.jetro.go.jp/en/invest/setting_up/section3/page7.html"
+      description: "JETRO - Overview of individual tax system for non-residents"
+      retrieved_at: "2026-02-28"
+  updated_at: "2026-02-28"
+  notes: |
+    Non-resident flat tax rate for Japan-source employment income.
+
+    A non-resident is an individual who has NOT resided in Japan for 1 year or more
+    and does NOT have a domicile (jusho) in Japan.
+
+    KEY RULES:
+    - Flat 20.42% national income tax on gross compensation (20% base + 2.1% reconstruction surtax)
+    - NO employment income deduction
+    - NO basic deduction or personal deductions
+    - NO tax credits
+    - Resident tax (10%) MAY apply if registered on municipal ledger as of Jan 1
+      of the following year - but typically non-residents are NOT registered, so
+      this calculator assumes NO resident tax
+    - Social insurance still applies if employed by a Japanese company
+
+    WHO THIS APPLIES TO:
+    - Foreign nationals working in Japan for less than 1 year
+    - Individuals without a domicile (jusho) in Japan
+    - Short-term business visitors with Japan-source employment income
+    - Directors of Japanese companies who are non-resident
+
+    IMPORTANT: This rate includes the 2.1% reconstruction surtax
+    (20% x 102.1% = 20.42%)
+
+parameters:
+  # Non-resident flat tax rate (includes reconstruction surtax)
+  non_resident_tax_rate: 0.2042
+
+notices:
+  - id: "non_resident_flat_rate"
+    title: "Non-Resident Flat Tax Rate"
+    body: |
+      As a non-resident, your Japan-source employment income is subject to a flat
+      20.42% national income tax (20% + 2.1% reconstruction surtax).
+      No deductions, exemptions, or credits are available.
+    severity: "warning"
+
+  - id: "no_resident_tax"
+    title: "No Resident Tax (Assumed)"
+    body: |
+      Non-residents are typically not registered on the municipal ledger and
+      therefore not subject to the 10% resident tax. If you ARE registered
+      as of January 1 of the following year, resident tax may also apply.
+    severity: "info"
+
+  - id: "social_insurance_still_applies"
+    title: "Social Insurance Still Applies"
+    body: |
+      Even as a non-resident, if you are employed by a Japanese company,
+      standard social insurance contributions (health, pension, employment
+      insurance) still apply to your salary.
+    severity: "info"
+
+calculations:
+  # Override employment deduction to zero (non-residents get no deduction)
+  - id: employment_deduction_raw
+    type: identity
+    value: 0
+
+  - id: employment_deduction
+    type: identity
+    value: 0
+
+  # Employment income = gross (no deduction)
+  - id: employment_income_raw
+    type: identity
+    value: "@gross_annual"
+
+  - id: employment_income
+    type: identity
+    value: "@gross_annual"
+
+  # Override basic deduction to zero
+  - id: basic_deduction_national
+    type: identity
+    value: 0
+
+  # Override spouse deduction to zero (no deductions for non-residents)
+  - id: spouse_deduction_amount_national
+    type: identity
+    value: 0
+
+  # Override dependent deduction to zero
+  - id: dependent_deduction_amount_national
+    type: identity
+    value: 0
+
+  # Total deductions national: only social insurance (still deductible? Actually NO for non-residents)
+  # For non-residents, the flat 20.42% applies to GROSS with NO deductions at all
+  - id: total_deductions_national
+    type: identity
+    value: 0
+
+  # Taxable income = gross for non-residents
+  - id: taxable_income_national
+    type: identity
+    value: "@gross_annual"
+
+  # Override: flat 20.42% on gross (replaces bracket_tax)
+  - id: national_income_tax_base_raw
+    type: mul
+    values:
+      - "@gross_annual"
+      - "$non_resident_tax_rate"
+
+  - id: national_income_tax_base
+    type: round
+    value: "$national_income_tax_base_raw"
+    precision: 0
+    mode: floor
+    category: income_tax
+    label: "National Income Tax (Flat 20.42%)"
+    description: "Flat 20.42% for non-residents (20% + 2.1% surtax)"
+
+  # No separate reconstruction surtax (already included in 20.42%)
+  - id: reconstruction_surtax_raw
+    type: identity
+    value: 0
+
+  - id: reconstruction_surtax
+    type: identity
+    value: 0
+    category: surtax
+    label: "Reconstruction Surtax"
+    description: "Included in the 20.42% flat rate"
+
+  # total_national_income_tax = just the flat tax (surtax is embedded)
+  # This node already exists in base, so it gets replaced in-place
+  - id: total_national_income_tax
+    type: identity
+    value: "$national_income_tax_base"
+
+  # No resident tax for non-residents
+  - id: spouse_deduction_amount_resident
+    type: identity
+    value: 0
+
+  - id: dependent_deduction_amount_resident
+    type: identity
+    value: 0
+
+  - id: total_deductions_resident
+    type: identity
+    value: 0
+
+  - id: taxable_income_resident
+    type: identity
+    value: 0
+
+  - id: resident_tax_income_levy_raw
+    type: identity
+    value: 0
+
+  - id: resident_tax_income_levy
+    type: identity
+    value: 0
+    category: income_tax
+    label: "Resident Tax (Income Levy)"
+    description: "N/A for non-residents"
+
+  - id: resident_tax_percapita_levy
+    type: identity
+    value: 0
+    category: income_tax
+    label: "Resident Tax (Per-Capita Levy)"
+    description: "N/A for non-residents"
+
+  - id: total_resident_tax
+    type: identity
+    value: 0
+
+  # net_annual is already the last node in the base, replaced in-place
+  - id: net_annual
+    type: sub
+    values:
+      - "@gross_annual"
+      - type: sum
+        values:
+          - "$total_national_income_tax"
+          - "$total_social_insurance"
+
+outputs:
+  gross: "@gross_annual"
+  net: "$net_annual"
+  effective_rate:
+    type: div
+    values:
+      - type: sub
+        values:
+          - "@gross_annual"
+          - "$net_annual"
+      - "@gross_annual"
+  breakdown:
+    taxes:
+      - "$national_income_tax_base"
+    contributions:
+      - "$health_insurance_annual"
+      - "$pension_annual"
+      - "$employment_insurance_annual"
+      - "$longterm_care_annual"
+      - "$childcare_support_annual"

@@ -1,0 +1,24 @@
+{
+  "name": "High income - single, no children",
+  "description": "Employee earning EUR 80,000. All six brackets apply. Tax credit fully phased out. Below EFKA cap.",
+  "inputs": {
+    "gross_annual": 80000,
+    "filing_status": "single"
+  },
+  "expected": {
+    "net": 43804,
+    "effective_rate": 0.4525,
+    "breakdown": {
+      "income_tax": 25500,
+      "efka_employee": 10696
+    }
+  },
+  "tolerance": 10,
+  "sources": [
+    {
+      "description": "2026 brackets with new 39% bracket for 40-60k and 44% for above 60k",
+      "url": "https://kpmg.com/xx/en/our-insights/gms-flash-alert/flash-alert-2025-277.html",
+      "retrieved_at": "2026-03-01"
+    }
+  ]
+}

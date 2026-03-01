@@ -1,0 +1,78 @@
+meta:
+  variant: "non-resident"
+  label: "Non-Resident"
+  description: |
+    Tax treatment for non-residents earning New Zealand-sourced employment income.
+    Non-residents pay the same PAYE rates as residents but are NOT eligible for the
+    Independent Earner Tax Credit (IETC). ACC earners levy still applies to
+    NZ employment income.
+  base: "base.yaml"
+  sources:
+    - url: "https://www.ird.govt.nz/income-tax/income-tax-for-individuals/tax-codes-and-tax-rates-for-individuals/tax-rates-for-individuals"
+      description: "IRD tax rates for individuals including non-residents"
+      retrieved_at: "2026-02-28"
+    - url: "https://taxsummaries.pwc.com/new-zealand/individual/residence"
+      description: "PwC NZ individual residence and non-resident taxation summary"
+      retrieved_at: "2026-02-28"
+    - url: "https://www.grantthornton.global/en/insights/articles/expatriate-tax-NewZealand/"
+      description: "Grant Thornton NZ expatriate tax guide"
+      retrieved_at: "2026-02-28"
+  updated_at: "2026-02-28"
+  notes: |
+    Non-residents are taxed on NZ-sourced income only. For employment income
+    (PAYE), the same progressive brackets apply as for residents.
+
+    Key differences from residents:
+    - NOT eligible for the Independent Earner Tax Credit (IETC)
+    - ACC earners levy still applies to NZ employment income
+    - Interest/dividends subject to non-resident withholding tax (separate)
+    - May be eligible for treaty relief under NZ's extensive DTA network
+
+    Non-residents are those who do not meet either:
+    - The 183-day presence test (>183 days in any 12-month period), or
+    - The permanent place of abode test
+
+    Note: New from 1 April 2026, remote workers visiting NZ for up to 275 days
+    (in 18 months) working for non-NZ employers may be exempt from NZ tax
+    entirely under the new non-resident visitor rules.
+
+notices:
+  - id: "non_resident_taxation"
+    title: "Non-Resident Taxation"
+    body: |
+      As a non-resident, you pay PAYE on NZ-sourced employment income at the
+      same rates as residents. However, you are NOT eligible for the Independent
+      Earner Tax Credit (IETC). Interest and dividend income from NZ sources is
+      subject to non-resident withholding tax (NRWT), which is not included here.
+    severity: "info"
+
+  - id: "dta_relief"
+    title: "Double Tax Agreement Relief"
+    body: |
+      New Zealand has DTAs with over 40 countries. If you are tax resident in a
+      DTA country and present in NZ for less than 183 days in a 12-month period,
+      your NZ employment income may be exempt under the treaty. Consult a tax
+      professional for treaty benefits.
+    severity: "info"
+
+  - id: "remote_worker_exemption"
+    title: "Remote Worker Exemption (from 1 April 2026)"
+    body: |
+      From 1 April 2026, overseas visitors working remotely for non-NZ employers
+      may stay up to 275 days in any 18-month period without triggering NZ tax
+      obligations, provided they meet certain conditions. This calculator assumes
+      you ARE subject to NZ tax on your employment income.
+    severity: "info"
+
+calculations:
+  # Remove IETC credit for non-residents
+  - id: ietc_credit_raw
+    type: identity
+    value: 0
+
+  - id: ietc_credit
+    type: identity
+    value: 0
+    category: credit
+    label: "Independent Earner Tax Credit"
+    description: "Not available for non-residents"

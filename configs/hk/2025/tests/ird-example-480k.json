@@ -1,0 +1,25 @@
+{
+  "name": "IRD official example - HK$480,000 single",
+  "description": "Matches the IRD PAM39 guide example: monthly salary HK$40,000, annual HK$480,000. MPF capped at HK$18,000. Progressive tax = HK$38,100.",
+  "inputs": {
+    "gross_annual": 480000,
+    "filing_status": "single"
+  },
+  "expected": {
+    "net": 423900,
+    "effective_rate": 0.11688,
+    "breakdown": {
+      "salaries_tax": 38100,
+      "mpf_employee": 18000
+    }
+  },
+  "tolerance": 1,
+  "tolerance_percent": 0.001,
+  "sources": [
+    {
+      "description": "IRD PAM39 Guide worked example Q1/Q2: Income 480000, MPF 18000, Net income 462000, Basic allowance 132000, NCI 330000. Progressive: first 200000 = 16000, remainder 130000 * 17% = 22100, total = 38100. Standard: 462000 * 15% = 69300. Tax = 38100 (progressive lower).",
+      "url": "https://www.ird.gov.hk/eng/pdf/pam39e.pdf",
+      "retrieved_at": "2026-02-28"
+    }
+  ]
+}

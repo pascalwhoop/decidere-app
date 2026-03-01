@@ -1,0 +1,24 @@
+{
+  "name": "Low income - below basic allowance (HK$100,000)",
+  "description": "Income below basic allowance results in zero tax. MPF at 5% applies since above HK$85,200 threshold.",
+  "inputs": {
+    "gross_annual": 100000,
+    "filing_status": "single"
+  },
+  "expected": {
+    "net": 95000,
+    "effective_rate": 0.05,
+    "breakdown": {
+      "salaries_tax": 0,
+      "mpf_employee": 5000
+    }
+  },
+  "tolerance": 1,
+  "sources": [
+    {
+      "description": "Manual calculation: MPF = 100000 * 5% = 5000. Net income = 95000. NCI = 95000 - 132000 = 0. Progressive tax = 0. Standard rate = 95000 * 15% = 14250. Tax = min(0, 14250) = 0.",
+      "url": "https://www.gov.hk/en/residents/taxes/taxfiling/taxrates/salariesrates.htm",
+      "retrieved_at": "2026-02-28"
+    }
+  ]
+}

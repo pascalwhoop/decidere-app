@@ -1,0 +1,27 @@
+{
+  "name": "Scotland - Higher income (£80,000)",
+  "description": "Scottish taxpayer earning £80,000 - in the Scottish Advanced rate band (45%). Pays significantly more income tax than rest of UK at this level.",
+  "variant": "scotland",
+  "inputs": {
+    "gross_annual": 80000,
+    "filing_status": "single"
+  },
+  "expected": {
+    "net": 54657,
+    "effective_rate": 0.31679,
+    "breakdown": {
+      "income_tax": 21732,
+      "national_insurance": 3611
+    }
+  },
+  "tolerance": 50,
+  "tolerance_percent": 0.005,
+  "sources": [
+    {
+      "description": "Manual calculation using Scottish 2026/27 tax bands",
+      "url": "https://www.gov.scot/publications/scottish-income-tax-technical-factsheet/",
+      "date": "2026-02-28",
+      "notes": "PA: £12,570. Taxable: £67,430. Scottish tax: £3,967 * 19% = £753.73, £12,989 * 20% = £2,597.80, £14,136 * 21% = £2,968.56, £31,338 * 42% = £13,161.96, £5,000 * 45% = £2,250.00. Total IT: £21,732.05. NI: £3,016 + £594.60 = £3,610.60. Total: £25,342.65. Net: £54,657.35."
+    }
+  ]
+}

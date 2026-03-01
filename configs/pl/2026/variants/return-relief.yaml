@@ -1,0 +1,89 @@
+meta:
+  variant: "return-relief"
+  label: "Return Relief (Ulga na powrot)"
+  description: |
+    Tax exemption for individuals who transfer their tax residence to Poland.
+    Income up to 85,528 PLN/year is exempt from PIT for 4 consecutive years.
+    Available for both returning Polish citizens and foreigners settling in Poland
+    for the first time, provided they did not have tax residence in Poland for
+    at least 3 calendar years before moving.
+
+    This is one of Europe's most attractive relocation tax incentives.
+    Combined with the 30,000 PLN tax-free amount, effectively the first
+    115,528 PLN of annual income is tax-free.
+  base: "../base.yaml"
+  sources:
+    - url: "https://saregofinance.pl/ulga-na-powrot-tax-relief/"
+      description: "Polish Settlement Tax Relief (Ulga na Powrot) Expert Guide 2026"
+      retrieved_at: "2026-02-28"
+    - url: "https://taxsummaries.pwc.com/poland/individual/significant-developments"
+      description: "PwC - Poland PIT-0 reliefs including return relief"
+      retrieved_at: "2026-02-28"
+    - url: "https://martinitax.pl/en/strefa-wiedzy/pay-zero-tax-on-income-after-moving-to-poland/"
+      description: "MartiniTax - Return Relief explanation"
+      retrieved_at: "2026-02-28"
+  updated_at: "2026-02-28"
+  notes: |
+    Eligibility requirements:
+    - Transfer tax residence to Poland after December 31, 2021
+    - Did not have tax residence in Poland for at least 3 calendar years
+      before moving
+    - Polish citizen, EU/EEA/Swiss citizen with Pole's Card, or holder
+      of permanent residence permit
+    - Available for 4 consecutive tax years starting from the year
+      of transfer or the following year
+
+    Important:
+    - Only applies to PIT. Social contributions (ZUS) and health insurance
+      are still due in full.
+    - The 85,528 PLN limit is shared with other PIT-0 reliefs (under-26,
+      families 4+, working seniors). Only one limit applies total.
+    - Compatible with all taxation forms (tax scale, flat tax, lump sum)
+    - Can be combined with joint filing and child tax credits
+
+notices:
+  - id: "return_relief_eligibility"
+    title: "Eligibility Requirements"
+    body: |
+      To qualify for the Return Relief (Ulga na powrot), you must:
+      - Have transferred your tax residence to Poland
+      - Not have been a Polish tax resident for at least 3 calendar years before moving
+      - Be a Polish citizen, EU/EEA/Swiss citizen with Pole's Card, or have a
+        permanent residence permit
+      This relief is available for 4 consecutive tax years. Consult a tax advisor
+      to confirm eligibility.
+    severity: "warning"
+
+  - id: "return_relief_calculation"
+    title: "How the Relief Works"
+    body: |
+      Enter your full GROSS salary. The calculator will automatically exempt
+      the first 85,528 PLN of income from PIT. Combined with the standard
+      30,000 PLN tax-free amount (kwota wolna), effectively the first
+      115,528 PLN of annual income is tax-free.
+
+      Note: Social contributions (ZUS) and health insurance (9%) still apply
+      to the full income.
+    severity: "info"
+
+parameters:
+  # Return relief exemption limit (same as under-26)
+  return_relief_limit: 85528
+
+calculations:
+  # Override the under_26_exempt_amount to apply return relief instead
+  # The return relief works identically to the under-26 exemption
+  # but applies to new residents regardless of age
+  - id: under_26_exempt_amount
+    type: min
+    values: ["@gross_annual", "$return_relief_limit"]
+    label: "Return Relief Exemption Amount"
+    description: "PIT exemption up to 85,528 PLN for new Polish tax residents"
+
+  # Show the tax-free benefit in the breakdown
+  - id: return_relief_benefit
+    type: identity
+    value: "$under_26_exempt_amount"
+    category: deduction
+    label: "Return Relief (Ulga na powrot)"
+    description: "PIT exemption on first 85,528 PLN of income for new tax residents"

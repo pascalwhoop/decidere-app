@@ -95,7 +95,12 @@ parameters:
   # Social Security remains the same as base (inherited from base.yaml)
 
 calculations:
-  # Override taxable income to be same as gross (no allowances under Beckham)
+  # Delete the taxable_income_before_allowances node from base (not used in Beckham)
+  - id: taxable_income_before_allowances
+    $delete: true
+
+  # Under Beckham Law, the full gross income is taxed at the flat rate (no deductions or allowances)
+  # Override the base calculation which deducts personal allowance
   - id: taxable_income
     type: identity
     value: "@gross_annual"
@@ -129,23 +134,10 @@ calculations:
     label: "Beckham Law Income Tax"
     description: "24% flat rate up to €600,000, then 47% above"
 
-  # Delete personal allowance credit (not applicable under Beckham)
-  - id: personal_allowance_tax_credit_amount
-    $delete: true
-
-  - id: personal_allowance_credit
-    $delete: true
-
   # Social Security and solidarity contributions remain the same
   # (inherited from base.yaml)
 
-  # Override total tax before credits to use Beckham tax
-  - id: total_tax_before_credits
-    type: sum
-    values:
-      - "$national_income_tax"
-
-  # Tax after credits (no credits under Beckham, so same as before)
+  # Tax after credits (no credits under Beckham)
   - id: tax_after_credits
     type: identity
     value: "$national_income_tax"

@@ -1,0 +1,31 @@
+{
+  "name": "Helsinki - Low income (30k, no church)",
+  "description": "30,000 EUR salary in Helsinki, no church membership. Verified against vero.fi tax rate table (8.5% at 30k for church member, ~8.1% without church).",
+  "inputs": {
+    "gross_annual": 30000,
+    "municipality": "helsinki",
+    "church_member": false
+  },
+  "expected": {
+    "net": 25159,
+    "effective_rate": 0.16138,
+    "breakdown": {
+      "state_tax": 3652,
+      "municipal_tax": 1409,
+      "tyel_pension": 2190,
+      "unemployment_insurance": 267,
+      "health_care_contribution": 330,
+      "daily_allowance_contribution": 264,
+      "work_income_tax_credit": 3430
+    }
+  },
+  "tolerance": 50,
+  "tolerance_percent": 0.005,
+  "sources": [
+    {
+      "url": "https://www.vero.fi/en/individuals/tax-cards-and-tax-returns/income/earned-income/tax-rates-on-pay-pensions-and-benefits/",
+      "description": "Vero.fi tax rate examples 2026: 8.5% at 30k (Helsinki, church member)",
+      "retrieved_at": "2026-02-28"
+    }
+  ]
+}

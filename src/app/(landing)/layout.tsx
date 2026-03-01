@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
+import { DecidereLogo } from "@/components/decidere-logo"
 
 export default function LandingLayout({
   children,
@@ -11,10 +12,8 @@ export default function LandingLayout({
       <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
           <Link href="/" className="flex items-center gap-2 font-semibold">
-            <div className="bg-primary text-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-              <span className="text-lg">🌍</span>
-            </div>
-            <span>NetCalc</span>
+            <DecidereLogo className="size-8 rounded-lg" />
+            <span>Decidere</span>
           </Link>
           <nav className="flex items-center gap-4">
             <Button asChild variant="default">
@@ -49,7 +48,7 @@ export default function LandingLayout({
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li>
                   <a
-                    href="https://github.com/pascalwhoop/universalNetCalc"
+                    href="https://github.com/pascalwhoop/decidere"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="hover:text-foreground"
@@ -59,7 +58,7 @@ export default function LandingLayout({
                 </li>
                 <li>
                   <a
-                    href="https://github.com/pascalwhoop/universalNetCalc/issues/new"
+                    href="https://github.com/pascalwhoop/decidere/issues/new"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="hover:text-foreground"
@@ -80,8 +79,7 @@ export default function LandingLayout({
             <div>
               <h3 className="font-semibold mb-4">About</h3>
               <p className="text-sm text-muted-foreground">
-                Open-source salary calculator helping you understand your income
-                across the world&apos;s tax systems.
+                Decidere helps you decide where to live. Starting with financial clarity across the world&apos;s tax systems. Open-source and community-driven.
               </p>
             </div>
           </div>

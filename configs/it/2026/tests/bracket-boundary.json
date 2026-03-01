@@ -1,18 +1,23 @@
 {
   "name": "Income at second bracket boundary",
-  "description": "Employee earning €28,000 exactly. At bracket boundary - benefits from employment credit, €1,000 fixed deduction, and €65 bonus.",
+  "description": "Employee earning €28,000 exactly. INPS contributions (3.19% after 6pp cuneo fiscale cut) are deducted from gross BEFORE calculating IRPEF. All income taxed at 23% on reduced base, with significant employment credit, €1,000 fixed deduction, and €65 bonus.",
   "inputs": {
     "gross_annual": 28000,
     "region_level_1": "marche"
   },
   "expected": {
-    "net": 22933,
-    "effective_rate": 0.1810
+    "net": 23161,
+    "effective_rate": 0.1728
   },
   "tolerance": 50,
   "sources": [
     {
-      "description": "At bracket boundary - all income taxed at 23%, but significant credits apply",
+      "description": "INPS employee contributions are deducted from gross before IRPEF calculation",
+      "url": "https://www.rivermate.com/",
+      "retrieved_at": "2026-01-23"
+    },
+    {
+      "description": "At bracket boundary - income taxed at 23% on base after INPS deduction, with significant credits apply",
       "url": "https://taxing.it/personal-income-tax-irpef-rates/",
       "retrieved_at": "2026-01-22"
     }

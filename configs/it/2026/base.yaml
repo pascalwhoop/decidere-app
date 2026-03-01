@@ -167,10 +167,45 @@ parameters:
   municipal_tax_rate: 0.008
 
 calculations:
-  # Taxable income (for standard case, same as gross annual)
+  # INPS contribution cut rate based on income (cuneo fiscale)
+  - id: inps_cut_rate
+    type: conditional
+    condition:
+      type: lte
+      left: "@gross_annual"
+      right: "$inps_cut_threshold_1"
+    then: "$inps_cut_rate_1"
+    else:
+      type: conditional
+      condition:
+        type: lte
+        left: "@gross_annual"
+        right: "$inps_cut_threshold_2"
+      then: "$inps_cut_rate_2"
+      else: 0
+
+  # Effective INPS rate after cut
+  - id: inps_effective_rate
+    type: sub
+    values:
+      - "$inps_employee_rate"
+      - "$inps_cut_rate"
+
+  # Social Security Contributions (INPS) - Employee portion
+  - id: inps_employee
+    type: percent_of
+    base: "@gross_annual"
+    rate: "$inps_effective_rate"
+    category: contribution
+    label: "Social Security (INPS - Employee)"
+
+  # Taxable income for IRPEF is gross annual minus INPS contributions
+  # This is the legally correct base for income tax calculation
   - id: taxable_income
-    type: identity
-    value: "@gross_annual"
+    type: sub
+    values:
+      - "@gross_annual"
+      - "$inps_employee"
 
   # Gross National Income Tax (IRPEF) before credits
   - id: irpef_gross
@@ -314,7 +349,7 @@ calculations:
       veneto: 0.0178
     default: 0.0173
 
-  # Regional Income Tax (Addizionale Regionale)
+  # Regional Income Tax (Addizionale Regionale) - applied to taxable income (gross - INPS)
   - id: regional_tax
     type: percent_of
     base: "$taxable_income"
@@ -322,7 +357,7 @@ calculations:
     category: income_tax
     label: "Regional Tax (Addizionale Regionale)"
 
-  # Municipal Income Tax (Addizionale Comunale)
+  # Municipal Income Tax (Addizionale Comunale) - applied to taxable income (gross - INPS)
   - id: municipal_tax
     type: percent_of
     base: "$taxable_income"
@@ -337,38 +372,6 @@ calculations:
       - "$irpef"
       - "$regional_tax"
       - "$municipal_tax"
-
-  # INPS contribution cut rate based on income (cuneo fiscale)
-  - id: inps_cut_rate
-    type: conditional
-    condition:
-      type: lte
-      left: "@gross_annual"
-      right: "$inps_cut_threshold_1"
-    then: "$inps_cut_rate_1"
-    else:
-      type: conditional
-      condition:
-        type: lte
-        left: "@gross_annual"
-        right: "$inps_cut_threshold_2"
-      then: "$inps_cut_rate_2"
-      else: 0
-
-  # Effective INPS rate after cut
-  - id: inps_effective_rate
-    type: sub
-    values:
-      - "$inps_employee_rate"
-      - "$inps_cut_rate"
-
-  # Social Security Contributions (INPS) - Employee portion
-  - id: inps_employee
-    type: percent_of
-    base: "@gross_annual"
-    rate: "$inps_effective_rate"
-    category: contribution
-    label: "Social Security (INPS - Employee)"
 
   # Total Deductions
   - id: total_deductions

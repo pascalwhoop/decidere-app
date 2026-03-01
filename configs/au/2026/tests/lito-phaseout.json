@@ -1,0 +1,18 @@
+{
+  "name": "LITO phase-out range - AUD 40,000",
+  "description": "Tests LITO phase-out between $37,500 and $45,000 (5c per dollar reduction)",
+  "inputs": {
+    "gross_annual": 40000
+  },
+  "expected": {
+    "net": 36287,
+    "effective_rate": 0.09283,
+    "breakdown": {
+      "income_tax": 3488,
+      "medicare_levy": 800,
+      "lito_offset": 575
+    }
+  },
+  "tolerance": 5,
+  "tolerance_percent": 0.005
+}

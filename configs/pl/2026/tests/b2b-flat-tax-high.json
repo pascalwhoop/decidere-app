@@ -1,0 +1,27 @@
+{
+  "name": "B2B Flat Tax at 360,000 PLN - senior professional",
+  "description": "Self-employed contractor on 19% flat tax, income 360,000 PLN. Health contribution exceeds deduction limit of 14,100 PLN.",
+  "variant": "b2b-flat-tax",
+  "inputs": {
+    "gross_annual": 360000,
+    "filing_status": "single"
+  },
+  "expected": {
+    "net": 259044,
+    "effective_rate": 0.28043,
+    "breakdown": {
+      "total_social_contributions": 23121,
+      "health_insurance": 16507,
+      "income_tax": 61328
+    }
+  },
+  "tolerance": 10,
+  "tolerance_percent": 0.005,
+  "sources": [
+    {
+      "description": "Manual calculation: Fixed ZUS = 23,121; Health = max(5,190, (360,000 - 23,121) * 4.9%) = 16,507.07; Health deduction = min(14,100, 16,507.07) = 14,100; Taxable = 360,000 - 23,121 - 14,100 = 322,779; Tax = 322,779 * 19% = 61,328.01; Net = 259,043.92",
+      "url": "https://smarglobal.com/choosing-taxation-system-2026-poland/",
+      "retrieved_at": "2026-02-28"
+    }
+  ]
+}

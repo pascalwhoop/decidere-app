@@ -1,0 +1,32 @@
+{
+  "name": "Married with 1 Dependent (JPY 10M), Age 45, Tokyo",
+  "description": "High income married with dependent (age 20) - tests dependent deductions, long-term care insurance, pension cap, childcare support contribution",
+  "inputs": {
+    "gross_annual": 10000000,
+    "age": 45,
+    "filing_status": "married_dependents",
+    "num_dependents_19_22": 1
+  },
+  "expected": {
+    "employment_income": 8050000,
+    "health_insurance_annual": 492500,
+    "pension_annual": 713700,
+    "employment_insurance_annual": 50000,
+    "longterm_care_annual": 81000,
+    "childcare_support_annual": 11500,
+    "total_social_insurance": 1348700,
+    "basic_deduction_national": 580000,
+    "taxable_income_national": 5111300,
+    "national_income_tax_base": 594760,
+    "reconstruction_surtax": 12489,
+    "total_national_income_tax": 607249,
+    "taxable_income_resident": 5491300,
+    "resident_tax_income_levy": 549130,
+    "resident_tax_percapita_levy": 5000,
+    "total_resident_tax": 554130,
+    "net": 7489921,
+    "effective_rate": 0.2510
+  },
+  "tolerance": 100,
+  "tolerance_percent": 0.001
+}

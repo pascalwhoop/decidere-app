@@ -1,0 +1,134 @@
+meta:
+  variant: "key-employee"
+  label: "Key Employee (Avainhenkilovero)"
+  description: |
+    Flat 25% tax rate for qualifying foreign specialists and returning Finnish citizens.
+    Requirements: monthly salary >= 5,800 EUR, special expertise, not tax resident in
+    Finland for past 5 years. Apply within 90 days of arrival.
+    Foreign nationals: up to 84 months. Returning Finnish citizens: up to 60 months.
+    The 25% flat rate replaces progressive state+municipal+church tax and health/daily
+    allowance contributions. TyEL pension (7.30%) and unemployment (0.89%) still apply.
+  base: "../base.yaml"
+  sources:
+    - url: "https://vialtopartners.com/regional-alerts/finland-global-mobility-tax-changes-to-the-taxation-of-key-employees-in-2026"
+      description: "Vialto Partners - Key employee tax changes 2026 (25% rate, Finnish citizens eligible)"
+      retrieved_at: "2026-02-28"
+    - url: "https://yle.fi/a/74-20211326"
+      description: "YLE News - Finland's new 25% flat tax for foreign experts"
+      retrieved_at: "2026-02-28"
+
+# Key employee regime: 25% flat withholding tax on gross salary
+# Replaces: state tax + municipal tax + church tax + health care + daily allowance
+# Keeps: TyEL pension (7.30%) + unemployment (0.89%) + YLE broadcasting tax
+
+parameters:
+  key_employee_rate: 0.25
+
+calculations:
+  # Delete all progressive tax calculations
+  - id: state_tax
+    $delete: true
+  - id: municipal_tax
+    $delete: true
+  - id: municipal_tax_rate
+    $delete: true
+  - id: church_tax
+    $delete: true
+  - id: basic_deduction
+    $delete: true
+  - id: basic_deduction_excess
+    $delete: true
+  - id: basic_deduction_reduction
+    $delete: true
+  - id: taxable_income
+    $delete: true
+  - id: pure_earned_income
+    $delete: true
+  - id: work_credit_buildup
+    $delete: true
+  - id: work_credit_reduction_phase1
+    $delete: true
+  - id: work_credit_reduction_phase2
+    $delete: true
+  - id: work_credit_reduction
+    $delete: true
+  - id: work_income_tax_credit
+    $delete: true
+  - id: total_tax_before_credits
+    $delete: true
+  - id: total_credits
+    $delete: true
+  # Delete health care and daily allowance (included in 25% flat rate)
+  - id: health_care_contribution
+    $delete: true
+  - id: daily_allowance_contribution
+    $delete: true
+  - id: total_social_contributions
+    $delete: true
+  - id: pension_unemployment_only
+    $delete: true
+
+  # Reuse total_income_tax ID for flat 25% key employee tax
+  # (replaces deleted progressive total_income_tax in-place, keeping correct eval order)
+  - id: total_income_tax
+    label: "Key Employee Tax (25%)"
+    type: mul
+    values: ["@gross_annual", "$key_employee_rate"]
+    category: income_tax
+    description: "Flat 25% withholding tax for qualifying foreign specialists (avainhenkilovero)"
+
+  # Total deductions = key employee tax (25%) + YLE + pension + unemployment
+  - id: total_deductions
+    label: "Total Deductions"
+    type: sum
+    values:
+      - "$total_income_tax"
+      - "$yle_tax"
+      - "$tyel_pension"
+      - "$unemployment_insurance"
+
+  - id: net_annual
+    label: "Net Annual Salary"
+    type: sub
+    values:
+      - "@gross_annual"
+      - "$total_deductions"
+
+outputs:
+  gross: "@gross_annual"
+  net: "$net_annual"
+  effective_rate:
+    type: div
+    values:
+      - "$total_deductions"
+      - "@gross_annual"
+  breakdown:
+    taxes:
+      - "$total_income_tax"
+    contributions:
+      - "$tyel_pension"
+      - "$unemployment_insurance"
+    surtaxes:
+      - "$yle_tax"
+    credits: []
+    deductions: []
+
+notices:
+  - id: "key_employee_info"
+    title: "Key Employee Tax Regime (Avainhenkilovero)"
+    body: |
+      You are using the Key Employee flat tax regime (25%). This replaces all
+      progressive state tax, municipal tax, church tax, health insurance, and
+      daily allowance contributions with a single 25% withholding tax.
+
+      Eligibility requirements:
+      - Monthly salary at least 5,800 EUR
+      - Work requires special expertise
+      - Not been Finnish tax resident for past 5 years
+      - Apply within 90 days of starting work in Finland
+      - Foreign nationals: max 84 months
+      - Returning Finnish citizens (new in 2026): max 60 months
+
+      Note: TyEL pension (7.30%) and unemployment insurance (0.89%) are
+      still deducted separately on top of the 25% flat tax.
+    severity: "info"

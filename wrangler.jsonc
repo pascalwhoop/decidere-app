@@ -11,6 +11,10 @@
 	"name": "universal-net-calc",
 	"routes": [
     {
+      "pattern": "decidere.app",
+      "custom_domain": true
+    },
+    {
       "pattern": "netcalc.curiloo.com",
       "custom_domain": true
     }

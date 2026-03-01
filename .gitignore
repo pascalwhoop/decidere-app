@@ -69,3 +69,4 @@ bundle-analysis*.html
 # convx history
 history/
 data/
+public/generated/

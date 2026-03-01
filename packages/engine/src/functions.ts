@@ -11,6 +11,7 @@ export function resolveFunctions(): Map<string, Function> {
   functions.set('family_quotient_tax', familyQuotientTax)
   functions.set('alternative_minimum_tax', alternativeMinimumTax)
   functions.set('swiss_federal_tax', swissFederalTax)
+  functions.set('austria_full_year_tax', austriaFullYearTax)
 
   return functions
 }
@@ -315,4 +316,226 @@ function computeGermanTax2025(taxableIncome: number): number {
 
   // Zone 5: Linear rate 45% (≥ €277,826)
   return Math.floor(0.45 * x - 19246.67)
+}
+
+/**
+ * Austria Full-Year Tax Calculation (14-salary system)
+ *
+ * Austria pays employees 14 times per year (regular monthly x 12 + holiday bonus + Christmas bonus).
+ * The 13th and 14th month payments ("Sonderzahlungen") receive preferential tax treatment:
+ * - Social security at reduced rates (17.07% employee vs 18.07% regular)
+ * - First EUR 620 tax-free, then 6% flat rate up to EUR 25,000
+ * - Higher graduated rates above EUR 25,000
+ *
+ * This function computes the complete annual tax burden including both
+ * regular monthly tax (progressive brackets) and special payment tax (flat 6%).
+ *
+ * Inputs:
+ *   gross_annual: Total annual compensation (14 months)
+ *   sv_base_rate: Employee SV rate excluding unemployment (pension + health + AK + WF)
+ *   sv_base_rate_special: Employee SV rate for special payments excluding unemployment
+ *   unemployment_rate: Full unemployment insurance rate (2.95%)
+ *   sv_cap_monthly: Monthly SV cap (EUR 6,930 for 2026)
+ *   sv_cap_special_annual: Annual SV cap for special payments (EUR 13,860 for 2026)
+ *   transport_credit: Verkehrsabsetzbetrag (EUR 496 for 2026)
+ *   werbungskosten: Standard business expense deduction (EUR 132 for 2026)
+ *   alv_tier1_limit: Unemployment insurance tier 1 upper limit (EUR 2,225 for 2026)
+ *   alv_tier2_limit: Unemployment insurance tier 2 upper limit (EUR 2,427 for 2026)
+ *   alv_tier3_limit: Unemployment insurance tier 3 upper limit (EUR 2,630 for 2026)
+ *
+ * Returns: Total annual income tax.
+ * The function stores intermediate values in context.nodes for breakdown.
+ *
+ * Source: Austrian Income Tax Act (EStG) 2026, PwC Austria tax summaries
+ */
+function austriaFullYearTax(
+  inputs: Record<string, any>,
+  context: CalculationContext
+): number {
+  const {
+    gross_annual,
+    sv_base_rate,
+    sv_base_rate_special,
+    unemployment_rate,
+    sv_cap_monthly,
+    sv_cap_special_annual,
+    transport_credit,
+    werbungskosten,
+    alv_tier1_limit,
+    alv_tier2_limit,
+    alv_tier3_limit,
+  } = inputs
+
+  // Optional: taxable_fraction for Zuzugsfreibetrag (default 1.0 = fully taxable)
+  const taxableFraction = inputs.taxable_fraction ?? 1.0
+
+  // Split annual gross into regular (12 months) and special payments (2 months)
+  const monthlyGross = gross_annual / 14
+  const regularAnnual = monthlyGross * 12  // 12 regular monthly payments
+  const specialAnnual = monthlyGross * 2   // 13th + 14th month
+
+  // === Determine effective unemployment insurance rate (tiered reduction for low earners) ===
+  // Source: BDO Austria, ASVG 2026
+  // - Up to EUR 2,225/month: 0% (full reduction of 2.95%)
+  // - EUR 2,225.01 to EUR 2,427: 1% (reduction of 1.95%)
+  // - EUR 2,427.01 to EUR 2,630: 2% (reduction of 0.95%)
+  // - Above EUR 2,630: 2.95% (full rate)
+  let effectiveAlvRate: number
+  if (monthlyGross <= alv_tier1_limit) {
+    effectiveAlvRate = 0
+  } else if (monthlyGross <= alv_tier2_limit) {
+    effectiveAlvRate = 0.01
+  } else if (monthlyGross <= alv_tier3_limit) {
+    effectiveAlvRate = 0.02
+  } else {
+    effectiveAlvRate = unemployment_rate
+  }
+
+  // === Social Security on Regular Payments ===
+  // Total rate = base rate (pension + health + AK + WF) + effective unemployment rate
+  const svRegularRate = sv_base_rate + effectiveAlvRate
+  const svBaseMonthly = Math.min(monthlyGross, sv_cap_monthly)
+  const svRegularAnnual = svBaseMonthly * svRegularRate * 12
+
+  // === Social Security on Special Payments ===
+  // Special payments use a reduced base rate + effective unemployment rate
+  const svSpecialRate = sv_base_rate_special + effectiveAlvRate
+  const svSpecialBase = Math.min(specialAnnual, sv_cap_special_annual)
+  const svSpecialAnnual = svSpecialBase * svSpecialRate
+
+  // Total social security
+  const totalSV = svRegularAnnual + svSpecialAnnual
+
+  // Store SV breakdown in context for output
+  context.nodes['sv_regular'] = Math.round(svRegularAnnual * 100) / 100
+  context.nodes['sv_special'] = Math.round(svSpecialAnnual * 100) / 100
+  context.nodes['total_social_security'] = Math.round(totalSV * 100) / 100
+
+  // === Income Tax on Regular Payments (progressive brackets) ===
+  // Taxable income = regular gross - SV on regular - Werbungskostenpauschale
+  // For Zuzugsfreibetrag: taxable_fraction reduces the gross before SV deduction
+  const taxableRegularGross = regularAnnual * taxableFraction
+  const taxableRegular = Math.max(0, taxableRegularGross - svRegularAnnual - werbungskosten)
+
+  // Compute progressive tax on regular income using 2026 brackets
+  const regularTaxGross = computeAustrianProgressiveTax2026(taxableRegular)
+
+  // Apply Verkehrsabsetzbetrag (transport credit) - directly reduces tax
+  const regularTax = Math.max(0, regularTaxGross - transport_credit)
+
+  // Store for breakdown
+  context.nodes['regular_income_tax'] = Math.round(regularTax * 100) / 100
+
+  // === Income Tax on Special Payments (Sonderzahlungen) ===
+  // Special payments: first EUR 620 tax-free, then 6% flat rate
+  // SV on special payments is deducted first
+  // For Zuzugsfreibetrag: taxable_fraction reduces the special payment gross
+  const specialTaxableGross = specialAnnual * taxableFraction
+  const specialAfterSV = specialTaxableGross - svSpecialAnnual
+  const specialTaxBase = Math.max(0, specialAfterSV - 620)
+
+  // Standard rate: 6% for amounts up to EUR 25,000
+  // Higher rates for amounts above EUR 25,000 (rare for most employees)
+  let specialTax = 0
+  if (specialTaxBase > 0) {
+    if (specialTaxBase <= 25000) {
+      specialTax = specialTaxBase * 0.06
+    } else if (specialTaxBase <= 50000) {
+      specialTax = 25000 * 0.06 + (specialTaxBase - 25000) * 0.27
+    } else if (specialTaxBase <= 83333) {
+      specialTax = 25000 * 0.06 + 25000 * 0.27 + (specialTaxBase - 50000) * 0.3575
+    } else {
+      // Above EUR 83,333: excess added to regular income (taxed at marginal rate)
+      // For simplification, we apply 50% to the excess
+      specialTax =
+        25000 * 0.06 +
+        25000 * 0.27 +
+        33333 * 0.3575 +
+        (specialTaxBase - 83333) * 0.50
+    }
+  }
+
+  // Store for breakdown
+  context.nodes['special_payment_tax'] = Math.round(specialTax * 100) / 100
+
+  // Total income tax (regular + special payments)
+  const totalIncomeTax = regularTax + specialTax
+  context.nodes['total_income_tax'] = Math.round(totalIncomeTax * 100) / 100
+
+  // Store the tax-free allowance for Zuzugsfreibetrag variant display
+  if (taxableFraction < 1.0) {
+    const taxFreeAllowance = gross_annual * (1 - taxableFraction)
+    context.nodes['zuzugsfreibetrag_allowance'] = Math.round(taxFreeAllowance * 100) / 100
+  }
+
+  // Return total income tax (SV is handled separately in the YAML config for breakdown)
+  return Math.round(totalIncomeTax * 100) / 100
+}
+
+/**
+ * Austrian progressive income tax calculation for 2026
+ * Based on official brackets from EStG 2026 (inflation-adjusted by 1.73%)
+ *
+ * Brackets:
+ *   0 - 13,539: 0%
+ *   13,539 - 21,992: 20%
+ *   21,992 - 36,458: 30%
+ *   36,458 - 70,365: 40%
+ *   70,365 - 104,859: 48%
+ *   104,859 - 1,000,000: 50%
+ *   Above 1,000,000: 55%
+ *
+ * Source: https://www.usp.gv.at/en/themen/steuern-finanzen/einkommensteuer-ueberblick/weitere-informationen-est/tarifstufen.html
+ */
+function computeAustrianProgressiveTax2026(taxableIncome: number): number {
+  if (taxableIncome <= 0) return 0
+
+  const x = Math.floor(taxableIncome)
+
+  if (x <= 13539) return 0
+
+  let tax = 0
+
+  // Bracket 1: 0 - 13,539 @ 0%
+  // No tax
+
+  // Bracket 2: 13,539 - 21,992 @ 20%
+  if (x <= 21992) {
+    tax = (x - 13539) * 0.20
+    return Math.round(tax * 100) / 100
+  }
+  tax += (21992 - 13539) * 0.20  // = 1,690.60
+
+  // Bracket 3: 21,992 - 36,458 @ 30%
+  if (x <= 36458) {
+    tax += (x - 21992) * 0.30
+    return Math.round(tax * 100) / 100
+  }
+  tax += (36458 - 21992) * 0.30  // = 4,339.80
+
+  // Bracket 4: 36,458 - 70,365 @ 40%
+  if (x <= 70365) {
+    tax += (x - 36458) * 0.40
+    return Math.round(tax * 100) / 100
+  }
+  tax += (70365 - 36458) * 0.40  // = 13,562.80
+
+  // Bracket 5: 70,365 - 104,859 @ 48%
+  if (x <= 104859) {
+    tax += (x - 70365) * 0.48
+    return Math.round(tax * 100) / 100
+  }
+  tax += (104859 - 70365) * 0.48  // = 16,557.12
+
+  // Bracket 6: 104,859 - 1,000,000 @ 50%
+  if (x <= 1000000) {
+    tax += (x - 104859) * 0.50
+    return Math.round(tax * 100) / 100
+  }
+  tax += (1000000 - 104859) * 0.50  // = 447,570.50
+
+  // Bracket 7: Above 1,000,000 @ 55% (extended until 2029)
+  tax += (x - 1000000) * 0.55
+
+  return Math.round(tax * 100) / 100
 }

@@ -1,0 +1,18 @@
+{
+  "name": "Very high income - AUD 250,000",
+  "description": "Tests top tax bracket (45% tier) for high earners",
+  "inputs": {
+    "gross_annual": 250000
+  },
+  "expected": {
+    "net": 166362,
+    "effective_rate": 0.33455,
+    "breakdown": {
+      "income_tax": 78638,
+      "medicare_levy": 5000,
+      "lito_offset": 0
+    }
+  },
+  "tolerance": 5,
+  "tolerance_percent": 0.005
+}

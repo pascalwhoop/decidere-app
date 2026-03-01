@@ -17,24 +17,24 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 })
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://netcalc.app"
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://decidere.app"
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "NetCalc - Universal Gross to Net Salary Calculator",
-    template: "%s | NetCalc",
+    default: "Decidere — Decide Where to Live",
+    template: "%s | Decidere",
   },
   description:
-    "Free, open-source salary calculator for 15+ countries. Calculate after-tax income, compare countries side-by-side, and understand tax breakdowns with our transparent, community-driven tool. Perfect for expats, digital nomads, and anyone comparing salaries across borders.",
+    "Starting with tax-advisor-level salary comparisons across 15+ countries. Decidere helps you decide where to live — financial clarity is just the beginning. Free, open-source, community-driven.",
   keywords: [
-    "salary calculator",
-    "net salary calculator",
-    "gross to net",
-    "tax calculator",
-    "after-tax income",
+    "decidere",
+    "relocation decision",
+    "where to live",
     "salary comparison",
-    "expat salary",
+    "after-tax income",
+    "tax calculator",
+    "expat",
     "digital nomad",
     "international salary",
     "tax breakdown",
@@ -47,11 +47,10 @@ export const metadata: Metadata = {
     "UK salary calculator",
     "Italy impatriate regime",
     "cross-border salary",
-    "relocation salary",
   ],
-  authors: [{ name: "NetCalc Community" }],
-  creator: "NetCalc",
-  publisher: "NetCalc",
+  authors: [{ name: "Decidere" }],
+  creator: "Decidere",
+  publisher: "Decidere",
   formatDetection: {
     email: false,
     address: false,
@@ -61,26 +60,25 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: siteUrl,
-    title: "NetCalc - Universal Salary Calculator",
+    title: "Decidere — Decide Where to Live",
     description:
-      "Calculate and compare after-tax salaries across 15+ countries. Free, transparent, open-source.",
-    siteName: "NetCalc",
+      "Compare real after-tax income across 15+ countries. Starting with financial clarity — more dimensions coming soon. Free and open-source.",
+    siteName: "Decidere",
     images: [
       {
         url: `${siteUrl}/og-image.png`,
         width: 1200,
         height: 630,
-        alt: "NetCalc - Universal Salary Calculator",
+        alt: "Decidere — Decide Where to Live",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "NetCalc - Universal Salary Calculator",
+    title: "Decidere — Decide Where to Live",
     description:
-      "Calculate and compare after-tax salaries across 15+ countries. Free, transparent, open-source.",
+      "Compare real after-tax income across 15+ countries. Starting with financial clarity — more dimensions coming soon. Free and open-source.",
     images: [`${siteUrl}/og-image.png`],
-    creator: "@netcalc",
   },
   robots: {
     index: true,
@@ -110,9 +108,9 @@ export default function RootLayout({
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "WebApplication",
-    "name": "NetCalc",
-    "alternateName": "Universal Salary Calculator",
-    "description": "Free open-source salary calculator for 15+ countries. Calculate after-tax income, compare countries side-by-side, and understand tax breakdowns.",
+    "name": "Decidere",
+    "alternateName": "Decide Where to Live",
+    "description": "Compare real after-tax income across 15+ countries. Decidere helps you decide where to live, starting with financial clarity.",
     "url": siteUrl,
     "applicationCategory": "FinanceApplication",
     "operatingSystem": "Web",
@@ -133,14 +131,7 @@ export default function RootLayout({
     ],
     "author": {
       "@type": "Organization",
-      "name": "NetCalc Community",
-    },
-    "aggregateRating": {
-      "@type": "AggregateRating",
-      "ratingValue": "4.8",
-      "ratingCount": "127",
-      "bestRating": "5",
-      "worstRating": "1",
+      "name": "Decidere",
     },
   }
 

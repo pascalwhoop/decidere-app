@@ -1,25 +1,25 @@
 {
   "name": "Married couple filing jointly (€70,000)",
-  "description": "Married joint filing taxpayer using quociente conjugal (quotient 2) for 2026",
+  "description": "Married joint filing with quociente conjugal (quotient 2). Specific deduction: max(€4,104, €7,700) = €7,700. Taxable for IRS: €70,000 - €7,700 = €62,300; per quotient: €31,150",
   "inputs": {
     "gross_annual": 70000,
     "filing_status": "married_joint"
   },
   "expected": {
-    "net": 46289.69,
-    "effective_rate": 0.33872,
+    "net": 48976.19,
+    "effective_rate": 0.30033,
     "breakdown": {
-      "irs_total": 16010.31,
+      "irs_total": 13323.81,
       "social_security_employee": 7700.00
     }
   },
   "tolerance": 1,
   "sources": [
     {
-      "description": "Manual calculation using 2026 IRS brackets with quociente conjugal (quotient = 2)",
+      "description": "Manual calculation using 2026 IRS brackets with quociente conjugal and dedução específica",
       "url": "https://www.pwc.pt/en/pwcinforfisco/statebudget/pit-and-social-security.html",
       "retrieved_at": "2026-02-22",
-      "notes": "Joint filing: income per quotient = 70000/2 = 35000. IRS per quotient = 8005.153 (same as median single). Total IRS = 8005.153*2=16010.306. SS: 70000*0.11=7700. Net: 70000-16010.306-7700=46289.694. Effective rate: (16010.306+7700)/70000=0.33872"
+      "notes": "Specific Deduction: max(€4104, 70000*0.11) = max(€4104, €7700) = €7700; Taxable for IRS: €70000 - €7700 = €62300; Per quotient: €62300/2 = €31150; IRS per quotient: (0-8342): 1042.75; (8342-12587): 666.465; (12587-17838): 1113.212; (17838-23089): 1265.491; (23089-29397): 1961.788; (29397-31150): 1753*0.349=612.197; Total per quotient=6661.903; Total IRS=6661.903*2=13323.806; SS: 70000*0.11=7700; Net: 70000-13323.806-7700=48976.194; Effective Rate: 21023.806/70000 = 0.30034"
     }
   ]
 }

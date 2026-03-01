@@ -1,0 +1,25 @@
+{
+  "name": "Single - Above median income (EUR 4,500/month x 14)",
+  "description": "Above-median employee earning EUR 63,000 annually, standard region, no children",
+  "inputs": {
+    "gross_annual": 63000,
+    "region": "standard"
+  },
+  "expected": {
+    "net": 42700,
+    "effective_rate": 0.322,
+    "breakdown": {
+      "income_tax": 9006,
+      "social_security": 11294
+    }
+  },
+  "tolerance": 50,
+  "tolerance_percent": 0.01,
+  "sources": [
+    {
+      "description": "Verified against karriere.at Brutto-Netto-Rechner 2026 (EUR 4,500/month x 14 = EUR 63,000)",
+      "url": "https://www.karriere.at/brutto/4500",
+      "retrieved_at": "2026-02-28"
+    }
+  ]
+}

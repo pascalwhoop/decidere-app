@@ -1,0 +1,17 @@
+{
+  "name": "Non-resident - AUD 150,000",
+  "description": "Foreign resident in 37% bracket, no Medicare levy",
+  "variant": "non-resident",
+  "inputs": {
+    "gross_annual": 150000
+  },
+  "expected": {
+    "net": 103950,
+    "effective_rate": 0.307,
+    "breakdown": {
+      "income_tax": 46050
+    }
+  },
+  "tolerance": 5,
+  "tolerance_percent": 0.005
+}

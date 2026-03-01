@@ -1,0 +1,134 @@
+meta:
+  variant: "zuzugsfreibetrag"
+  label: "Researcher/Scientist Tax Relief (Zuzugsfreibetrag)"
+  description: |
+    Tax benefit for scientists and researchers relocating to Austria under Section 103(1a) EStG.
+    Reduces taxable income by 30% for up to 5 years. This is Austria's equivalent of the
+    Dutch 30% ruling, but restricted to researchers and scientists whose relocation serves
+    the Austrian public interest in science and research.
+  base: "../base.yaml"
+  sources:
+    - url: "https://www.legal500.com/guides/chapter/austria-private-client/"
+      description: "Legal 500 Austria - Zuzugsfreibetrag for researchers/scientists under Section 103 EStG"
+      retrieved_at: "2026-02-28"
+    - url: "https://artus.at/en/blog/tax-benefits-for-international-researchers-and-scientists-moving-to-austria/"
+      description: "ARTUS Steuerberatung - Tax benefits for international researchers moving to Austria"
+      retrieved_at: "2026-02-28"
+    - url: "https://www.steuerberatung-weiss.at/steuerinfo/zuzugsfreibetrag-en"
+      description: "Mag. Veronika Weiss - detailed explanation of Zuzugsfreibetrag under Section 103(1a) EStG"
+      retrieved_at: "2026-02-28"
+    - url: "https://www.uibk.ac.at/en/personnel-department/wissenschaftliches_personal/tax-benefits/"
+      description: "University of Innsbruck - Tax benefits for incoming scientists and researchers"
+      retrieved_at: "2026-02-28"
+  updated_at: "2026-02-28"
+  notes: |
+    The Zuzugsfreibetrag (relocation tax allowance) under Section 103(1a) EStG provides a
+    30% reduction of taxable income from scientific/research activity for up to 5 years.
+
+    Eligibility requirements:
+    - Must be a scientist or researcher in a field serving Austria's public interest
+    - Must relocate the center of vital interests to Austria from abroad
+    - The relocation must not be a return within 5-10 years of prior Austrian residency
+    - Written application must be submitted to the Federal Ministry of Finance within 6 months
+    - The benefit covers only income from the scientific/research activity itself
+    - No other relocation-related expenses or extraordinary burdens may be claimed alongside
+
+    Who qualifies (public interest criteria):
+    - University professors
+    - Scientists working in their habilitation subject at a university
+    - Postdoctoral researchers with excellence scholarships
+    - Researchers whose work contributes to Austrian public interest in science
+
+    Comparison with similar schemes:
+    - NL 30% ruling: Broader scope (skilled migrants), same 30% rate, 5-year limit
+    - DK researcher scheme: 27% flat rate, 7 years, broader eligibility
+    - AT Zuzugsfreibetrag: Narrower scope (researchers/scientists only), 30% exemption, 5 years
+
+    This variant models the 30% income reduction. The exemption applies to the entire
+    annual compensation (both regular and special payments), reducing the taxable portion.
+    Social security contributions are still calculated on the full gross salary.
+
+    Alternative benefit (can be combined): Flat average tax rate of at least 15% on foreign
+    income not subject to limited tax liability in Austria. This is NOT modeled here as it
+    applies to foreign-source income, not Austrian employment income.
+
+notices:
+  - id: "zzfb_eligibility"
+    title: "Eligibility Check Required"
+    body: |
+      This variant assumes you qualify for the Zuzugsfreibetrag (Section 103(1a) EStG).
+      To qualify:
+      - You must be a scientist or researcher
+      - Your relocation to Austria must serve the public interest in science/research
+      - You must move your center of vital interests to Austria
+      - Application must be submitted to the Finance Ministry within 6 months of moving
+      - Maximum benefit period: 5 years
+
+      Consult with a tax advisor (Steuerberater) to confirm eligibility before relying
+      on this calculation.
+    severity: "warning"
+
+  - id: "zzfb_scope"
+    title: "30% Tax-Free Allowance"
+    body: |
+      Enter your TOTAL gross salary. The calculator will automatically apply the 30%
+      Zuzugsfreibetrag, reducing the taxable portion of your income to 70%.
+
+      Note: This benefit only applies to income from your scientific/research activity.
+      Other income sources are taxed at the regular progressive rates.
+    severity: "info"
+
+  - id: "zzfb_no_other_deductions"
+    title: "No Additional Relocation Deductions"
+    body: |
+      When claiming the Zuzugsfreibetrag, you cannot additionally claim relocation-related
+      expenses or extraordinary burdens. The 30% flat reduction is intended to cover all
+      such costs in a simplified manner.
+    severity: "info"
+
+parameters:
+  # The Zuzugsfreibetrag reduces taxable income by 30%
+  zzfb_percentage: 0.30
+  taxable_fraction: 0.70
+
+calculations:
+  # Override the income_tax function call to pass taxable_fraction = 0.70
+  # Social security is still computed on full gross inside the function
+  - id: income_tax
+    type: function
+    name: "austria_full_year_tax"
+    inputs:
+      gross_annual: "@gross_annual"
+      sv_base_rate: "$sv_base_rate"
+      sv_base_rate_special: "$sv_base_rate_special"
+      unemployment_rate: "$unemployment_rate"
+      sv_cap_monthly: "$sv_cap_monthly"
+      sv_cap_special_annual: "$sv_cap_special_annual"
+      transport_credit: "$transport_credit"
+      werbungskosten: "$werbungskosten"
+      alv_tier1_limit: "$alv_tier1_limit"
+      alv_tier2_limit: "$alv_tier2_limit"
+      alv_tier3_limit: "$alv_tier3_limit"
+      taxable_fraction: "$taxable_fraction"
+    category: income_tax
+    label: "Income Tax (with Zuzugsfreibetrag)"
+    description: "Progressive income tax with 30% Zuzugsfreibetrag reduction for researchers"
+
+  # Add a display node showing the tax-free allowance
+  - id: zuzugsfreibetrag_deduction
+    type: mul
+    values:
+      - "@gross_annual"
+      - "$zzfb_percentage"
+    category: deduction
+    label: "Zuzugsfreibetrag (30% Tax-Free Allowance)"
+    description: "30% of gross salary exempt from income tax under Section 103(1a) EStG"
+
+outputs:
+  breakdown:
+    taxes:
+      - "$income_tax"
+    contributions:
+      - "$social_security"
+    deductions:
+      - "$zuzugsfreibetrag_deduction"

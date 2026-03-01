@@ -1,16 +1,21 @@
 {
   "name": "Low income single earner",
-  "description": "Employee earning €20,000 annually. Includes employment tax credit (creates no-tax area), €1,000 fixed deduction for 2026, and INPS contribution cut.",
+  "description": "Employee earning €20,000 annually. INPS contributions (2.19% after cuneo fiscale) are deducted from gross BEFORE calculating IRPEF. Includes employment tax credit (creates no-tax area), €1,000 fixed deduction for 2026.",
   "inputs": {
     "gross_annual": 20000,
     "region_level_1": "marche"
   },
   "expected": {
-    "net": 18098,
-    "effective_rate": 0.0951
+    "net": 18210,
+    "effective_rate": 0.0895
   },
   "tolerance": 50,
   "sources": [
+    {
+      "description": "INPS employee contributions are deducted from gross before IRPEF calculation (Rivermate.com)",
+      "url": "https://www.rivermate.com/",
+      "retrieved_at": "2026-01-23"
+    },
     {
       "description": "Employment tax credit (detrazione lavoro dipendente) significantly reduces effective tax rate",
       "url": "https://taxing.it/tax-credit-for-employment-income/",

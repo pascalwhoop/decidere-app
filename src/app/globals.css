@@ -58,7 +58,7 @@ input[type="number"] {
 
 :root {
 	--radius: 0.625rem;
-	--background: oklch(1 0 0);
+	--background: rgb(245 249 255);
 	--foreground: oklch(0.145 0 0);
 	--card: oklch(1 0 0);
 	--card-foreground: oklch(0.145 0 0);
@@ -92,7 +92,7 @@ input[type="number"] {
 }
 
 .dark {
-	--background: oklch(0.145 0 0);
+	--background: rgb(3 6 13);
 	--foreground: oklch(0.985 0 0);
 	--card: oklch(0.205 0 0);
 	--card-foreground: oklch(0.985 0 0);

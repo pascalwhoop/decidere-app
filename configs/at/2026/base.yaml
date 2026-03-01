@@ -1,0 +1,252 @@
+meta:
+  country: "at"
+  year: 2026
+  currency: "EUR"
+  version: "1.0.0"
+  sources:
+    - url: "https://www.usp.gv.at/en/themen/steuern-finanzen/einkommensteuer-ueberblick/weitere-informationen-est/tarifstufen.html"
+      description: "Official Austrian income tax brackets 2026 (USP Unternehmensserviceportal)"
+      retrieved_at: "2026-02-28"
+    - url: "https://taxsummaries.pwc.com/austria/individual/taxes-on-personal-income"
+      description: "PwC Austria individual tax summary 2026 - rates and WHT examples"
+      retrieved_at: "2026-02-28"
+    - url: "https://taxsummaries.pwc.com/austria/individual/other-taxes"
+      description: "PwC Austria social security contribution rates 2026"
+      retrieved_at: "2026-02-28"
+    - url: "https://www.bdo.at/en-gb/insights/people-organisation/the-expected-social-security-contributions-2026"
+      description: "BDO Austria social security contributions 2026 - caps, thresholds, unemployment reductions"
+      retrieved_at: "2026-02-28"
+    - url: "https://www.moore-salzburg.at/en/sozialversicherungswerte-2026/"
+      description: "Moore Salzburg - social security values and tax credits 2026"
+      retrieved_at: "2026-02-28"
+    - url: "https://www.karriere.at/brutto/4500"
+      description: "karriere.at Brutto-Netto-Rechner 2026 - used for test vector verification"
+      retrieved_at: "2026-02-28"
+    - url: "https://www.tpa-group.at/news/personalverrechnung-2026-wichtigste-neuerungen/"
+      description: "TPA Group - key payroll changes 2026, ASVG cap, Vienna housing subsidy increase"
+      retrieved_at: "2026-02-28"
+  updated_at: "2026-02-28"
+  notes: |
+    Austria uses a progressive income tax system with 7 brackets (0% to 55%) and a unique
+    14-salary-per-year system. The 13th month (Urlaubsgeld/holiday bonus) and 14th month
+    (Weihnachtsgeld/Christmas bonus) receive preferential flat-rate taxation at 6%.
+
+    Key characteristics:
+    - Progressive income tax: 0% to 55% (55% bracket extended to 2029, then 50%)
+    - Social insurance (ASVG): pension 10.25%, health 3.87%, unemployment 2.95%, plus minor levies
+    - Monthly SV cap: EUR 6,930 (annual for 14 payments = EUR 97,020)
+    - 14 salaries: 12 regular + holiday bonus (13th) + Christmas bonus (14th)
+    - Special payments taxed at 6% flat (after EUR 620 exemption) instead of progressive rates
+    - Transport credit (Verkehrsabsetzbetrag): EUR 496/year
+    - Business expense lump sum (Werbungskostenpauschale): EUR 132/year
+    - Family Bonus Plus: EUR 2,000.16/child/year (not included in base config)
+    - Low-income unemployment insurance reduction (tiered below EUR 2,630/month)
+
+    Key changes from 2025:
+    - All tax brackets increased by 1.73% (2/3 of 2.6% inflation)
+    - Monthly SV cap raised from EUR 6,450 to EUR 6,930
+    - Special payment SV cap raised from EUR 12,900 to EUR 13,860
+    - Transport credit increased from EUR 487 to EUR 496
+    - Vienna housing subsidy increased from 0.50% to 0.75% (employee share)
+
+    Note: This calculator uses an annual gross input that represents the full 14-month
+    compensation. For employees who think in monthly terms, their monthly salary x 14
+    equals the annual gross to enter. The 13th/14th month favorable taxation is
+    automatically applied.
+
+notices:
+  - id: "salary_input_14_months"
+    title: "14 Monthly Salaries"
+    body: |
+      In Austria, employees receive 14 salaries per year: 12 regular monthly payments plus
+      a holiday bonus (Urlaubsgeld, 13th month) and Christmas bonus (Weihnachtsgeld, 14th month).
+      Enter your TOTAL annual compensation (all 14 payments combined).
+      Example: If your monthly gross is EUR 4,500, enter EUR 63,000 (4,500 x 14).
+    severity: "info"
+
+  - id: "special_payment_tax"
+    title: "Favorable Tax on 13th & 14th Month"
+    body: |
+      The 13th and 14th month salaries are taxed at a preferential flat rate of 6%
+      (after a EUR 620 tax-free exemption), rather than the progressive income tax rates
+      that apply to regular monthly pay. This is a significant tax advantage unique to Austria
+      and can save EUR 1,000-5,000 per year compared to standard taxation.
+    severity: "info"
+
+  - id: "social_security_notice"
+    title: "Social Security Contributions (ASVG)"
+    body: |
+      Social security contributions are capped at EUR 6,930/month (EUR 97,020/year for 14 payments).
+      Employee rates: Pension 10.25%, Health 3.87%, Unemployment 2.95% (reduced for low incomes),
+      Chamber of Labour (AK) 0.50%, Housing subsidy (WF) 0.50% (0.75% in Vienna).
+      Total standard employee rate: ~18.07% (18.32% in Vienna from 2026).
+      Special payments (13th/14th) have a lower SV rate of 17.07%.
+    severity: "info"
+
+  - id: "family_bonus_not_included"
+    title: "Family Bonus Plus Not Included"
+    body: |
+      The Family Bonus Plus (Familienbonus Plus) of EUR 2,000.16 per child under 18
+      per year is not included in this base calculation. If you have children, your
+      actual tax burden will be lower. Use the variant with children for more accurate results.
+    severity: "warning"
+
+  - id: "church_tax_not_included"
+    title: "Church Tax Not Included"
+    body: |
+      Church contributions (Kirchenbeitrag) of approximately 1.1% of income are not
+      included in this calculation. Unlike Germany, Austrian church tax is collected
+      directly by religious organizations and is tax-deductible up to EUR 600/year.
+    severity: "info"
+
+inputs:
+  gross_annual:
+    type: number
+    required: true
+    min: 0
+    label: "Total Annual Gross Salary (14 months)"
+    description: "Your total yearly compensation including 13th and 14th month bonuses"
+
+  region:
+    type: enum
+    required: false
+    default: "standard"
+    label: "Federal State (Bundesland)"
+    description: "Affects housing subsidy (Wohnbaufoerderung) rate - Vienna has a higher rate from 2026"
+    options:
+      standard:
+        label: "All states except Vienna"
+        description: "Standard WF-Beitrag of 0.50%"
+      vienna:
+        label: "Vienna (Wien)"
+        description: "Increased WF-Beitrag of 0.75% from 2026"
+
+parameters:
+  # Income tax brackets 2026 (inflation-adjusted by 1.73%)
+  tax_brackets:
+    - { threshold: 0, rate: 0 }
+    - { threshold: 13539, rate: 0.20 }
+    - { threshold: 21992, rate: 0.30 }
+    - { threshold: 36458, rate: 0.40 }
+    - { threshold: 70365, rate: 0.48 }
+    - { threshold: 104859, rate: 0.50 }
+    - { threshold: 1000000, rate: 0.55 }
+
+  # Social security employee contribution rates (ASVG)
+  pension_rate: 0.1025
+  health_rate: 0.0387
+  unemployment_rate: 0.0295
+
+  # Minor levies (employee)
+  ak_umlage: 0.005       # Chamber of Labour (Arbeiterkammer)
+  wf_beitrag_standard: 0.005  # Housing subsidy (Wohnbaufoerderung) - standard
+  wf_beitrag_vienna: 0.0075   # Housing subsidy - Vienna from 2026
+
+  # Combined employee SV base rates (EXCLUDING unemployment - that is tiered separately)
+  # Standard: pension 10.25% + health 3.87% + AK 0.50% + WF 0.50% = 15.12%
+  sv_base_rate_standard: 0.1512
+  # Vienna: pension 10.25% + health 3.87% + AK 0.50% + WF 0.75% = 15.37%
+  sv_base_rate_vienna: 0.1537
+
+  # Special payment base rates (EXCLUDING unemployment)
+  # Regular SV rate for specials is 17.07%, minus full unemployment 2.95% = 14.12%
+  sv_base_rate_special_standard: 0.1412
+  # Vienna: 14.12% + 0.25% (extra WF) = 14.37%
+  sv_base_rate_special_vienna: 0.1437
+
+  # Social security caps 2026
+  sv_cap_monthly: 6930               # Monthly cap for regular payments
+  sv_cap_special_annual: 13860       # Annual cap for special payments (2 x monthly cap)
+
+  # Unemployment insurance tiered thresholds (monthly gross) for 2026
+  alv_tier1_limit: 2225    # Up to this: 0% ALV
+  alv_tier2_limit: 2427    # Up to this: 1% ALV
+  alv_tier3_limit: 2630    # Up to this: 2% ALV; above: 2.95%
+
+  # Tax credits
+  transport_credit: 496              # Verkehrsabsetzbetrag
+  werbungskosten: 132                # Werbungskostenpauschale (standard business expenses)
+
+  # Special payment tax parameters
+  special_payment_exemption: 620     # First EUR 620 of special payments tax-free
+  special_payment_rate: 0.06         # 6% flat rate on special payments
+
+calculations:
+  # Determine the SV base rate based on region (Vienna vs standard)
+  - id: sv_base_rate
+    type: switch
+    on: "@region"
+    cases:
+      standard: "$sv_base_rate_standard"
+      vienna: "$sv_base_rate_vienna"
+    default: "$sv_base_rate_standard"
+
+  # Determine the special payment SV base rate based on region
+  - id: sv_base_rate_special
+    type: switch
+    on: "@region"
+    cases:
+      standard: "$sv_base_rate_special_standard"
+      vienna: "$sv_base_rate_special_vienna"
+    default: "$sv_base_rate_special_standard"
+
+  # Use the function node to compute the full Austrian 14-salary tax
+  # This handles the complex split between regular and special payment taxation,
+  # including the tiered unemployment insurance reduction for low earners
+  - id: income_tax
+    type: function
+    name: "austria_full_year_tax"
+    inputs:
+      gross_annual: "@gross_annual"
+      sv_base_rate: "$sv_base_rate"
+      sv_base_rate_special: "$sv_base_rate_special"
+      unemployment_rate: "$unemployment_rate"
+      sv_cap_monthly: "$sv_cap_monthly"
+      sv_cap_special_annual: "$sv_cap_special_annual"
+      transport_credit: "$transport_credit"
+      werbungskosten: "$werbungskosten"
+      alv_tier1_limit: "$alv_tier1_limit"
+      alv_tier2_limit: "$alv_tier2_limit"
+      alv_tier3_limit: "$alv_tier3_limit"
+    category: income_tax
+    label: "Income Tax (Einkommensteuer)"
+    description: "Progressive income tax on regular pay + 6% flat rate on 13th/14th month"
+
+  # Reference the SV values computed inside the function
+  # The function stores total_social_security in context.nodes
+  - id: social_security
+    type: identity
+    value: "$total_social_security"
+    category: contribution
+    label: "Social Security (Sozialversicherung)"
+    description: "Pension, health, unemployment, AK chamber, and housing subsidy contributions"
+
+  # Total deductions
+  - id: total_deductions
+    type: sum
+    values:
+      - "$income_tax"
+      - "$social_security"
+
+  # Net income
+  - id: net_annual
+    type: sub
+    values:
+      - "@gross_annual"
+      - "$total_deductions"
+
+outputs:
+  gross: "@gross_annual"
+  net: "$net_annual"
+
+  effective_rate:
+    type: div
+    values:
+      - "$total_deductions"
+      - "@gross_annual"
+
+  breakdown:
+    taxes:
+      - "$income_tax"
+    contributions:
+      - "$social_security"

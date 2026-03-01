@@ -1,0 +1,24 @@
+{
+  "name": "Median income - one dependent child",
+  "description": "Employee earning EUR 30,000 with 1 child. Reduced 2nd bracket (18% vs 20%) and 3rd bracket (24% vs 26%). Higher tax credit (EUR 900).",
+  "inputs": {
+    "gross_annual": 30000,
+    "filing_status": "one_child"
+  },
+  "expected": {
+    "net": 21429,
+    "effective_rate": 0.2857,
+    "breakdown": {
+      "income_tax": 4560,
+      "efka_employee": 4011
+    }
+  },
+  "tolerance": 10,
+  "sources": [
+    {
+      "description": "2026 child-dependent rates from Ministry of Finance: 1 child gets 18% on 2nd bracket, 24% on 3rd",
+      "url": "https://minfin.gov.gr/en/tax-policy/tax-guide/income-taxation/",
+      "retrieved_at": "2026-03-01"
+    }
+  ]
+}

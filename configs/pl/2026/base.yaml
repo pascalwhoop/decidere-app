@@ -1,0 +1,362 @@
+meta:
+  country: "pl"
+  year: 2026
+  currency: "PLN"
+  version: "1.0.0"
+  sources:
+    - url: "https://taxsummaries.pwc.com/poland/individual/taxes-on-personal-income"
+      description: "PwC Tax Summaries - Poland Individual Taxes on Personal Income"
+      retrieved_at: "2026-02-28"
+    - url: "https://taxsummaries.pwc.com/poland/individual/other-taxes"
+      description: "PwC Tax Summaries - Poland Social Security and Health Insurance"
+      retrieved_at: "2026-02-28"
+    - url: "https://www.accace.com/tax-guideline-for-poland/"
+      description: "Accace 2026 Tax Guideline for Poland"
+      retrieved_at: "2026-02-28"
+    - url: "https://getsix.eu/human-resources-payroll-in-poland/social-insurance-institution-zus-contributions-in-poland-in-2026-current-bases-limits-and-contribution-amounts-for-entrepreneurs/"
+      description: "ZUS contributions in Poland 2026 - bases, limits, amounts"
+      retrieved_at: "2026-02-28"
+    - url: "https://www.tax-checker.com/tax-system-in-poland/income-tax-in-poland/"
+      description: "Tax-checker.com - Income Tax in Poland 2026"
+      retrieved_at: "2026-02-28"
+  updated_at: "2026-02-28"
+  notes: |
+    Poland employment income (umowa o prace) tax calculation for 2026.
+
+    Key features:
+    - Progressive PIT: 12% up to 120,000 PLN, 32% above
+    - Tax-free amount (kwota wolna): 30,000 PLN (via 3,600 PLN tax-reducing amount)
+    - Employee social contributions (ZUS): 13.71% (pension 9.76% + disability 1.50% + sickness 2.45%)
+    - ZUS pension+disability cap: 282,600 PLN/year (above: only sickness 2.45%)
+    - Health insurance (NFZ): 9% of income after social contributions, NOT deductible from tax
+    - Standard tax-deductible costs (KUP): 3,000 PLN/year (local) or 3,600 PLN/year (commuters)
+    - Solidarity levy: 4% on taxable income exceeding 1,000,000 PLN
+
+    This config models standard employment contract (umowa o prace) taxation.
+    For B2B/self-employment (flat 19%, lump sum/ryczalt), see variants.
+
+    Since the "Polski Lad" reform (2022), the 9% health contribution is NO LONGER
+    deductible from income tax. This significantly increased effective tax rates.
+
+notices:
+  - id: "salary_input"
+    title: "Annual Gross Salary"
+    body: |
+      Enter your total annual gross salary (wynagrodzenie brutto) in PLN before
+      any deductions. This should be the amount stated in your employment contract
+      (umowa o prace) multiplied by 12 months, plus any bonuses.
+    severity: "info"
+
+  - id: "employment_type"
+    title: "Employment Contract Only"
+    body: |
+      This calculator models standard employment contracts (umowa o prace).
+      Poland has very different tax treatment for:
+      - B2B contracts (dzialalnosc gospodarcza) - see flat tax or ryczalt variants
+      - Civil law contracts (umowa zlecenie, umowa o dzielo)
+      Consult a tax advisor for non-employment income.
+    severity: "warning"
+
+  - id: "health_not_deductible"
+    title: "Health Contribution Not Deductible"
+    body: |
+      Since the "Polski Lad" reform (July 2022), the 9% health insurance contribution
+      (skladka zdrowotna) is no longer deductible from income tax for employees.
+      This means the effective tax burden is higher than pre-2022 calculations suggest.
+    severity: "info"
+
+  - id: "zus_cap"
+    title: "ZUS Contribution Cap"
+    body: |
+      Pension and disability contributions are capped at an annual income of
+      282,600 PLN (30 x projected average salary of 9,420 PLN). Above this
+      threshold, only the sickness contribution (2.45%) continues to apply.
+      Health insurance (9%) has no cap.
+    severity: "info"
+
+inputs:
+  gross_annual:
+    type: number
+    required: true
+    min: 0
+    label: "Annual Gross Salary"
+    description: "Total yearly gross salary in PLN before deductions (wynagrodzenie brutto roczne)"
+
+  filing_status:
+    type: enum
+    required: true
+    default: "single"
+    label: "Filing Status"
+    description: "Tax filing status"
+    options:
+      single:
+        label: "Single"
+        description: "Unmarried individual filing separately"
+      married:
+        label: "Married (Joint)"
+        description: "Married couple filing jointly (rozliczenie wspolne)"
+
+  commuter:
+    type: boolean
+    required: false
+    default: false
+    label: "Commuter (Higher KUP)"
+    description: "Working outside your place of residence entitles you to higher tax-deductible costs (3,600 PLN/year instead of 3,000 PLN/year)"
+
+  under_26:
+    type: boolean
+    required: false
+    default: false
+    label: "Under 26 Years Old (Ulga dla mlodych)"
+    description: "Workers under 26 are exempt from PIT on employment income up to 85,528 PLN/year"
+
+parameters:
+  # PIT brackets (progressive tax scale)
+  pit_brackets:
+    - { threshold: 0, rate: 0.12 }
+    - { threshold: 120000, rate: 0.32 }
+
+  # Tax-reducing amount (kwota zmniejszajaca podatek)
+  # 12% x 30,000 PLN tax-free amount = 3,600 PLN
+  tax_reducing_amount: 3600
+
+  # Employee social security contribution rates
+  employee_pension_rate: 0.0976
+  employee_disability_rate: 0.015
+  employee_sickness_rate: 0.0245
+  # Combined pension + disability rate (for cap calculation)
+  employee_pension_disability_rate: 0.1126
+  # Total employee social security rate (pension + disability + sickness)
+  employee_social_rate: 0.1371
+
+  # ZUS annual cap for pension + disability contributions
+  # 30 x projected average monthly salary (9,420 PLN)
+  zus_annual_cap: 282600
+
+  # Health insurance rate (NOT deductible from tax since Polski Lad)
+  health_insurance_rate: 0.09
+
+  # Standard tax-deductible costs (KUP - koszty uzyskania przychodu)
+  kup_local: 3000       # 250 PLN/month for local workers
+  kup_commuter: 3600    # 300 PLN/month for commuters
+
+  # Under-26 exemption limit (ulga dla mlodych)
+  under_26_limit: 85528
+
+  # Solidarity levy threshold (4% on income above 1,000,000 PLN)
+  solidarity_threshold: 1000000
+  solidarity_rate: 0.04
+
+calculations:
+  # ============================================================================
+  # SOCIAL SECURITY CONTRIBUTIONS (ZUS)
+  # ============================================================================
+
+  # Determine the income base subject to pension+disability (capped)
+  - id: pension_disability_base
+    type: min
+    values: ["@gross_annual", "$zus_annual_cap"]
+    label: "Pension & Disability Base (Capped)"
+
+  # Pension + disability contributions (capped at 282,600 PLN)
+  - id: employee_pension_disability
+    type: mul
+    values: ["$pension_disability_base", "$employee_pension_disability_rate"]
+    label: "Pension & Disability Contributions"
+
+  # Sickness contribution (no cap, applies to full gross)
+  - id: employee_sickness
+    type: mul
+    values: ["@gross_annual", "$employee_sickness_rate"]
+    label: "Sickness Contribution"
+
+  # Total employee social contributions
+  - id: total_social_contributions
+    type: sum
+    values:
+      - "$employee_pension_disability"
+      - "$employee_sickness"
+    category: contribution
+    label: "Social Security (ZUS)"
+    description: "Pension (9.76%) + Disability (1.50%) + Sickness (2.45%), pension & disability capped at 282,600 PLN"
+
+  # ============================================================================
+  # HEALTH INSURANCE (NFZ)
+  # ============================================================================
+
+  # Health insurance base = gross - social contributions
+  - id: health_insurance_base
+    type: sub
+    values: ["@gross_annual", "$total_social_contributions"]
+    label: "Health Insurance Base"
+
+  # Health insurance contribution = 9% of base (NOT deductible from tax)
+  - id: health_insurance
+    type: mul
+    values: ["$health_insurance_base", "$health_insurance_rate"]
+    category: contribution
+    label: "Health Insurance (NFZ 9%)"
+    description: "9% of income after social contributions. Not deductible from income tax since 2022."
+
+  # ============================================================================
+  # TAX-DEDUCTIBLE COSTS (KUP)
+  # ============================================================================
+
+  # Select KUP based on commuter status
+  - id: kup_amount
+    type: switch
+    on: "@commuter"
+    cases:
+      "true": "$kup_commuter"
+      "false": "$kup_local"
+    default: "$kup_local"
+    label: "Tax-Deductible Costs (KUP)"
+
+  # ============================================================================
+  # UNDER-26 EXEMPTION (Ulga dla mlodych)
+  # ============================================================================
+
+  # Amount of income exempt from PIT for under-26 workers
+  - id: under_26_exempt_amount
+    type: conditional
+    condition:
+      type: eq
+      left: "@under_26"
+      right: true
+    then:
+      type: min
+      values: ["@gross_annual", "$under_26_limit"]
+    else: 0
+    label: "Under-26 Exemption Amount"
+
+  # ============================================================================
+  # TAXABLE INCOME CALCULATION
+  # ============================================================================
+
+  # Income after social contributions (base for PIT calculation)
+  - id: income_after_social
+    type: sub
+    values: ["@gross_annual", "$total_social_contributions"]
+    label: "Income After Social Contributions"
+
+  # Income after under-26 exemption
+  - id: income_after_exemption
+    type: max
+    values:
+      - 0
+      - type: sub
+        values:
+          - "$income_after_social"
+          - "$under_26_exempt_amount"
+
+  # Taxable income = income after social contributions - KUP - under-26 exemption
+  # (cannot be negative)
+  - id: taxable_income
+    type: max
+    values:
+      - 0
+      - type: sub
+        values:
+          - "$income_after_exemption"
+          - "$kup_amount"
+    label: "Taxable Income"
+
+  # ============================================================================
+  # PIT CALCULATION
+  # ============================================================================
+
+  # Gross PIT from tax brackets
+  - id: pit_gross
+    type: bracket_tax
+    base: "$taxable_income"
+    brackets: "$pit_brackets"
+    label: "PIT Before Tax-Reducing Amount"
+
+  # Apply tax-reducing amount (kwota zmniejszajaca podatek = 3,600 PLN)
+  # For income fully within first bracket, reduces to zero
+  # For income above 120,000 PLN, the 3,600 is already built into
+  # the bracket calculation (10,800 = 120,000 * 12% - 3,600 + 3,600)
+  # Actually the brackets work as: first 120k at 12%, above at 32%
+  # Then we subtract the flat 3,600 from total tax
+  - id: income_tax
+    type: max
+    values:
+      - 0
+      - type: sub
+        values:
+          - "$pit_gross"
+          - "$tax_reducing_amount"
+    category: income_tax
+    label: "Personal Income Tax (PIT)"
+    description: "Progressive PIT: 12% up to 120,000 PLN, 32% above, minus 3,600 PLN tax-reducing amount"
+
+  # ============================================================================
+  # SOLIDARITY LEVY (Danina solidarnosciowa)
+  # ============================================================================
+
+  # Solidarity levy: 4% on income above 1,000,000 PLN
+  # Base is taxable income (after social contributions, before KUP for solidarity purposes)
+  # Actually solidarity levy base = income after social minus the 30,000 tax-free
+  # For simplicity and accuracy, we use the standard approach:
+  # solidarity base = taxable income (same base as PIT)
+  - id: solidarity_excess
+    type: max
+    values:
+      - 0
+      - type: sub
+        values:
+          - "$taxable_income"
+          - "$solidarity_threshold"
+
+  - id: solidarity_levy
+    type: mul
+    values: ["$solidarity_excess", "$solidarity_rate"]
+    category: surtax
+    label: "Solidarity Levy (4%)"
+    description: "4% surtax on taxable income exceeding 1,000,000 PLN (danina solidarnosciowa)"
+
+  # ============================================================================
+  # TOTAL TAX AND NET INCOME
+  # ============================================================================
+
+  # Total tax = PIT + solidarity levy
+  - id: total_tax
+    type: sum
+    values:
+      - "$income_tax"
+      - "$solidarity_levy"
+
+  # Total deductions = social contributions + health insurance + total tax
+  - id: total_deductions
+    type: sum
+    values:
+      - "$total_social_contributions"
+      - "$health_insurance"
+      - "$total_tax"
+
+  # Net annual income
+  - id: net_annual
+    type: sub
+    values:
+      - "@gross_annual"
+      - "$total_deductions"
+
+outputs:
+  gross: "@gross_annual"
+  net: "$net_annual"
+  effective_rate:
+    type: div
+    values:
+      - type: sub
+        values:
+          - "@gross_annual"
+          - "$net_annual"
+      - "@gross_annual"
+  breakdown:
+    taxes:
+      - "$income_tax"
+    surtaxes:
+      - "$solidarity_levy"
+    contributions:
+      - "$total_social_contributions"
+      - "$health_insurance"

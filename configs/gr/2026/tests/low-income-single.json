@@ -1,0 +1,24 @@
+{
+  "name": "Low income - single, no children",
+  "description": "Employee earning EUR 15,000. Tax calculated on 2026 brackets with partial tax credit (phased down from EUR 777).",
+  "inputs": {
+    "gross_annual": 15000,
+    "filing_status": "single"
+  },
+  "expected": {
+    "net": 11812,
+    "effective_rate": 0.2125,
+    "breakdown": {
+      "income_tax": 1183,
+      "efka_employee": 2006
+    }
+  },
+  "tolerance": 10,
+  "sources": [
+    {
+      "description": "2026 tax brackets from Ministry of Finance and PwC Tax Summaries",
+      "url": "https://minfin.gov.gr/en/tax-policy/tax-guide/income-taxation/",
+      "retrieved_at": "2026-03-01"
+    }
+  ]
+}

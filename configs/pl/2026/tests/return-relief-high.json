@@ -1,0 +1,27 @@
+{
+  "name": "Return Relief at 200,000 PLN - partial PIT",
+  "description": "New resident using return relief at high income. Only income above the exempted portion is taxed.",
+  "variant": "return-relief",
+  "inputs": {
+    "gross_annual": 200000,
+    "filing_status": "single"
+  },
+  "expected": {
+    "net": 150562,
+    "effective_rate": 0.24719,
+    "breakdown": {
+      "total_social_contributions": 27420,
+      "health_insurance": 15532,
+      "income_tax": 6486
+    }
+  },
+  "tolerance": 5,
+  "tolerance_percent": 0.005,
+  "sources": [
+    {
+      "description": "Manual calculation: ZUS = 27,420; Health = 15,532.20; Exempt = 85,528; income_after_social = 172,580; income_after_exemption = 87,052; Taxable = 84,052; PIT = 84,052 * 12% - 3,600 = 6,486.24; Net = 200,000 - 27,420 - 15,532.20 - 6,486.24 = 150,561.56",
+      "url": "https://saregofinance.pl/ulga-na-powrot-tax-relief/",
+      "retrieved_at": "2026-02-28"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "name": "National Average - Median income (40k, no church)",
+  "description": "40,000 EUR salary with national average municipal rate (7.60%), no church membership.",
+  "inputs": {
+    "gross_annual": 40000,
+    "municipality": "national_avg",
+    "church_member": false
+  },
+  "expected": {
+    "net": 30622,
+    "effective_rate": 0.23445,
+    "breakdown": {
+      "state_tax": 5827,
+      "municipal_tax": 2734,
+      "tyel_pension": 2920,
+      "unemployment_insurance": 356,
+      "health_care_contribution": 440,
+      "daily_allowance_contribution": 352,
+      "work_income_tax_credit": 3411,
+      "yle_tax": 160
+    }
+  },
+  "tolerance": 50,
+  "tolerance_percent": 0.005
+}

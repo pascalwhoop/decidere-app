@@ -1,0 +1,27 @@
+{
+  "name": "Scotland - Top rate taxpayer (£150,000)",
+  "description": "Scottish taxpayer earning £150,000 - in the Scottish Top rate band (48%). Personal allowance fully eliminated. Pays significantly more than rest of UK.",
+  "variant": "scotland",
+  "inputs": {
+    "gross_annual": 150000,
+    "filing_status": "single"
+  },
+  "expected": {
+    "net": 84978,
+    "effective_rate": 0.43348,
+    "breakdown": {
+      "income_tax": 60011,
+      "national_insurance": 5011
+    }
+  },
+  "tolerance": 100,
+  "tolerance_percent": 0.005,
+  "sources": [
+    {
+      "description": "Manual calculation using Scottish 2026/27 tax bands",
+      "url": "https://www.gov.scot/publications/scottish-income-tax-technical-factsheet/",
+      "date": "2026-02-28",
+      "notes": "PA: £0 (eliminated). Taxable: £150,000. Scottish tax: £3,967 * 19% = £753.73, £12,989 * 20% = £2,597.80, £14,136 * 21% = £2,968.56, £31,338 * 42% = £13,161.96, £50,140 * 45% = £22,563.00, £37,430 * 48% = £17,966.40. Total IT: £60,011.45. NI: £3,016 + £1,994.60 = £5,010.60. Total: £65,022.05. Net: £84,977.95."
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "name": "Low income - three or more children",
+  "description": "Employee earning EUR 18,000 with 3+ children. Both first brackets at 9% (2nd bracket reduced from 20% to 9%). Higher credit of EUR 1,340 phased down to EUR 1,220.",
+  "inputs": {
+    "gross_annual": 18000,
+    "filing_status": "three_children"
+  },
+  "expected": {
+    "net": 15193,
+    "effective_rate": 0.1560,
+    "breakdown": {
+      "income_tax": 400,
+      "efka_employee": 2407
+    }
+  },
+  "tolerance": 10,
+  "sources": [
+    {
+      "description": "3+ children: both first two brackets at 9%, credit EUR 1,340 per Ministry of Finance",
+      "url": "https://minfin.gov.gr/en/tax-policy/tax-guide/income-taxation/",
+      "retrieved_at": "2026-03-01"
+    }
+  ]
+}

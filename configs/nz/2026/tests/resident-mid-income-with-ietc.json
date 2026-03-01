@@ -1,0 +1,26 @@
+{
+  "name": "Resident middle income with full IETC",
+  "description": "Resident earning NZD 60,000 per year with full IETC (compare with non-resident test)",
+  "inputs": {
+    "gross_annual": 60000
+  },
+  "expected": {
+    "net": 49249.50,
+    "effective_rate": 0.1792,
+    "breakdown": {
+      "income_tax": 10220.50,
+      "acc_levy": 1050,
+      "ietc_credit": 520
+    }
+  },
+  "tolerance": 10,
+  "tolerance_percent": 0.005,
+  "sources": [
+    {
+      "description": "Calculated using 2026-27 PAYE rates, ACC levy (1.75%), and full IETC",
+      "url": "https://www.ird.govt.nz/income-tax/income-tax-for-individuals/tax-codes-and-tax-rates-for-individuals/tax-rates-for-individuals",
+      "retrieved_at": "2026-02-28",
+      "notes": "PAYE: 10.5% + 17.5% + 30%. ACC: 1.75%. IETC: Full $520 (income $60,000 is between $24,000 and $66,000). Compare with non-resident test to see IETC benefit."
+    }
+  ]
+}

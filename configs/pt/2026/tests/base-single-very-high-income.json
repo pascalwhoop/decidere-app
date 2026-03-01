@@ -1,25 +1,25 @@
 {
   "name": "Single filer with very high income (€120,000)",
-  "description": "Very high income single taxpayer in top IRS bracket for 2026",
+  "description": "Very high income single taxpayer in top IRS bracket. Specific deduction (max €4,104, 11% of gross) = €13,200 (11% of gross). Taxable for IRS: €120,000 - €13,200 = €106,800",
   "inputs": {
     "gross_annual": 120000,
     "filing_status": "single"
   },
   "expected": {
-    "net": 60587.27,
-    "effective_rate": 0.49511,
+    "net": 66923.27,
+    "effective_rate": 0.44231,
     "breakdown": {
-      "irs_total": 46212.73,
+      "irs_total": 39876.73,
       "social_security_employee": 13200.00
     }
   },
   "tolerance": 1,
   "sources": [
     {
-      "description": "Manual calculation using 2026 IRS brackets from Portuguese Tax Code Article 68 (OE2026)",
+      "description": "Manual calculation using 2026 IRS brackets with mandatory dedução específica (specific employment income deduction)",
       "url": "https://www.pwc.pt/en/pwcinforfisco/statebudget/pit-and-social-security.html",
       "retrieved_at": "2026-02-22",
-      "notes": "IRS: (0-8342): 1042.75; (8342-12587): 666.465; (12587-17838): 1113.212; (17838-23089): 1265.491; (23089-29397): 1961.788; (29397-43090): 13693*0.349=4778.857; (43090-46566): 3476*0.431=1498.156; (46566-86634): 40068*0.446=17870.328; (86634-120000): 33366*0.48=16015.68; Total IRS=46212.727; SS: 120000*0.11=13200; Net: 60587.273; Effective rate: (46212.727+13200)/120000=0.49511"
+      "notes": "Specific Deduction: max(€4104, 120000*0.11) = max(€4104, €13200) = €13200; Taxable for IRS: €120000 - €13200 = €106800; IRS brackets: (0-8342): 1042.75; (8342-12587): 666.465; (12587-17838): 1113.212; (17838-23089): 1265.491; (23089-29397): 1961.788; (29397-43090): 4778.857; (43090-46566): 1498.156; (46566-86634): 17870.328; (86634-106800): 20166*0.48=9679.68; Total IRS=39876.727; SS: 120000*0.11=13200; Net: 120000-39876.727-13200=66923.273; Effective Rate: 53076.727/120000 = 0.44231"
     }
   ]
 }

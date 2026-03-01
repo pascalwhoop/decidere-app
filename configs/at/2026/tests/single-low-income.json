@@ -1,0 +1,25 @@
+{
+  "name": "Single - Low income (EUR 2,000/month x 14)",
+  "description": "Low-income employee earning EUR 28,000 annually, standard region, no children",
+  "inputs": {
+    "gross_annual": 28000,
+    "region": "standard"
+  },
+  "expected": {
+    "net": 22793,
+    "effective_rate": 0.186,
+    "breakdown": {
+      "income_tax": 1013,
+      "social_security": 4194
+    }
+  },
+  "tolerance": 50,
+  "tolerance_percent": 0.01,
+  "sources": [
+    {
+      "description": "Verified against karriere.at Brutto-Netto-Rechner 2026 (EUR 2,000/month x 14 = EUR 28,000)",
+      "url": "https://www.karriere.at/brutto/2000",
+      "retrieved_at": "2026-02-28"
+    }
+  ]
+}

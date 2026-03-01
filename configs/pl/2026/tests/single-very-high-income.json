@@ -1,0 +1,27 @@
+{
+  "name": "Single filer at very high income - 1,500,000 PLN (solidarity levy)",
+  "description": "Employment contract, very high earner testing ZUS cap and solidarity levy (4% above 1M PLN).",
+  "inputs": {
+    "gross_annual": 1500000,
+    "filing_status": "single"
+  },
+  "expected": {
+    "net": 855966,
+    "effective_rate": 0.42936,
+    "breakdown": {
+      "total_social_contributions": 68571,
+      "health_insurance": 128829,
+      "income_tax": 429497,
+      "solidarity_levy": 17137
+    }
+  },
+  "tolerance": 10,
+  "tolerance_percent": 0.005,
+  "sources": [
+    {
+      "description": "Manual calculation: ZUS = 282,600 * 11.26% + 1,500,000 * 2.45% = 31,820.76 + 36,750 = 68,570.76; Health = (1,500,000 - 68,570.76) * 9% = 128,828.63; Taxable = 1,431,429.24 - 3,000 = 1,428,429.24; PIT = 120,000*12% + 1,308,429.24*32% - 3,600 = 429,497.36; Solidarity = (1,428,429.24 - 1,000,000)*4% = 17,137.17; Net = 1,500,000 - 68,570.76 - 128,828.63 - 429,497.36 - 17,137.17 = 855,966.08",
+      "url": "https://taxsummaries.pwc.com/poland/individual/taxes-on-personal-income",
+      "retrieved_at": "2026-02-28"
+    }
+  ]
+}

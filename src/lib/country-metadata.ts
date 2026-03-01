@@ -10,6 +10,7 @@ export const COUNTRY_FLAGS: Record<string, string> = {
   ch: "🇨🇭",
   us: "🇺🇸",
   gb: "🇬🇧",
+  gr: "🇬🇷",
   uk: "🇬🇧",
   fr: "🇫🇷",
   it: "🇮🇹",
@@ -28,6 +29,7 @@ export const COUNTRY_FLAGS: Record<string, string> = {
   no: "🇳🇴",
   nz: "🇳🇿",
   se: "🇸🇪",
+  mx: "🇲🇽",
 }
 
 /**
@@ -39,6 +41,7 @@ export const COUNTRY_NAMES: Record<string, string> = {
   ch: "Switzerland",
   us: "United States",
   gb: "United Kingdom",
+  gr: "Greece",
   uk: "United Kingdom",
   fr: "France",
   it: "Italy",
@@ -57,6 +60,7 @@ export const COUNTRY_NAMES: Record<string, string> = {
   no: "Norway",
   nz: "New Zealand",
   se: "Sweden",
+  mx: "Mexico",
 }
 
 /**
@@ -73,6 +77,7 @@ export const CURRENCY_BY_COUNTRY: Record<string, string> = {
   ch: "CHF",
   us: "USD",
   gb: "GBP",
+  gr: "EUR",
   uk: "GBP",
   sg: "SGD",
   ae: "AED",
@@ -86,6 +91,7 @@ export const CURRENCY_BY_COUNTRY: Record<string, string> = {
   no: "NOK",
   nz: "NZD",
   se: "SEK",
+  mx: "MXN",
 }
 
 /**
@@ -108,6 +114,7 @@ export const CURRENCY_SYMBOLS: Record<string, string> = {
   NOK: "kr",
   NZD: "NZ$",
   SEK: "kr",
+  MXN: "MX$",
 }
 
 /**

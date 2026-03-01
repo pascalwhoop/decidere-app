@@ -1,0 +1,25 @@
+{
+  "name": "Article 5C - median income",
+  "description": "Employee earning EUR 30,000 under Article 5C regime. Only EUR 15,000 taxable. Tax credit phased out based on full gross.",
+  "variant": "article-5c",
+  "inputs": {
+    "gross_annual": 30000,
+    "filing_status": "single"
+  },
+  "expected": {
+    "net": 24506,
+    "effective_rate": 0.1831,
+    "breakdown": {
+      "income_tax": 1483,
+      "efka_employee": 4011
+    }
+  },
+  "tolerance": 10,
+  "sources": [
+    {
+      "description": "Article 5C provides 50% income tax exemption per TaxLaw.gr and PwC",
+      "url": "https://www.taxlaw.gr/en/practice-areas/tax-law/5c-tax-regime-special-regime-of-taxation-for-income-from-employment-and-business-activity-earned-in-greece-by-individuals-who-transfer-their-tax-residence-to-greece/",
+      "retrieved_at": "2026-03-01"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "name": "Single - Very high income (EUR 8,000/month x 14)",
+  "description": "Very high income employee earning EUR 112,000 annually, standard region. Monthly salary exceeds SV cap. Tests 48% bracket.",
+  "inputs": {
+    "gross_annual": 112000,
+    "region": "standard"
+  },
+  "expected": {
+    "net": 69701,
+    "effective_rate": 0.378,
+    "breakdown": {
+      "income_tax": 24906,
+      "social_security": 17393
+    }
+  },
+  "tolerance": 100,
+  "tolerance_percent": 0.01,
+  "sources": [
+    {
+      "description": "Verified against karriere.at Brutto-Netto-Rechner 2026 (EUR 8,000/month x 14 = EUR 112,000)",
+      "url": "https://www.karriere.at/brutto/8000",
+      "retrieved_at": "2026-02-28"
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "name": "Median income - single, no children",
+  "description": "Employee earning EUR 30,000. Three brackets apply (9%, 20%, 26%). Tax credit partially phased out.",
+  "inputs": {
+    "gross_annual": 30000,
+    "filing_status": "single"
+  },
+  "expected": {
+    "net": 20906,
+    "effective_rate": 0.3031,
+    "breakdown": {
+      "income_tax": 5083,
+      "efka_employee": 4011
+    }
+  },
+  "tolerance": 10,
+  "sources": [
+    {
+      "description": "2026 tax scale from Ministry of Finance: 9% on first 10k, 20% on 10-20k, 26% on 20-30k",
+      "url": "https://minfin.gov.gr/en/tax-policy/tax-guide/income-taxation/",
+      "retrieved_at": "2026-03-01"
+    }
+  ]
+}

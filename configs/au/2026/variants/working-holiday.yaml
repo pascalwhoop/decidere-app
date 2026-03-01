@@ -1,0 +1,97 @@
+meta:
+  variant: "working-holiday"
+  label: "Working Holiday Maker"
+  description: "Special tax rates for visa subclass 417 (Working Holiday) and 462 (Work and Holiday) holders"
+  base: "base.yaml"
+  sources:
+    - url: "https://www.ato.gov.au/tax-rates-and-codes/tax-rates-working-holiday-makers"
+      description: "ATO Working Holiday Maker Tax Rates 2025-26"
+      retrieved_at: "2026-02-28"
+    - url: "https://www.ato.gov.au/tax-rates-and-codes/schedule-15-tax-table-for-working-holiday-makers"
+      description: "Schedule 15 - Tax table for working holiday makers"
+      retrieved_at: "2026-02-28"
+
+# Working Holiday Makers (WHM):
+# - Visa subclass 417 (Working Holiday) or 462 (Work and Holiday)
+# - No tax-free threshold
+# - 15% flat rate on first $45,000
+# - Then non-resident rates apply ($45,001+)
+# - No Medicare levy (most WHMs are foreign residents for tax purposes)
+# - No LITO
+# - Employer must register with ATO as WHM employer
+
+parameters:
+  # Working holiday maker tax brackets
+  income_tax_brackets:
+    - threshold: 0
+      rate: 0.15      # $0 - $45,000 at 15%
+    - threshold: 45000
+      rate: 0.30      # $45,001 - $135,000
+    - threshold: 135000
+      rate: 0.37      # $135,001 - $190,000
+    - threshold: 190000
+      rate: 0.45      # $190,001+
+
+calculations:
+  # Remove Medicare levy node (WHMs generally don't pay Medicare)
+  - id: medicare_levy
+    $delete: true
+
+  # Remove all LITO calculation nodes (WHMs not eligible)
+  - id: lito_phase_1_reduction
+    $delete: true
+
+  - id: lito_after_phase_1
+    $delete: true
+
+  - id: lito_phase_2_reduction
+    $delete: true
+
+  - id: lito_offset
+    $delete: true
+
+  # Recalculate total tax (no Medicare, no LITO)
+  - id: total_tax_before_offsets
+    type: sum
+    values:
+      - $income_tax
+
+  - id: total_tax
+    type: sum
+    values:
+      - $income_tax
+
+outputs:
+  gross: "@gross_annual"
+  net: $net_annual
+  effective_rate:
+    type: div
+    values:
+      - $total_tax
+      - "@gross_annual"
+  breakdown:
+    taxes:
+      - $income_tax
+  informational:
+    - $employer_super
+
+notices:
+  - id: "whm_taxation"
+    title: "Working Holiday Maker Tax"
+    body: "As a working holiday maker (visa 417/462), you pay a flat 15% tax on the first $45,000 of income, then standard non-resident rates apply above that. There is no tax-free threshold."
+    severity: info
+
+  - id: "whm_employer_registration"
+    title: "Employer Registration Required"
+    body: "Your employer must be registered with the ATO as a working holiday maker employer to apply the correct 15% withholding rate. If they are not registered, tax will be withheld at higher rates."
+    severity: warning
+
+  - id: "whm_nda_exception"
+    title: "Non-Discrimination Article (NDA) Exception"
+    body: "If you are an Australian resident for tax purposes AND from a country with a non-discrimination article in its tax treaty with Australia (Chile, Finland, Germany, Israel, Japan, Norway, Turkey, UK), you may be taxed at ordinary resident rates instead. Consult a tax professional."
+    severity: info
+
+  - id: "superannuation_whm"
+    title: "Superannuation"
+    body: "Your employer must contribute 12% to superannuation. When you leave Australia, you can claim your super through a Departing Australia Superannuation Payment (DASP), but withholding tax of 65% applies for working holiday makers."
+    severity: info

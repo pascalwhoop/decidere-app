@@ -1,0 +1,26 @@
+{
+  "name": "Single filer at high income - 200,000 PLN",
+  "description": "Standard employment contract, single filer in the 32% bracket. Income below ZUS cap.",
+  "inputs": {
+    "gross_annual": 200000,
+    "filing_status": "single"
+  },
+  "expected": {
+    "net": 130382,
+    "effective_rate": 0.34809,
+    "breakdown": {
+      "total_social_contributions": 27420,
+      "health_insurance": 15532,
+      "income_tax": 26666
+    }
+  },
+  "tolerance": 5,
+  "tolerance_percent": 0.005,
+  "sources": [
+    {
+      "description": "Manual calculation: ZUS = 200,000 * 11.26% + 200,000 * 2.45% = 22,520 + 4,900 = 27,420; Health = (200,000 - 27,420) * 9% = 15,532.20; Taxable = 172,580 - 3,000 = 169,580; PIT = 120,000 * 12% + 49,580 * 32% - 3,600 = 14,400 + 15,865.60 - 3,600 = 26,665.60; Net = 200,000 - 27,420 - 15,532.20 - 26,665.60 = 130,382.20",
+      "url": "https://taxsummaries.pwc.com/poland/individual/taxes-on-personal-income",
+      "retrieved_at": "2026-02-28"
+    }
+  ]
+}

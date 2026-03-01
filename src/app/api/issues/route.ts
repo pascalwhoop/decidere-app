@@ -100,7 +100,7 @@ ${JSON.stringify(result.breakdown, null, 2)}
 
     // Get GitHub repository from environment or use default
     const githubRepo =
-      process.env.GITHUB_REPO || "pascalwhoop/universalNetCalc"
+      process.env.GITHUB_REPO || "pascalwhoop/decidere"
 
     const githubResponse = await fetch(
       `https://api.github.com/repos/${githubRepo}/issues`,

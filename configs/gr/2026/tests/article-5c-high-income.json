@@ -1,0 +1,25 @@
+{
+  "name": "Article 5C - high income",
+  "description": "Employee earning EUR 60,000 under Article 5C regime. Only EUR 30,000 taxable. Tax credit fully phased out.",
+  "variant": "article-5c",
+  "inputs": {
+    "gross_annual": 60000,
+    "filing_status": "single"
+  },
+  "expected": {
+    "net": 46478,
+    "effective_rate": 0.2254,
+    "breakdown": {
+      "income_tax": 5500,
+      "efka_employee": 8022
+    }
+  },
+  "tolerance": 10,
+  "sources": [
+    {
+      "description": "Article 5C: 50% exemption on EUR 60,000 = EUR 30,000 taxable. Tax on 30k = 900 + 2,000 + 2,600 = 5,500",
+      "url": "https://www.taxlaw.gr/en/practice-areas/tax-law/5c-tax-regime-special-regime-of-taxation-for-income-from-employment-and-business-activity-earned-in-greece-by-individuals-who-transfer-their-tax-residence-to-greece/",
+      "retrieved_at": "2026-03-01"
+    }
+  ]
+}

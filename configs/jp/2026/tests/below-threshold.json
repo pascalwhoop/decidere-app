@@ -1,0 +1,32 @@
+{
+  "name": "Below Taxation Threshold (JPY 1.2M), Age 25",
+  "description": "Very low income - tests below taxation threshold. With 2026 deductions (740K employment + 950K basic), taxable income should be zero.",
+  "inputs": {
+    "gross_annual": 1200000,
+    "age": 25,
+    "filing_status": "single",
+    "num_dependents_19_22": 0
+  },
+  "expected": {
+    "employment_income": 460000,
+    "health_insurance_annual": 59100,
+    "pension_annual": 109800,
+    "employment_insurance_annual": 6000,
+    "longterm_care_annual": 0,
+    "childcare_support_annual": 1380,
+    "total_social_insurance": 176280,
+    "basic_deduction_national": 950000,
+    "taxable_income_national": 0,
+    "national_income_tax_base": 0,
+    "reconstruction_surtax": 0,
+    "total_national_income_tax": 0,
+    "taxable_income_resident": 0,
+    "resident_tax_income_levy": 0,
+    "resident_tax_percapita_levy": 5000,
+    "total_resident_tax": 5000,
+    "net": 1018720,
+    "effective_rate": 0.1511
+  },
+  "tolerance": 100,
+  "tolerance_percent": 0.001
+}

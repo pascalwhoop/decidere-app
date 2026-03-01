@@ -1,0 +1,27 @@
+{
+  "name": "Commuter at median income - 84,000 PLN with higher KUP",
+  "description": "Worker commuting from outside place of residence, higher tax-deductible costs (3,600 PLN vs 3,000 PLN).",
+  "inputs": {
+    "gross_annual": 84000,
+    "filing_status": "single",
+    "commuter": true
+  },
+  "expected": {
+    "net": 61294,
+    "effective_rate": 0.27030,
+    "breakdown": {
+      "total_social_contributions": 11516,
+      "health_insurance": 6524,
+      "income_tax": 4666
+    }
+  },
+  "tolerance": 5,
+  "tolerance_percent": 0.005,
+  "sources": [
+    {
+      "description": "Manual calculation: Same as median but KUP = 3,600 instead of 3,000. Taxable = 84,000 - 11,516.40 - 3,600 = 68,883.60; PIT = 68,883.60 * 12% - 3,600 = 4,666.03; Net = 84,000 - 11,516.40 - 6,523.52 - 4,666.03 = 61,294.04",
+      "url": "https://taxsummaries.pwc.com/poland/individual/taxes-on-personal-income",
+      "retrieved_at": "2026-02-28"
+    }
+  ]
+}

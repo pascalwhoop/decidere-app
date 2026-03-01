@@ -1,0 +1,649 @@
+meta:
+  country: "jp"
+  year: 2026
+  currency: "JPY"
+  version: "1.0.0"
+  sources:
+    - url: "https://www.nta.go.jp/english/taxes/individual/"
+      description: "National Tax Agency - Individual Income Tax Rates and Brackets"
+      retrieved_at: "2026-02-28"
+    - url: "https://www.mhlw.go.jp/english/policy/pension/"
+      description: "Ministry of Health, Labour and Welfare - Social Insurance Rates"
+      retrieved_at: "2026-02-28"
+    - url: "https://www.kyoukaikenpo.or.jp/"
+      description: "Kyokai Kenpo - Health Insurance Rates by Prefecture (FY2026)"
+      retrieved_at: "2026-02-28"
+    - url: "https://taxsummaries.pwc.com/japan/individual"
+      description: "PwC Japan Tax Summaries - Individual Taxes"
+      retrieved_at: "2026-02-28"
+    - url: "https://www.pwc.com/jp/en/taxnews/pdf/jtu-20251226-en.pdf"
+      description: "PwC - Overview of 2026 Tax Reform Proposals"
+      retrieved_at: "2026-02-28"
+    - url: "https://www.ey.com/content/dam/ey-unified-site/ey-com/en-jp/technical/tax-alerts/2026/pdf/ey-japan-tax-alert-17-feb-2026-en-02.pdf"
+      description: "EY Japan - 2026 Tax Reform Newsletter"
+      retrieved_at: "2026-02-28"
+    - url: "https://www.mochizuki-associates.com/en/blog/payroll-5/social-insurance-contribution-rates-2026-48"
+      description: "Mochizuki & Associates - FY2026 Social Insurance Contribution Rates"
+      retrieved_at: "2026-02-28"
+    - url: "https://www.ramco.com/payce/payroll-compliance-japan"
+      description: "Ramco - Japan Payroll Compliance (FY2026 Kyokai Kenpo confirmed rates)"
+      retrieved_at: "2026-02-28"
+  updated_at: "2026-02-28"
+  notes: |
+    Japan 2026 tax configuration covering national income tax, resident tax, and social insurance.
+
+    Key changes from 2025:
+    - Basic deduction raised from JPY 580,000 to JPY 620,000 (for income <= 23.5M)
+    - Temporary special basic deduction (2026-2027): additional amounts for lower incomes
+      (up to JPY 950,000 total for employment income <= 1.32M)
+    - Employment income deduction minimum raised from JPY 650,000 to JPY 690,000
+    - Additional JPY 50,000 special provision for employment income deduction (2026-2027)
+    - Health insurance (Tokyo): 4.955% -> 4.925% employee share
+    - Long-term care insurance: 0.795% -> 0.81%
+    - Employment insurance (employee): 0.55% -> 0.50%
+    - NEW: Child & Childcare Support Contribution 0.115% employee share (from May 2026)
+    - Income tax brackets: UNCHANGED (5% to 45%)
+    - Reconstruction surtax: Still 2.1% through 2037
+    - Defense surtax (1%): Starts January 2027, NOT applicable in 2026
+
+    Important notes:
+    - Resident tax is calculated on PRIOR year income (year-lag effect)
+    - First year workers in Japan pay JPY 0 resident tax
+    - Pension capped at JPY 650,000/month (JPY 7,800,000/year)
+    - Health insurance uses Tokyo rate (9.85% total, 4.925% employee share)
+    - The temporary special basic deduction is income-graduated and applies to
+      national income tax only, not resident tax
+
+notices:
+  - id: "resident_tax_timing"
+    title: "Resident Tax Payment Timing"
+    body: |
+      Resident tax shown is based on CURRENT year income but is actually paid in the FOLLOWING year.
+      If this is your first year working in Japan, you will pay JPY 0 resident tax this year.
+      If this is your final year, you will owe resident tax next year on this year's income.
+    severity: "warning"
+
+  - id: "reconstruction_surtax"
+    title: "Reconstruction Surtax"
+    body: |
+      A 2.1% surtax on income tax applies through December 31, 2037 to fund reconstruction
+      measures following the 2011 Tohoku earthquake and tsunami.
+    severity: "info"
+
+  - id: "tokyo_health_insurance"
+    title: "Tokyo Health Insurance Rate"
+    body: |
+      This calculator uses Tokyo's health insurance rate (4.925% employee share for FY2026).
+      Rates vary by prefecture from approximately 4.72% to 5.39%.
+    severity: "info"
+
+  - id: "employment_income_deduction"
+    title: "Employment Income Deduction"
+    body: |
+      Japan provides a statutory employment income deduction that reduces
+      taxable income. In 2026, the minimum deduction is JPY 690,000 (up from JPY 650,000),
+      plus a temporary additional JPY 50,000 special provision for 2026-2027.
+      This is automatic and cannot be itemized or increased with actual expenses.
+    severity: "info"
+
+  - id: "temporary_deduction_boost"
+    title: "2026-2027 Temporary Deduction Increase"
+    body: |
+      For 2026-2027, the basic deduction has been raised to JPY 620,000 with additional
+      temporary increases for those with employment income up to JPY 6.55M.
+      The employment income deduction minimum also receives an extra JPY 50,000.
+      These measures address rising living costs.
+    severity: "info"
+
+  - id: "childcare_contribution"
+    title: "New Child & Childcare Support Contribution (2026)"
+    body: |
+      From FY2026, a new Child & Childcare Support Contribution of 0.115% (employee share)
+      is collected alongside health insurance premiums. This funds expanded childcare
+      programs and applies to all insured employees regardless of parental status.
+    severity: "info"
+
+inputs:
+  gross_annual:
+    type: number
+    required: true
+    min: 0
+    label: "Annual Gross Salary"
+    description: "Your total yearly salary before any deductions (in Japanese Yen)"
+
+  age:
+    type: number
+    required: true
+    min: 18
+    max: 100
+    default: 35
+    label: "Age"
+    description: "Your age (required for long-term care insurance calculation - applies to ages 40-64)"
+
+  filing_status:
+    type: enum
+    required: true
+    default: "single"
+    label: "Filing Status"
+    options:
+      single:
+        label: "Single"
+        description: "Unmarried individual without dependents"
+      married:
+        label: "Married"
+        description: "Married with non-working spouse (income <= JPY 580,000)"
+      married_dependents:
+        label: "Married with Dependents"
+        description: "Married with non-working spouse and dependent children"
+
+  num_dependents_19_22:
+    type: number
+    required: false
+    min: 0
+    max: 10
+    default: 0
+    label: "Number of Dependents (Age 19-22)"
+    description: "Special dependents aged 19-22 (students) - JPY 630,000 deduction each"
+
+parameters:
+  # National Income Tax Brackets (2026) - UNCHANGED from 2025
+  national_tax_brackets:
+    - threshold: 0
+      rate: 0.05
+    - threshold: 1950000
+      rate: 0.10
+    - threshold: 3300000
+      rate: 0.20
+    - threshold: 6950000
+      rate: 0.23
+    - threshold: 9000000
+      rate: 0.33
+    - threshold: 18000000
+      rate: 0.40
+    - threshold: 40000000
+      rate: 0.45
+
+  # Reconstruction surtax rate (through 2037)
+  reconstruction_surtax_rate: 0.021
+
+  # Employment Income Deduction brackets (2026)
+  # Minimum guaranteed: JPY 690,000 (up from 650,000)
+  # Plus JPY 50,000 special provision for 2026-2027 = effective 740,000
+  # The upper brackets use the same formula percentages but with the 50,000 added
+  employment_deduction_min: 740000     # 690,000 + 50,000 special provision
+  employment_deduction_threshold_2: 1899999  # JPY 651K-1.9M range
+  employment_deduction_threshold_3: 3599999  # JPY 1.9M-3.6M range
+  employment_deduction_threshold_4: 6599999  # JPY 3.6M-6.6M range
+  employment_deduction_threshold_5: 8499999  # JPY 6.6M-8.5M range
+  employment_deduction_cap: 1950000    # Above 8.5M: capped at 1,950,000
+
+  # Basic deduction (2026 reform)
+  # Standard: JPY 620,000 (up from 580,000)
+  # Temporary special provision for 2026-2027 (income-graduated):
+  #   Employment income <= 1.32M: JPY 950,000
+  #   1.32M < income <= 3.36M: JPY 850,000
+  #   3.36M < income <= 4.89M: JPY 680,000
+  #   4.89M < income <= 6.55M: JPY 630,000
+  #   6.55M < income <= 23.5M: JPY 580,000 (standard, no special increase)
+  # Note: these amounts are the TOTAL basic deduction (not additive)
+  basic_deduction_national_default: 580000
+  basic_deduction_resident: 430000    # Resident tax basic deduction (UNCHANGED)
+
+  # Spouse deduction (for married filing status)
+  spouse_deduction_national: 380000
+  spouse_deduction_resident: 330000
+
+  # Dependent deduction (ages 19-22, special rate)
+  dependent_deduction_19_22_national: 630000
+  dependent_deduction_19_22_resident: 450000
+
+  # Resident tax rates
+  resident_tax_rate: 0.10  # Flat 10% (4% prefectural + 6% municipal)
+  resident_tax_percapita: 5000  # JPY 5,000 annual per-capita levy
+
+  # Social insurance rates (Tokyo, FY2026)
+  health_insurance_rate: 0.04925      # Employee share (Tokyo, from March 2026)
+  pension_rate: 0.0915                 # Employee share (unchanged)
+  employment_insurance_rate: 0.005     # Employee rate (general business, from April 2026)
+  longterm_care_rate: 0.0081           # Ages 40-64 only (from March 2026)
+  childcare_support_rate: 0.00115      # NEW: Child & Childcare Support (from May 2026)
+
+  # Social insurance caps
+  pension_monthly_cap: 650000          # JPY 650,000/month maximum
+  health_insurance_monthly_cap: 1390000 # JPY 1,390,000/month maximum
+
+calculations:
+  # Step 1: Calculate Employment Income (after employment income deduction)
+  # 2026 formula: minimum is now 740,000 (690,000 + 50,000 special provision)
+  # Brackets: same percentages as 2025 but with updated minimum
+  - id: employment_deduction_raw
+    type: conditional
+    condition:
+      type: lte
+      left: "@gross_annual"
+      right: "$employment_deduction_min"
+    then: "@gross_annual"
+    else:
+      type: conditional
+      condition:
+        type: lte
+        left: "@gross_annual"
+        right: "$employment_deduction_threshold_2"
+      then: "$employment_deduction_min"
+      else:
+        type: conditional
+        condition:
+          type: lte
+          left: "@gross_annual"
+          right: "$employment_deduction_threshold_3"
+        then:
+          type: sum
+          values:
+            - type: mul
+              values:
+                - "@gross_annual"
+                - 0.30
+            - 80000
+        else:
+          type: conditional
+          condition:
+            type: lte
+            left: "@gross_annual"
+            right: "$employment_deduction_threshold_4"
+          then:
+            type: sum
+            values:
+              - type: mul
+                values:
+                  - "@gross_annual"
+                  - 0.20
+              - 440000
+          else:
+            type: conditional
+            condition:
+              type: lte
+              left: "@gross_annual"
+              right: "$employment_deduction_threshold_5"
+            then:
+              type: sum
+              values:
+                - type: mul
+                  values:
+                    - "@gross_annual"
+                    - 0.10
+                - 1100000
+            else: "$employment_deduction_cap"
+
+  - id: employment_deduction
+    type: round
+    value: "$employment_deduction_raw"
+    precision: 0
+    mode: floor
+
+  - id: employment_income_raw
+    type: max
+    values:
+      - 0
+      - type: sub
+        values:
+          - "@gross_annual"
+          - "$employment_deduction"
+
+  - id: employment_income
+    type: round
+    value: "$employment_income_raw"
+    precision: 0
+    mode: floor
+
+  # Step 2: Calculate Social Insurance Premiums
+  # Monthly salary for social insurance calculations
+  - id: monthly_salary
+    type: div
+    values:
+      - "@gross_annual"
+      - 12
+
+  # Health insurance (capped at JPY 1,390,000/month)
+  - id: health_insurance_base
+    type: min
+    values:
+      - "$monthly_salary"
+      - "$health_insurance_monthly_cap"
+
+  - id: health_insurance_annual_raw
+    type: mul
+    values:
+      - type: mul
+        values:
+          - "$health_insurance_base"
+          - "$health_insurance_rate"
+      - 12
+
+  - id: health_insurance_annual
+    type: round
+    value: "$health_insurance_annual_raw"
+    precision: 0
+    mode: floor
+    category: contribution
+    label: "Health Insurance"
+    description: "Health Insurance (Tokyo rate 4.925%)"
+
+  # Pension insurance (capped at JPY 650,000/month)
+  - id: pension_base
+    type: min
+    values:
+      - "$monthly_salary"
+      - "$pension_monthly_cap"
+
+  - id: pension_annual_raw
+    type: mul
+    values:
+      - type: mul
+        values:
+          - "$pension_base"
+          - "$pension_rate"
+      - 12
+
+  - id: pension_annual
+    type: round
+    value: "$pension_annual_raw"
+    precision: 0
+    mode: floor
+    category: contribution
+    label: "Employees' Pension Insurance"
+    description: "Employees' Pension (9.15%)"
+
+  # Employment insurance (no cap, calculated on actual salary)
+  - id: employment_insurance_annual_raw
+    type: mul
+    values:
+      - "@gross_annual"
+      - "$employment_insurance_rate"
+
+  - id: employment_insurance_annual
+    type: round
+    value: "$employment_insurance_annual_raw"
+    precision: 0
+    mode: floor
+    category: contribution
+    label: "Employment Insurance"
+    description: "Employment Insurance (0.50%)"
+
+  # Long-term care insurance (ages 40-64 only)
+  - id: longterm_care_applicable
+    type: conditional
+    condition:
+      type: gte
+      left: "@age"
+      right: 40
+    then:
+      type: conditional
+      condition:
+        type: lte
+        left: "@age"
+        right: 64
+      then: 1
+      else: 0
+    else: 0
+
+  - id: longterm_care_annual_raw
+    type: mul
+    values:
+      - type: mul
+        values:
+          - type: mul
+            values:
+              - "$health_insurance_base"
+              - "$longterm_care_rate"
+          - 12
+      - "$longterm_care_applicable"
+
+  - id: longterm_care_annual
+    type: round
+    value: "$longterm_care_annual_raw"
+    precision: 0
+    mode: floor
+    category: contribution
+    label: "Long-term Care Insurance"
+    description: "Long-term Care Insurance (0.81%, ages 40-64)"
+
+  # Child & Childcare Support Contribution (NEW in 2026)
+  # Calculated on health insurance base (standard remuneration)
+  - id: childcare_support_annual_raw
+    type: mul
+    values:
+      - type: mul
+        values:
+          - "$health_insurance_base"
+          - "$childcare_support_rate"
+      - 12
+
+  - id: childcare_support_annual
+    type: round
+    value: "$childcare_support_annual_raw"
+    precision: 0
+    mode: floor
+    category: contribution
+    label: "Child & Childcare Support"
+    description: "Child & Childcare Support Contribution (0.115%, new 2026)"
+
+  # Total social insurance
+  - id: total_social_insurance
+    type: sum
+    values:
+      - "$health_insurance_annual"
+      - "$pension_annual"
+      - "$employment_insurance_annual"
+      - "$longterm_care_annual"
+      - "$childcare_support_annual"
+
+  # Step 3: Calculate National Income Tax
+  # Basic deduction with 2026-2027 special temporary provision
+  # Income-graduated: uses employment_income to determine which tier
+  - id: basic_deduction_national
+    type: conditional
+    condition:
+      type: lte
+      left: "$employment_income"
+      right: 1320000
+    then: 950000
+    else:
+      type: conditional
+      condition:
+        type: lte
+        left: "$employment_income"
+        right: 3360000
+      then: 850000
+      else:
+        type: conditional
+        condition:
+          type: lte
+          left: "$employment_income"
+          right: 4890000
+        then: 680000
+        else:
+          type: conditional
+          condition:
+            type: lte
+            left: "$employment_income"
+            right: 6550000
+          then: 630000
+          else: "$basic_deduction_national_default"
+
+  # Spouse deduction (for married filing status)
+  - id: spouse_deduction_amount_national
+    type: switch
+    on: "@filing_status"
+    cases:
+      single: 0
+      married: "$spouse_deduction_national"
+      married_dependents: "$spouse_deduction_national"
+
+  # Dependent deduction (ages 19-22)
+  - id: dependent_deduction_amount_national
+    type: mul
+    values:
+      - "@num_dependents_19_22"
+      - "$dependent_deduction_19_22_national"
+
+  # Total deductions for national tax
+  - id: total_deductions_national
+    type: sum
+    values:
+      - "$total_social_insurance"
+      - "$basic_deduction_national"
+      - "$spouse_deduction_amount_national"
+      - "$dependent_deduction_amount_national"
+
+  # Taxable income for national tax
+  - id: taxable_income_national
+    type: max
+    values:
+      - 0
+      - type: sub
+        values:
+          - "$employment_income"
+          - "$total_deductions_national"
+
+  # Base national income tax (before surtax)
+  - id: national_income_tax_base_raw
+    type: bracket_tax
+    base: "$taxable_income_national"
+    brackets: "$national_tax_brackets"
+
+  - id: national_income_tax_base
+    type: round
+    value: "$national_income_tax_base_raw"
+    precision: 0
+    mode: floor
+    category: income_tax
+    label: "National Income Tax (Base)"
+    description: "Base income tax before reconstruction surtax"
+
+  # Reconstruction surtax (2.1% of base tax)
+  - id: reconstruction_surtax_raw
+    type: mul
+    values:
+      - "$national_income_tax_base"
+      - "$reconstruction_surtax_rate"
+
+  - id: reconstruction_surtax
+    type: round
+    value: "$reconstruction_surtax_raw"
+    precision: 0
+    mode: floor
+    category: surtax
+    label: "Reconstruction Surtax"
+    description: "2.1% surtax through 2037"
+
+  # Total national income tax (base + surtax)
+  - id: total_national_income_tax
+    type: sum
+    values:
+      - "$national_income_tax_base"
+      - "$reconstruction_surtax"
+
+  # Step 4: Calculate Resident Tax (on prior year income)
+  # Note: resident tax basic deduction is UNCHANGED at 430,000
+  # (the temporary special provision does NOT apply to resident tax)
+
+  # Spouse deduction (for married filing status)
+  - id: spouse_deduction_amount_resident
+    type: switch
+    on: "@filing_status"
+    cases:
+      single: 0
+      married: "$spouse_deduction_resident"
+      married_dependents: "$spouse_deduction_resident"
+
+  # Dependent deduction (ages 19-22)
+  - id: dependent_deduction_amount_resident
+    type: mul
+    values:
+      - "@num_dependents_19_22"
+      - "$dependent_deduction_19_22_resident"
+
+  # Total deductions for resident tax (different basic deduction)
+  - id: total_deductions_resident
+    type: sum
+    values:
+      - "$total_social_insurance"
+      - "$basic_deduction_resident"
+      - "$spouse_deduction_amount_resident"
+      - "$dependent_deduction_amount_resident"
+
+  # Taxable income for resident tax
+  - id: taxable_income_resident
+    type: max
+    values:
+      - 0
+      - type: sub
+        values:
+          - "$employment_income"
+          - "$total_deductions_resident"
+
+  # Resident tax income levy (10% flat rate)
+  - id: resident_tax_income_levy_raw
+    type: mul
+    values:
+      - "$taxable_income_resident"
+      - "$resident_tax_rate"
+
+  - id: resident_tax_income_levy
+    type: round
+    value: "$resident_tax_income_levy_raw"
+    precision: 0
+    mode: floor
+    category: income_tax
+    label: "Resident Tax (Income Levy)"
+    description: "10% of prior year taxable income"
+
+  # Resident tax per-capita levy
+  - id: resident_tax_percapita_levy
+    type: identity
+    value: "$resident_tax_percapita"
+    category: income_tax
+    label: "Resident Tax (Per-Capita Levy)"
+    description: "JPY 5,000 annual flat levy"
+
+  # Total resident tax
+  - id: total_resident_tax
+    type: sum
+    values:
+      - "$resident_tax_income_levy"
+      - "$resident_tax_percapita_levy"
+
+  # Step 5: Calculate Net Annual Income
+  - id: net_annual
+    type: sub
+    values:
+      - "@gross_annual"
+      - type: sum
+        values:
+          - "$total_national_income_tax"
+          - "$total_resident_tax"
+          - "$total_social_insurance"
+
+outputs:
+  gross: "@gross_annual"
+  net: "$net_annual"
+  effective_rate:
+    type: div
+    values:
+      - type: sub
+        values:
+          - "@gross_annual"
+          - "$net_annual"
+      - "@gross_annual"
+  breakdown:
+    taxes:
+      - "$national_income_tax_base"
+      - "$reconstruction_surtax"
+      - "$resident_tax_income_levy"
+      - "$resident_tax_percapita_levy"
+    contributions:
+      - "$health_insurance_annual"
+      - "$pension_annual"
+      - "$employment_insurance_annual"
+      - "$longterm_care_annual"
+      - "$childcare_support_annual"

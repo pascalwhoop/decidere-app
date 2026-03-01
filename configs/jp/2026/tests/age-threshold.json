@@ -1,0 +1,32 @@
+{
+  "name": "Age 40 Threshold (JPY 6M), Long-term Care Insurance Activation",
+  "description": "Tests long-term care insurance activation at age 40 and childcare support contribution",
+  "inputs": {
+    "gross_annual": 6000000,
+    "age": 40,
+    "filing_status": "single",
+    "num_dependents_19_22": 0
+  },
+  "expected": {
+    "employment_income": 4360000,
+    "health_insurance_annual": 295500,
+    "pension_annual": 549000,
+    "employment_insurance_annual": 30000,
+    "longterm_care_annual": 48600,
+    "childcare_support_annual": 6900,
+    "total_social_insurance": 930000,
+    "basic_deduction_national": 680000,
+    "taxable_income_national": 2750000,
+    "national_income_tax_base": 177500,
+    "reconstruction_surtax": 3727,
+    "total_national_income_tax": 181227,
+    "taxable_income_resident": 3000000,
+    "resident_tax_income_levy": 300000,
+    "resident_tax_percapita_levy": 5000,
+    "total_resident_tax": 305000,
+    "net": 4583773,
+    "effective_rate": 0.2360
+  },
+  "tolerance": 500,
+  "tolerance_percent": 0.005
+}

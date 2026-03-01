@@ -1,0 +1,25 @@
+{
+  "name": "National Average - High income (100k, no church)",
+  "description": "100,000 EUR salary with national average municipal rate (7.60%), no church membership.",
+  "inputs": {
+    "gross_annual": 100000,
+    "municipality": "national_avg",
+    "church_member": false
+  },
+  "expected": {
+    "net": 60468,
+    "effective_rate": 0.39532,
+    "breakdown": {
+      "state_tax": 23892,
+      "municipal_tax": 6921,
+      "tyel_pension": 7300,
+      "unemployment_insurance": 890,
+      "health_care_contribution": 1100,
+      "daily_allowance_contribution": 880,
+      "work_income_tax_credit": 1610,
+      "yle_tax": 160
+    }
+  },
+  "tolerance": 50,
+  "tolerance_percent": 0.005
+}

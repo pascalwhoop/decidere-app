@@ -1,0 +1,26 @@
+{
+  "name": "Single filer at low income - 48,000 PLN",
+  "description": "Standard employment contract (umowa o prace), single filer earning 4,000 PLN/month. All income within 12% bracket.",
+  "inputs": {
+    "gross_annual": 48000,
+    "filing_status": "single"
+  },
+  "expected": {
+    "net": 36681,
+    "effective_rate": 0.2358,
+    "breakdown": {
+      "total_social_contributions": 6581,
+      "health_insurance": 3728,
+      "income_tax": 1010
+    }
+  },
+  "tolerance": 5,
+  "tolerance_percent": 0.005,
+  "sources": [
+    {
+      "description": "Manual calculation: ZUS = 48,000 * 13.71% = 6,580.80; Health = (48,000 - 6,580.80) * 9% = 3,727.73; Taxable = 48,000 - 6,580.80 - 3,000 = 38,419.20; PIT = 38,419.20 * 12% - 3,600 = 1,010.30; Net = 48,000 - 6,580.80 - 3,727.73 - 1,010.30 = 36,681.17",
+      "url": "https://taxsummaries.pwc.com/poland/individual/taxes-on-personal-income",
+      "retrieved_at": "2026-02-28"
+    }
+  ]
+}

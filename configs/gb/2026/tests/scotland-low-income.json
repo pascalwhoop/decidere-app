@@ -1,0 +1,27 @@
+{
+  "name": "Scotland - Low income (£30,000)",
+  "description": "Scottish taxpayer earning £30,000 - reaches the Intermediate rate band. Scotland's extra bands mean slightly different tax vs rest of UK at this level.",
+  "variant": "scotland",
+  "inputs": {
+    "gross_annual": 30000,
+    "filing_status": "single"
+  },
+  "expected": {
+    "net": 25155,
+    "effective_rate": 0.16150,
+    "breakdown": {
+      "income_tax": 3451,
+      "national_insurance": 1394
+    }
+  },
+  "tolerance": 50,
+  "tolerance_percent": 0.005,
+  "sources": [
+    {
+      "description": "Manual calculation using Scottish 2026/27 tax bands",
+      "url": "https://www.gov.scot/publications/scottish-income-tax-technical-factsheet/",
+      "date": "2026-02-28",
+      "notes": "PA: £12,570. Taxable: £17,430. Scottish tax: £3,967 * 19% = £753.73, £12,989 * 20% = £2,597.80, £474 * 21% = £99.54. Total IT: £3,451.07. NI (UK-wide): £17,430 * 8% = £1,394.40. Total deductions: £4,845.47. Net: £25,154.53."
+    }
+  ]
+}

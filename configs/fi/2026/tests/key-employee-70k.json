@@ -1,0 +1,22 @@
+{
+  "name": "Key Employee - 70k (minimum qualifying salary)",
+  "description": "Key employee regime at 70,000 EUR. Flat 25% tax replaces progressive taxes. TyEL + unemployment still apply.",
+  "variant": "key-employee",
+  "inputs": {
+    "gross_annual": 70000,
+    "municipality": "helsinki",
+    "church_member": false
+  },
+  "expected": {
+    "net": 46607,
+    "effective_rate": 0.33419,
+    "breakdown": {
+      "total_income_tax": 17500,
+      "tyel_pension": 5110,
+      "unemployment_insurance": 623,
+      "yle_tax": 160
+    }
+  },
+  "tolerance": 10,
+  "tolerance_percent": 0.005
+}

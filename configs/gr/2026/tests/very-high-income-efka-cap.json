@@ -1,0 +1,24 @@
+{
+  "name": "Very high income - above EFKA cap",
+  "description": "Employee earning EUR 120,000. EFKA contributions capped at annual EUR 93,143.28. Tax credit fully phased out.",
+  "inputs": {
+    "gross_annual": 120000,
+    "filing_status": "single"
+  },
+  "expected": {
+    "net": 64447,
+    "effective_rate": 0.4630,
+    "breakdown": {
+      "income_tax": 43100,
+      "efka_employee": 12453
+    }
+  },
+  "tolerance": 10,
+  "sources": [
+    {
+      "description": "EFKA monthly cap EUR 7,761.94 from Jan 2026 per PwC Tax Summaries",
+      "url": "https://taxsummaries.pwc.com/greece/individual/other-taxes",
+      "retrieved_at": "2026-03-01"
+    }
+  ]
+}

@@ -34,10 +34,17 @@ meta:
     - Foreign-source income generally exempt (subject to DTA provisions)
     - Valid for non-renewable 10-year period
 
+    Tax Calculation Under IFICI:
+    - Specific deduction is applied first: max(€4,104, 11% of gross)
+    - Then 20% flat rate is applied to: Gross - Specific Deduction
+    - Social security contribution (11%) still applies separately
+    - Result: Even lower effective tax rate than standard flat 20%, especially for high earners
+
     Differences from NHR:
     - Foreign pensions taxed at progressive rates (not 10% flat)
     - More restrictive eligibility criteria
     - Stricter sector requirements
+    - Now correctly applies mandatory deduction before flat tax (2026 fix)
 
 notices:
   - id: "ifici_eligibility"
@@ -84,6 +91,26 @@ parameters:
   social_security_employee_rate: 0.11
 
 calculations:
+  # Calculate specific deduction: max(€4,104 flat, 11% of gross)
+  # IFICI also uses dedução específica
+  - id: social_security_employee_amount
+    type: percent_of
+    base: "@gross_annual"
+    rate: "$social_security_employee_rate"
+
+  - id: specific_deduction
+    type: max
+    values:
+      - 4104
+      - "$social_security_employee_amount"
+
+  # Calculate taxable income for IFICI: Gross - Specific Deduction
+  - id: taxable_income_before_quotient
+    type: sub
+    values:
+      - "@gross_annual"
+      - "$specific_deduction"
+
   # Override quotient and per-quotient calculations (not used in IFICI)
   - id: quotient
     type: identity
@@ -91,22 +118,22 @@ calculations:
 
   - id: taxable_income_per_quotient
     type: identity
-    value: "@gross_annual"
+    value: "$taxable_income_before_quotient"
 
   - id: irs_per_quotient
     type: percent_of
-    base: "@gross_annual"
+    base: "$taxable_income_before_quotient"
     rate: "$ifici_flat_rate"
 
-  # Override IRS calculation with flat 20% rate
-  # Under IFICI, Portuguese employment income is taxed at 20% flat rate
+  # Override IRS calculation with flat 20% rate applied to reduced taxable income
+  # Under IFICI, Portuguese employment income is taxed at 20% flat rate on (Gross - Specific Deduction)
   - id: irs_total
     type: percent_of
-    base: "@gross_annual"
+    base: "$taxable_income_before_quotient"
     rate: "$ifici_flat_rate"
     category: income_tax
     label: "IRS (IFICI - 20% Flat Rate)"
-    description: "Income tax under IFICI special regime - 20% flat rate"
+    description: "Income tax under IFICI special regime - 20% flat rate on taxable income"
 
   # Note: Social security contribution remains at 11% (not affected by IFICI)
   # The base.yaml calculation for social_security_employee will still apply

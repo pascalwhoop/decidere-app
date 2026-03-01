@@ -1,0 +1,241 @@
+meta:
+  variant: "b2b-ryczalt-it"
+  label: "B2B Lump Sum IT (Ryczalt 12%)"
+  description: |
+    Lump sum taxation (ryczalt od przychodow ewidencjonowanych) at 12% for IT
+    services (PKWiU 62.01, 62.02 - programming, consulting, software development).
+    Tax is calculated on gross revenue with no expense deductions.
+    Social contributions (ZUS) are fixed monthly amounts, not income-based.
+    This is the most popular tax regime for IT contractors in Poland.
+
+    Enter your GROSS INVOICED REVENUE (before VAT) as the annual gross salary.
+    This represents your total B2B income for the year.
+  base: "../base.yaml"
+  sources:
+    - url: "https://www.podatki.wtf/?lang=en"
+      description: "B2B Calculator Poland 2026 (Podatki.wtf)"
+      retrieved_at: "2026-02-28"
+    - url: "https://smarglobal.com/choosing-taxation-system-2026-poland/"
+      description: "Choosing a Taxation System 2026 in Poland - SMAR Global"
+      retrieved_at: "2026-02-28"
+    - url: "https://getsix.eu/human-resources-payroll-in-poland/social-insurance-institution-zus-contributions-in-poland-in-2026-current-bases-limits-and-contribution-amounts-for-entrepreneurs/"
+      description: "ZUS contributions 2026 - entrepreneur rates"
+      retrieved_at: "2026-02-28"
+  updated_at: "2026-02-28"
+  notes: |
+    B2B Lump Sum (Ryczalt) for IT services at 12% rate.
+
+    Key differences from employment:
+    - Tax is on REVENUE (gross), not income (gross minus expenses)
+    - No expense deductions allowed
+    - ZUS social contributions are fixed monthly amounts based on declared base
+      (standard: 60% of projected average salary = 5,652 PLN/month)
+    - Health insurance for ryczalt has 3 tiers based on annual revenue
+    - 50% of paid health contributions can be deducted from revenue
+    - No tax-free amount (30,000 PLN) - does not apply to ryczalt
+
+    ZUS full-rate entrepreneur monthly contributions (2026):
+    - Pension: 1,103.27 PLN
+    - Disability: 452.16 PLN
+    - Sickness (voluntary): 138.47 PLN
+    - Accident: 94.39 PLN
+    - Labour Fund: 138.47 PLN
+    Total: 1,926.76 PLN/month = 23,121.12 PLN/year
+
+    Health insurance for ryczalt (2026, tiered by revenue):
+    - Revenue up to 60,000 PLN: ~461.67 PLN/month
+    - Revenue 60,000-300,000 PLN: ~830.58 PLN/month
+    - Revenue above 300,000 PLN: ~1,384.97 PLN/month
+
+notices:
+  - id: "b2b_ryczalt_input"
+    title: "Enter Gross Revenue"
+    body: |
+      Enter your total GROSS INVOICED REVENUE (before VAT) as the annual salary.
+      Under the ryczalt system, tax is calculated on revenue, not profit.
+      No expense deductions are allowed.
+    severity: "info"
+
+  - id: "b2b_ryczalt_zus"
+    title: "Fixed ZUS Contributions"
+    body: |
+      This calculation uses full-rate ZUS (big ZUS / duzy ZUS) contributions.
+      New entrepreneurs may qualify for:
+      - Start relief (ulga na start): 6 months, only health insurance
+      - Preferential ZUS (maly ZUS): 24 months, ~456 PLN/month
+      - Small ZUS Plus: variable, based on income
+      These reduce the fixed ZUS burden significantly.
+    severity: "info"
+
+  - id: "b2b_ryczalt_health"
+    title: "Health Insurance Tiers"
+    body: |
+      Under ryczalt, health insurance has 3 fixed tiers based on annual revenue:
+      - Up to 60,000 PLN: ~461.67 PLN/month
+      - 60,000 - 300,000 PLN: ~830.58 PLN/month
+      - Above 300,000 PLN: ~1,384.97 PLN/month
+      50% of paid health contributions can be deducted from revenue.
+    severity: "info"
+
+inputs:
+  # Remove employment-specific inputs
+  commuter:
+    $delete: true
+  under_26:
+    $delete: true
+
+parameters:
+  # Ryczalt IT tax rate
+  ryczalt_rate: 0.12
+
+  # Fixed ZUS social contributions for entrepreneurs (full rate, annual)
+  # Pension: 5,652 * 19.52% = 1,103.27/month * 12 = 13,239.24
+  # Disability: 5,652 * 8% = 452.16/month * 12 = 5,425.92
+  # Sickness: 5,652 * 2.45% = 138.47/month * 12 = 1,661.64
+  # Accident: 5,652 * 1.67% = 94.39/month * 12 = 1,132.68
+  # Labour Fund: 5,652 * 2.45% = 138.47/month * 12 = 1,661.64
+  fixed_zus_annual: 23121
+
+  # Health insurance tiers for ryczalt (annual)
+  health_tier_1_limit: 60000
+  health_tier_1_annual: 5540       # ~461.67 * 12
+  health_tier_2_limit: 300000
+  health_tier_2_annual: 9967       # ~830.58 * 12
+  health_tier_3_annual: 16620      # ~1,384.97 * 12
+
+  # 50% of health contributions can be deducted from revenue
+  health_deduction_rate: 0.50
+
+calculations:
+  # ============================================================================
+  # OVERRIDE: Fixed ZUS for entrepreneurs (not percentage-based)
+  # ============================================================================
+
+  - id: pension_disability_base
+    type: identity
+    value: 0
+    label: "Not used in ryczalt"
+
+  - id: employee_pension_disability
+    type: identity
+    value: 0
+
+  - id: employee_sickness
+    type: identity
+    value: 0
+
+  - id: total_social_contributions
+    type: identity
+    value: "$fixed_zus_annual"
+    category: contribution
+    label: "ZUS Social Contributions (Fixed)"
+    description: "Fixed monthly ZUS for entrepreneurs: pension, disability, sickness, accident, labour fund. Base: 5,652 PLN/month."
+
+  # ============================================================================
+  # OVERRIDE: Health insurance (tiered for ryczalt)
+  # ============================================================================
+
+  - id: health_insurance_base
+    type: identity
+    value: "@gross_annual"
+    label: "Revenue (for health tier)"
+
+  - id: health_insurance
+    type: conditional
+    condition:
+      type: lte
+      left: "@gross_annual"
+      right: "$health_tier_1_limit"
+    then: "$health_tier_1_annual"
+    else:
+      type: conditional
+      condition:
+        type: lte
+        left: "@gross_annual"
+        right: "$health_tier_2_limit"
+      then: "$health_tier_2_annual"
+      else: "$health_tier_3_annual"
+    category: contribution
+    label: "Health Insurance (NFZ - Tiered)"
+    description: "Fixed tiers based on annual revenue: up to 60k, 60-300k, above 300k PLN"
+
+  # ============================================================================
+  # OVERRIDE: Tax calculation (12% on revenue minus health deduction)
+  # ============================================================================
+
+  - id: under_26_exempt_amount
+    type: identity
+    value: 0
+
+  - id: kup_amount
+    type: identity
+    value: 0
+
+  - id: income_after_social
+    type: identity
+    value: "@gross_annual"
+
+  - id: income_after_exemption
+    type: identity
+    value: "@gross_annual"
+
+  # Taxable revenue = gross revenue - 50% of health contributions
+  # Social contributions are NOT deductible from revenue under ryczalt
+  # Health deduction (50% of health) computed inline to avoid node ordering issues
+  - id: taxable_income
+    type: max
+    values:
+      - 0
+      - type: sub
+        values:
+          - "@gross_annual"
+          - type: mul
+            values:
+              - "$health_insurance"
+              - "$health_deduction_rate"
+    label: "Taxable Revenue"
+    description: "Revenue minus 50% of health contributions (ZUS social not deductible under ryczalt)"
+
+  # Ryczalt tax = 12% of taxable revenue (no brackets, no tax-free amount)
+  - id: pit_gross
+    type: mul
+    values: ["$taxable_income", "$ryczalt_rate"]
+    label: "Ryczalt Tax (12%)"
+
+  # No tax-reducing amount under ryczalt
+  - id: income_tax
+    type: identity
+    value: "$pit_gross"
+    category: income_tax
+    label: "Ryczalt Income Tax (12%)"
+    description: "12% flat tax on gross revenue for IT services. No tax-free amount applies."
+
+  # No solidarity levy for ryczalt (it only applies to tax scale and flat tax)
+  - id: solidarity_excess
+    type: identity
+    value: 0
+
+  - id: solidarity_levy
+    type: identity
+    value: 0
+    category: surtax
+    label: "Solidarity Levy"
+    description: "Not applicable under ryczalt taxation"
+
+  # Total deductions = fixed ZUS + health + ryczalt tax
+  - id: total_tax
+    type: identity
+    value: "$income_tax"
+
+  - id: total_deductions
+    type: sum
+    values:
+      - "$total_social_contributions"
+      - "$health_insurance"
+      - "$total_tax"
+
+  - id: net_annual
+    type: sub
+    values:
+      - "@gross_annual"
+      - "$total_deductions"

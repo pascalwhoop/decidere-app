@@ -1,0 +1,27 @@
+{
+  "name": "B2B Ryczalt IT at 180,000 PLN - typical IT contractor",
+  "description": "IT contractor on B2B ryczalt 12%, earning 15,000 PLN/month. Revenue in 60k-300k health tier.",
+  "variant": "b2b-ryczalt-it",
+  "inputs": {
+    "gross_annual": 180000,
+    "filing_status": "single"
+  },
+  "expected": {
+    "net": 125910,
+    "effective_rate": 0.30050,
+    "breakdown": {
+      "total_social_contributions": 23121,
+      "health_insurance": 9967,
+      "income_tax": 21002
+    }
+  },
+  "tolerance": 10,
+  "tolerance_percent": 0.005,
+  "sources": [
+    {
+      "description": "Manual calculation: Fixed ZUS = 23,121; Health = 9,967 (60k-300k tier); Health deduction = 9,967 * 50% = 4,983.50; Taxable = 180,000 - 4,983.50 = 175,016.50; Tax = 175,016.50 * 12% = 21,001.98; Net = 180,000 - 23,121 - 9,967 - 21,001.98 = 125,910.02",
+      "url": "https://www.podatki.wtf/?lang=en",
+      "retrieved_at": "2026-02-28"
+    }
+  ]
+}

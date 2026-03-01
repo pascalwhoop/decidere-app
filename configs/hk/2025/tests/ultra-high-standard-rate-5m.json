@@ -1,0 +1,25 @@
+{
+  "name": "Ultra-high income - HK$5,000,000 single (standard rate kicks in)",
+  "description": "At this income level, the standard rate (15%) produces lower tax than progressive rates (17% marginal). This is where the standard rate cap benefits high earners.",
+  "inputs": {
+    "gross_annual": 5000000,
+    "filing_status": "single"
+  },
+  "expected": {
+    "net": 4234700,
+    "effective_rate": 0.15306,
+    "breakdown": {
+      "salaries_tax": 747300,
+      "mpf_employee": 18000
+    }
+  },
+  "tolerance": 1,
+  "tolerance_percent": 0.001,
+  "sources": [
+    {
+      "description": "Manual calculation: MPF capped at 18000. Net income = 4982000. NCI = 4982000 - 132000 = 4850000. Progressive: 16000 + 4650000*17% = 16000 + 790500 = 806500. Standard: 4982000 * 15% = 747300 (all within tier 1 of 5M). Tax = min(806500, 747300) = 747300 (standard rate wins).",
+      "url": "https://taxsummaries.pwc.com/hong-kong-sar/individual/taxes-on-personal-income",
+      "retrieved_at": "2026-02-28"
+    }
+  ]
+}

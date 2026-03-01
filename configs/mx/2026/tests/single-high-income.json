@@ -1,0 +1,26 @@
+{
+  "name": "Single filer at high income (MXN 1,000,000/year)",
+  "description": "Employee earning MXN 1,000,000 annually (~MXN 83,333/month, approximately USD 48,800). High earner in the 30% marginal bracket.",
+  "inputs": {
+    "gross_annual": 1000000,
+    "filing_status": "single"
+  },
+  "expected": {
+    "net": 747931,
+    "effective_rate": 0.25207,
+    "breakdown": {
+      "isr_before_subsidy": 224833,
+      "employment_subsidy": 0,
+      "imss_total": 27236
+    }
+  },
+  "tolerance": 10,
+  "tolerance_percent": 0.005,
+  "sources": [
+    {
+      "description": "Calculated using 2026 ISR annual table. ISR bracket: 30% on excess above MXN 668,840.15. IMSS still below cap.",
+      "url": "https://taxsummaries.pwc.com/mexico/individual/taxes-on-personal-income",
+      "retrieved_at": "2026-02-28"
+    }
+  ]
+}

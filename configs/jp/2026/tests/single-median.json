@@ -1,0 +1,32 @@
+{
+  "name": "Single, Median Income (JPY 6M), Age 35, Tokyo",
+  "description": "Most common scenario - single worker with JPY 6M salary in Tokyo, under 40 (no long-term care). Tests 2026 updated basic deduction (680,000 for this income tier) and updated social insurance rates.",
+  "inputs": {
+    "gross_annual": 6000000,
+    "age": 35,
+    "filing_status": "single",
+    "num_dependents_19_22": 0
+  },
+  "expected": {
+    "employment_income": 4360000,
+    "health_insurance_annual": 295500,
+    "pension_annual": 549000,
+    "employment_insurance_annual": 30000,
+    "longterm_care_annual": 0,
+    "childcare_support_annual": 6900,
+    "total_social_insurance": 881400,
+    "basic_deduction_national": 680000,
+    "taxable_income_national": 2798600,
+    "national_income_tax_base": 182360,
+    "reconstruction_surtax": 3829,
+    "total_national_income_tax": 186189,
+    "taxable_income_resident": 3048600,
+    "resident_tax_income_levy": 304860,
+    "resident_tax_percapita_levy": 5000,
+    "total_resident_tax": 309860,
+    "net": 4622551,
+    "effective_rate": 0.2296
+  },
+  "tolerance": 500,
+  "tolerance_percent": 0.005
+}

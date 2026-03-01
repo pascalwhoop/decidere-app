@@ -1,0 +1,578 @@
+meta:
+  country: "fi"
+  label: "Finland"
+  year: 2026
+  currency: "EUR"
+  version: "1.0.0"
+  updated_at: "2026-02-28"
+  sources:
+    - url: "https://www.vero.fi/en/individuals/deductions/what-can-I-deduct/these-deductions-are-calculated-automatically-by-the-tax-administration/"
+      description: "Vero.fi - Official automatic deductions 2026 (basic allowance, work income credit parameters)"
+      retrieved_at: "2026-02-28"
+    - url: "https://www.vero.fi/en/individuals/tax-cards-and-tax-returns/income/earned-income/tax-rates-on-pay-pensions-and-benefits/"
+      description: "Vero.fi - Official tax rates on pay 2026 (validation reference table)"
+      retrieved_at: "2026-02-28"
+    - url: "https://www.vero.fi/en/individuals/tax-cards-and-tax-returns/tax_card/tax-rate-and-income-ceiling/tax-bases/"
+      description: "Vero.fi - Tax bases 2026 (health, daily allowance rates, state tax scale link)"
+      retrieved_at: "2026-02-28"
+    - url: "https://finarmour.com/finland-tax-brackets-2025/"
+      description: "FinArmour - Finland 2026 state tax brackets table (6 brackets, sourced from Vero.fi 2026 Framework)"
+      retrieved_at: "2026-02-28"
+    - url: "https://stm.fi/en/social-insurance-contribution"
+      description: "Ministry of Social Affairs and Health - Social insurance contributions 2026"
+      retrieved_at: "2026-02-28"
+    - url: "https://www.ilmarinen.fi/en/current-topics/news-and-articles/2025/earnings-related-pension-insurance-contributions-for-2026-confirmed/"
+      description: "Ilmarinen - TyEL pension 7.30% for all ages from 2026"
+      retrieved_at: "2026-02-28"
+    - url: "https://news.bloombergtax.com/daily-tax-report-international/finland-parliament-passes-bill-to-amend-income-tax-scale-other-tax-acts-for-2026"
+      description: "Bloomberg Tax - Parliament bill: work credit max 3,430, phaseout threshold 35,000, rate 2%"
+      retrieved_at: "2026-02-28"
+  notes: |
+    Finland 2026 tax configuration for employed individuals under 65.
+
+    Key features:
+    - State progressive tax: 6 brackets from 12.64% to 44.25%
+    - Municipal tax: flat rate varying by municipality (4.7-10.9%, avg 7.57%)
+    - Church tax: optional (1-2.25%) for Evangelical Lutheran/Orthodox Church members
+    - Employee social contributions: TyEL 7.30% + unemployment 0.89% + health 1.10% + daily allowance 0.88%
+    - Basic deduction (perusvähennys): max 4,265, applies to state and municipal tax, phases out at 18%
+    - Work income tax credit (työtulovähennys): max 3,430, build-up 18%, deducted from all income taxes
+    - Ansiotulovähennys (earned income deduction) was ABOLISHED from 2025
+
+    Key changes from 2025:
+    - TyEL pension: 7.30% for ALL ages (was 8.65% for ages 53-62)
+    - Unemployment insurance: 0.89% (was 0.59%)
+    - Health care: 1.10% (was 1.06%), Daily allowance: 0.88% (was 0.84%)
+    - Top marginal rate reduced to ~52% (state 44.25% + avg municipal 7.57%)
+    - Work income tax credit max increased to 3,430 (was 2,140 in 2025)
+    - Basic deduction max increased to 4,265 (was 4,115)
+    - Home office deduction abolished, union fee deduction abolished
+
+    Municipal tax rates 2026 (post-SOTE reform, source: vero.fi):
+    - Helsinki: 5.30%, Espoo: 5.30%, Vantaa: 6.40%
+    - Tampere: 7.60%, Turku: 7.10%, Oulu: 8.10%
+    - National average (non-resident): 7.60%
+
+inputs:
+  gross_annual:
+    type: number
+    required: true
+    min: 0
+    label: "Annual Gross Salary"
+    description: "Your total annual gross salary before any deductions"
+
+  municipality:
+    type: enum
+    required: true
+    default: "helsinki"
+    label: "Municipality"
+    description: "Your municipality of residence (affects municipal tax rate)"
+    options:
+      helsinki:
+        label: "Helsinki"
+        description: "5.30% municipal tax"
+      espoo:
+        label: "Espoo"
+        description: "5.30% municipal tax"
+      vantaa:
+        label: "Vantaa"
+        description: "6.40% municipal tax"
+      tampere:
+        label: "Tampere"
+        description: "7.60% municipal tax"
+      turku:
+        label: "Turku"
+        description: "7.10% municipal tax"
+      oulu:
+        label: "Oulu"
+        description: "8.10% municipal tax"
+      jyvaskyla:
+        label: "Jyväskylä"
+        description: "8.10% municipal tax"
+      national_avg:
+        label: "National Average"
+        description: "7.60% municipal tax (use if your city is not listed)"
+
+  church_member:
+    type: boolean
+    required: false
+    default: false
+    label: "Church Member"
+    description: "Are you a member of the Evangelical Lutheran or Orthodox Church? Church tax applies (~1.5%)"
+
+parameters:
+  # State income tax brackets 2026 (valtion tuloveroasteikko)
+  # Source: FinArmour (from Vero.fi 2026 Framework), cross-verified with FinArmour worked example
+  # These are marginal rates applied to taxable earned income (pure_earned_income - basic_deduction)
+  state_tax_brackets:
+    - threshold: 0
+      rate: 0.1264
+    - threshold: 22000
+      rate: 0.19
+    - threshold: 32500
+      rate: 0.3025
+    - threshold: 53800
+      rate: 0.34
+    - threshold: 91000
+      rate: 0.4175
+    - threshold: 155000
+      rate: 0.4425
+
+  # Employee social insurance contribution rates 2026
+  tyel_pension_rate: 0.073
+  unemployment_insurance_rate: 0.0089
+  health_care_rate: 0.011
+  daily_allowance_rate: 0.0088
+  daily_allowance_threshold: 17255
+
+  # Standard income deduction for employment expenses (tulonhankkimisvähennys)
+  income_deduction: 750
+
+  # Basic deduction (perusvähennys) - applies to BOTH state and municipal taxable income
+  # Source: vero.fi official automatic deductions page
+  # Max 4,265. Reduced by 18% of net taxable earned income exceeding 4,265.
+  # Zero when net taxable earned income exceeds 27,959.
+  basic_deduction_max: 4265
+  basic_deduction_phaseout_rate: 0.18
+
+  # Work income tax credit (työtulovähennys) 2026
+  # Source: vero.fi official automatic deductions page
+  # Build-up: 18% of qualifying work income, max 3,430
+  # Phaseout 1: 2% of net taxable earned income exceeding 35,000
+  # Phaseout 2: 3.44% of net taxable earned income exceeding 42,550
+  # Deducted from state tax first, overflow to municipal/church/health proportionally
+  work_credit_max: 3430
+  work_credit_rate: 0.18
+  work_credit_phaseout_threshold: 35000
+  work_credit_phaseout_rate: 0.02
+  work_credit_phaseout2_threshold: 42550
+  work_credit_phaseout2_rate: 0.0344
+
+  # Church tax rate (Helsinki Evangelical Lutheran parish rate = 1.00%)
+  # Rates vary by municipality and denomination (1.00-2.25%)
+  church_tax_rate: 0.01
+
+  # YLE public broadcasting tax: 2.5% of income above 15,150, max 160 EUR
+  yle_threshold: 15150
+  yle_rate: 0.025
+  yle_max: 160
+
+calculations:
+  # ===================================================================
+  # Step 1: Employee social insurance contributions
+  # These are deducted from gross before computing taxable income
+  # ===================================================================
+
+  - id: tyel_pension
+    label: "TyEL Pension (7.30%)"
+    type: mul
+    values: ["@gross_annual", "$tyel_pension_rate"]
+    category: contribution
+    description: "Earnings-related pension insurance - same rate for all ages from 2026"
+
+  - id: unemployment_insurance
+    label: "Unemployment Insurance (0.89%)"
+    type: mul
+    values: ["@gross_annual", "$unemployment_insurance_rate"]
+    category: contribution
+
+  - id: health_care_contribution
+    label: "Health Care (1.10%)"
+    type: mul
+    values: ["@gross_annual", "$health_care_rate"]
+    category: contribution
+    description: "Medical care insurance (sairausvakuutusmaksu)"
+
+  - id: daily_allowance_contribution
+    label: "Daily Allowance (0.88%)"
+    type: conditional
+    condition:
+      type: gte
+      left: "@gross_annual"
+      right: "$daily_allowance_threshold"
+    then:
+      type: mul
+      values: ["@gross_annual", "$daily_allowance_rate"]
+    else: 0
+    category: contribution
+    description: "Daily allowance contribution (only if income >= 17,255/year)"
+
+  - id: total_social_contributions
+    label: "Total Employee Contributions"
+    type: sum
+    values:
+      - "$tyel_pension"
+      - "$unemployment_insurance"
+      - "$health_care_contribution"
+      - "$daily_allowance_contribution"
+
+  # Pension + unemployment + daily allowance (not health care, which is offset by work credit)
+  - id: pension_unemployment_only
+    label: "Pension + Unemployment + Daily Allowance"
+    type: sum
+    values:
+      - "$tyel_pension"
+      - "$unemployment_insurance"
+      - "$daily_allowance_contribution"
+
+  # ===================================================================
+  # Step 2: Pure earned income (puhdas ansiotulo)
+  # Gross - income deduction (750) - pension - unemployment
+  # Only TyEL pension and unemployment are deducted (NOT health/daily allowance)
+  # Source: FinArmour worked example: 72000 - 750 - (72000*0.0819) = 65353
+  # ===================================================================
+
+  - id: pure_earned_income
+    label: "Pure Earned Income"
+    type: max
+    values:
+      - 0
+      - type: sub
+        values:
+          - "@gross_annual"
+          - "$income_deduction"
+          - "$tyel_pension"
+          - "$unemployment_insurance"
+
+  # ===================================================================
+  # Step 3: Basic deduction (perusvähennys)
+  # Applies to BOTH state and municipal taxable income (since 2023)
+  # Max 4,265. Reduced by 18% of (pure_earned_income - 4,265) when > 4,265
+  # Zero when pure_earned_income > 27,959
+  # ===================================================================
+
+  - id: basic_deduction_excess
+    label: "Income above basic deduction threshold"
+    type: max
+    values:
+      - 0
+      - type: sub
+        values:
+          - "$pure_earned_income"
+          - "$basic_deduction_max"
+
+  - id: basic_deduction_reduction
+    label: "Basic Deduction Reduction"
+    type: mul
+    values:
+      - "$basic_deduction_excess"
+      - "$basic_deduction_phaseout_rate"
+
+  - id: basic_deduction
+    label: "Basic Deduction (Perusvähennys)"
+    type: max
+    values:
+      - 0
+      - type: sub
+        values:
+          - "$basic_deduction_max"
+          - "$basic_deduction_reduction"
+    category: deduction
+    description: "Basic allowance reducing state and municipal taxable income (phases out at 18%)"
+
+  # ===================================================================
+  # Step 4: Taxable income for state and municipal tax
+  # Pure earned income minus basic deduction
+  # ===================================================================
+
+  - id: taxable_income
+    label: "Taxable Income (State & Municipal)"
+    type: max
+    values:
+      - 0
+      - type: sub
+        values:
+          - "$pure_earned_income"
+          - "$basic_deduction"
+
+  # ===================================================================
+  # Step 5: State progressive income tax
+  # Applied to taxable_income (after basic deduction)
+  # ===================================================================
+
+  - id: state_tax
+    label: "State Income Tax"
+    type: bracket_tax
+    base: "$taxable_income"
+    brackets: "$state_tax_brackets"
+    category: income_tax
+    description: "Progressive state income tax (valtion tulovero)"
+
+  # ===================================================================
+  # Step 6: Municipal tax
+  # Applied to taxable_income (after basic deduction)
+  # ===================================================================
+
+  - id: municipal_tax_rate
+    label: "Municipal Tax Rate"
+    type: switch
+    on: "@municipality"
+    cases:
+      helsinki: 0.053
+      espoo: 0.053
+      vantaa: 0.064
+      tampere: 0.076
+      turku: 0.071
+      oulu: 0.081
+      jyvaskyla: 0.081
+      national_avg: 0.076
+    default: 0.076
+
+  - id: municipal_tax
+    label: "Municipal Tax (Kunnallisvero)"
+    type: mul
+    values: ["$taxable_income", "$municipal_tax_rate"]
+    category: income_tax
+    description: "Flat-rate municipal income tax"
+
+  # ===================================================================
+  # Step 7: Church tax (optional)
+  # Applied to taxable_income (same base as municipal)
+  # ===================================================================
+
+  - id: church_tax
+    label: "Church Tax (Kirkollisvero)"
+    type: conditional
+    condition:
+      type: eq
+      left: "@church_member"
+      right: true
+    then:
+      type: mul
+      values: ["$taxable_income", "$church_tax_rate"]
+    else: 0
+    category: income_tax
+    description: "Church tax for Evangelical Lutheran or Orthodox Church members (~1.5%)"
+
+  # ===================================================================
+  # Step 8: YLE public broadcasting tax
+  # 2.5% of (income - 15,150), max 160 EUR, zero if income < 15,150
+  # ===================================================================
+
+  - id: yle_tax
+    label: "YLE Broadcasting Tax"
+    type: conditional
+    condition:
+      type: gt
+      left: "@gross_annual"
+      right: "$yle_threshold"
+    then:
+      type: min
+      values:
+        - "$yle_max"
+        - type: mul
+          values:
+            - type: sub
+              values: ["@gross_annual", "$yle_threshold"]
+            - "$yle_rate"
+    else: 0
+    category: surtax
+    description: "Public broadcasting tax (Yle-vero): 2.5% of income above 15,150, max 160"
+
+  # ===================================================================
+  # Step 9: Work income tax credit (työtulovähennys)
+  # Build-up: 18% of work income (gross), max 3,430
+  # Phaseout 1: 2% of pure earned income above 35,000
+  # Phaseout 2: 3.44% of pure earned income above 42,550
+  # Deducted from state tax first, then overflow to muni/church/health
+  # ===================================================================
+
+  - id: work_credit_buildup
+    label: "Work Credit Build-up"
+    type: min
+    values:
+      - "$work_credit_max"
+      - type: mul
+        values:
+          - "@gross_annual"
+          - "$work_credit_rate"
+
+  # Phase 1: 2% of income between 35,000 and 42,550
+  - id: work_credit_reduction_phase1
+    label: "Work Credit Reduction Phase 1"
+    type: mul
+    values:
+      - type: min
+        values:
+          - type: max
+            values:
+              - 0
+              - type: sub
+                values: ["$pure_earned_income", "$work_credit_phaseout_threshold"]
+          - type: sub
+            values: ["$work_credit_phaseout2_threshold", "$work_credit_phaseout_threshold"]
+      - "$work_credit_phaseout_rate"
+
+  # Phase 2: 3.44% of income above 42,550
+  - id: work_credit_reduction_phase2
+    label: "Work Credit Reduction Phase 2"
+    type: mul
+    values:
+      - type: max
+        values:
+          - 0
+          - type: sub
+            values: ["$pure_earned_income", "$work_credit_phaseout2_threshold"]
+      - "$work_credit_phaseout2_rate"
+
+  - id: work_credit_reduction
+    label: "Work Credit Reduction"
+    type: sum
+    values:
+      - "$work_credit_reduction_phase1"
+      - "$work_credit_reduction_phase2"
+
+  - id: work_income_tax_credit
+    label: "Work Income Tax Credit (Työtulovähennys)"
+    type: credit
+    amount:
+      type: max
+      values:
+        - 0
+        - type: sub
+          values:
+            - "$work_credit_buildup"
+            - "$work_credit_reduction"
+    refundable: false
+    category: credit
+    description: "Tax credit for work income - deducted from income taxes"
+
+  # ===================================================================
+  # Step 9: Total tax and net calculation
+  # Work credit applies against: state + municipal + health + church tax
+  # ===================================================================
+
+  # Total tax base that work credit can offset
+  # Per vero.fi: "reduces state tax, overflow to municipal tax, church tax, health care"
+  # Daily allowance and YLE tax are NOT offset by the work credit
+  - id: total_tax_before_credits
+    label: "Total Tax Before Credits"
+    type: sum
+    values:
+      - "$state_tax"
+      - "$municipal_tax"
+      - "$church_tax"
+      - "$health_care_contribution"
+
+  - id: total_credits
+    label: "Total Tax Credits"
+    type: max
+    values:
+      - 0
+      - type: sub
+        values:
+          - "$work_credit_buildup"
+          - "$work_credit_reduction"
+
+  - id: total_income_tax
+    label: "Total Income Tax"
+    type: max
+    values:
+      - 0
+      - type: sub
+        values:
+          - "$total_tax_before_credits"
+          - "$total_credits"
+
+  - id: total_deductions
+    label: "Total Deductions"
+    type: sum
+    values:
+      - "$total_income_tax"
+      - "$daily_allowance_contribution"
+      - "$yle_tax"
+      - "$tyel_pension"
+      - "$unemployment_insurance"
+
+  - id: net_annual
+    label: "Net Annual Salary"
+    type: sub
+    values:
+      - "@gross_annual"
+      - "$total_deductions"
+
+outputs:
+  gross: "@gross_annual"
+  net: "$net_annual"
+  effective_rate:
+    type: div
+    values:
+      - "$total_deductions"
+      - "@gross_annual"
+  breakdown:
+    taxes:
+      - "$state_tax"
+      - "$municipal_tax"
+      - "$church_tax"
+    contributions:
+      - "$tyel_pension"
+      - "$unemployment_insurance"
+      - "$health_care_contribution"
+      - "$daily_allowance_contribution"
+    surtaxes:
+      - "$yle_tax"
+    deductions:
+      - "$basic_deduction"
+    credits:
+      - "$work_income_tax_credit"
+
+notices:
+  - id: "nordic_tax_system"
+    title: "Finnish Nordic Tax System"
+    body: |
+      Finland uses a dual income tax system combining progressive state tax (12.64-44.25%)
+      with a flat municipal tax (5-11%) and YLE broadcasting tax (max 160 EUR).
+      This calculator covers earned income (salary) only.
+      Capital income (investments, dividends) is taxed separately at 30%/34%.
+    severity: "info"
+
+  - id: "social_contributions"
+    title: "Employee Social Contributions (~10.2%)"
+    body: |
+      In addition to income tax, employees pay mandatory social insurance contributions:
+      - TyEL pension: 7.30% (same rate for all ages from 2026)
+      - Unemployment insurance: 0.89%
+      - Health care: 1.10%
+      - Daily allowance: 0.88% (if income >= 17,255/year)
+      Total: approximately 10.17% of gross salary. Your employer withholds
+      these from your pay and transfers them to the relevant institutions.
+    severity: "info"
+
+  - id: "2026_changes"
+    title: "Key Changes in 2026"
+    body: |
+      - TyEL pension now 7.30% for ALL ages (was 8.65% for ages 53-62)
+      - Top marginal rate reduced to ~52% (from ~59%)
+      - Work income tax credit increased (max 3,430, was 2,140)
+      - Home office deduction abolished for employees
+      - Union fee deduction abolished (unemployment fund fees still deductible)
+    severity: "info"
+
+  - id: "key_employee_available"
+    title: "Key Employee Tax Regime Available"
+    body: |
+      Foreign specialists may qualify for the Key Employee tax regime (avainhenkilovero),
+      providing a flat 25% tax rate (reduced from 32% in 2025) for up to 84 months.
+      Requirements:
+      - Monthly salary >= 5,800 EUR
+      - Work requires special expertise
+      - Not been tax resident in Finland for past 5 years
+      - Apply within 90 days of starting work
+      From 2026, returning Finnish citizens also qualify (max 60 months).
+      Use the "Key Employee" variant to calculate with this benefit.
+    severity: "info"
+
+  - id: "municipality_matters"
+    title: "Municipality Affects Your Tax"
+    body: |
+      Municipal tax rates range from 4.7% to 10.9% across Finland.
+      Since the 2023 SOTE reform (healthcare funding moved to regional level),
+      rates are lower than before. Helsinki (5.36%) has among the lowest rates.
+    severity: "info"
+
+  - id: "church_tax"
+    title: "Church Tax is Optional"
+    body: |
+      Church tax (1-2.25%) only applies to members of the Evangelical Lutheran
+      or Orthodox Church (~64% of Finns). You can resign online at eroakirkosta.fi.
+    severity: "info"

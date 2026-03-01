@@ -106,103 +106,116 @@ parameters:
 
 calculations:
   # Override taxable income calculation for impatriate regime
-  # For standard case: only 50% of income (up to €600k) is taxable
-  # With minor children: only 40% of income (up to €600k) is taxable
+  # CRITICAL FIX: INPS is deducted from gross FIRST, then impatriate percentage is applied
+  # For standard case: only 50% of (income - INPS) up to €600k is taxable
+  # With minor children: only 40% of (income - INPS) up to €600k is taxable
   # Income above €600k is fully taxable
   - id: taxable_income
     type: switch
     on: "@has_minor_children"
     cases:
-      # With minor children: 40% taxable (60% exempt)
+      # With minor children: 40% of reduced income taxable (60% exempt)
       true:
         type: sum
         values:
-          # Taxable portion of capped income (40%)
+          # Taxable portion of income after INPS (40%)
           - type: mul
             values:
               - type: min
                 values:
-                  - "@gross_annual"
+                  - type: sub
+                    values:
+                      - "@gross_annual"
+                      - "$inps_employee"
                   - "$impatriate_income_cap"
               - "$taxable_percentage_with_children"
-          # Income above cap (fully taxable)
+          # Income above cap (fully taxable after INPS)
           - type: sub
             values:
-              - "@gross_annual"
-              - type: min
+              - type: max
                 values:
-                  - "@gross_annual"
-                  - "$impatriate_income_cap"
-      # Without children: 50% taxable (50% exempt)
+                  - 0
+                  - type: sub
+                    values:
+                      - type: sub
+                        values:
+                          - "@gross_annual"
+                          - "$inps_employee"
+                      - "$impatriate_income_cap"
+      # Without children: 50% of reduced income taxable (50% exempt)
       false:
         type: sum
         values:
-          # Taxable portion of capped income (50%)
+          # Taxable portion of income after INPS (50%)
           - type: mul
             values:
               - type: min
                 values:
-                  - "@gross_annual"
+                  - type: sub
+                    values:
+                      - "@gross_annual"
+                      - "$inps_employee"
                   - "$impatriate_income_cap"
               - "$taxable_percentage_standard"
-          # Income above cap (fully taxable)
+          # Income above cap (fully taxable after INPS)
           - type: sub
             values:
-              - "@gross_annual"
-              - type: min
+              - type: max
                 values:
-                  - "@gross_annual"
-                  - "$impatriate_income_cap"
+                  - 0
+                  - type: sub
+                    values:
+                      - type: sub
+                        values:
+                          - "@gross_annual"
+                          - "$inps_employee"
+                      - "$impatriate_income_cap"
     default:
       type: sum
       values:
-        # Taxable portion of capped income (50%)
+        # Taxable portion of income after INPS (50%)
         - type: mul
           values:
             - type: min
               values:
-                - "@gross_annual"
+                - type: sub
+                  values:
+                    - "@gross_annual"
+                    - "$inps_employee"
                 - "$impatriate_income_cap"
             - "$taxable_percentage_standard"
-        # Income above cap (fully taxable)
+        # Income above cap (fully taxable after INPS)
         - type: sub
           values:
-            - "@gross_annual"
-            - type: min
+            - type: max
               values:
-                - "@gross_annual"
-                - "$impatriate_income_cap"
-    description: "Taxable income under impatriate regime"
+                - 0
+                - type: sub
+                  values:
+                    - type: sub
+                      values:
+                        - "@gross_annual"
+                        - "$inps_employee"
+                    - "$impatriate_income_cap"
+    description: "Taxable income under impatriate regime (INPS deducted from gross first)"
 
   # Calculate the tax-exempt amount for display purposes
   - id: impatriate_tax_exemption
-    type: switch
-    on: "@has_minor_children"
-    cases:
-      true:
-        type: mul
+    type: mul
+    values:
+      - type: min
         values:
-          - type: min
+          - type: sub
             values:
               - "@gross_annual"
-              - "$impatriate_income_cap"
-          - 0.60  # 60% exempt with children
-      false:
-        type: mul
-        values:
-          - type: min
-            values:
-              - "@gross_annual"
-              - "$impatriate_income_cap"
-          - 0.50  # 50% exempt without children
-    default:
-      type: mul
-      values:
-        - type: min
-          values:
-            - "@gross_annual"
-            - "$impatriate_income_cap"
-        - 0.50
+              - "$inps_employee"
+          - "$impatriate_income_cap"
+      - type: switch
+        on: "@has_minor_children"
+        cases:
+          true: 0.60
+          false: 0.50
+        default: 0.50
     category: deduction
     label: "Impatriate Regime Tax Exemption"
     description: "Portion of income exempt from taxation under impatriate regime"

@@ -1,0 +1,229 @@
+meta:
+  variant: "b2b-flat-tax"
+  label: "B2B Flat Tax 19% (Podatek liniowy)"
+  description: |
+    Flat 19% income tax for self-employed (dzialalnosc gospodarcza).
+    Tax is calculated on INCOME (revenue minus deductible costs).
+    Popular with high-earning professionals whose income exceeds ~150,000 PLN/year,
+    where the 32% progressive rate would apply under the tax scale.
+
+    No tax-free amount (30,000 PLN kwota wolna) applies under flat tax.
+    Health insurance at 4.9% of income (not 9%), deductible up to 14,100 PLN.
+    ZUS social contributions are fixed and deductible from income.
+  base: "../base.yaml"
+  sources:
+    - url: "https://smarglobal.com/choosing-taxation-system-2026-poland/"
+      description: "Choosing a Taxation System 2026 in Poland - SMAR Global"
+      retrieved_at: "2026-02-28"
+    - url: "https://taxsummaries.pwc.com/poland/individual/taxes-on-personal-income"
+      description: "PwC - Poland flat tax rate for business income"
+      retrieved_at: "2026-02-28"
+    - url: "https://www.txb.pl/en/post/higher-health-insurance-contributions-for-entrepreneurs-in-2026"
+      description: "Health insurance contributions for entrepreneurs 2026"
+      retrieved_at: "2026-02-28"
+  updated_at: "2026-02-28"
+  notes: |
+    B2B Flat Tax (podatek liniowy) at 19%.
+
+    Key features:
+    - 19% flat rate on income (revenue minus deductible costs)
+    - No tax-free amount (kwota wolna does NOT apply)
+    - No joint filing with spouse allowed
+    - Cannot use child tax credit
+    - Health insurance: 4.9% of income (minimum 432.54 PLN/month)
+    - Health contribution deductible up to 14,100 PLN/year (from income or as cost)
+    - ZUS social contributions fully deductible from income
+    - Solidarity levy: 4% on income above 1,000,000 PLN still applies
+
+    For this calculator, enter gross INCOME (revenue minus business costs).
+    ZUS is treated as fixed (full-rate entrepreneur).
+
+notices:
+  - id: "b2b_flat_input"
+    title: "Enter Annual Income"
+    body: |
+      Enter your annual INCOME (revenue minus deductible business costs).
+      Under the flat tax system, you can deduct legitimate business expenses
+      from your revenue before calculating tax.
+    severity: "info"
+
+  - id: "b2b_flat_comparison"
+    title: "When to Choose Flat Tax"
+    body: |
+      The 19% flat tax is beneficial when your income exceeds approximately
+      150,000 PLN/year. Below that, the progressive tax scale (12%/32%)
+      with the 30,000 PLN tax-free amount is usually more advantageous.
+      Note: You cannot use child tax credits or file jointly under flat tax.
+    severity: "info"
+
+  - id: "b2b_flat_health"
+    title: "Health Insurance at 4.9%"
+    body: |
+      Under flat tax, health insurance is 4.9% of income (not 9%).
+      Minimum: 432.54 PLN/month. Up to 14,100 PLN/year of health contributions
+      can be deducted from income or treated as a tax-deductible cost.
+    severity: "info"
+
+inputs:
+  # Remove employment-specific inputs
+  commuter:
+    $delete: true
+  under_26:
+    $delete: true
+
+parameters:
+  # Flat tax rate
+  flat_tax_rate: 0.19
+
+  # Fixed ZUS social contributions (same as ryczalt - full rate annual)
+  fixed_zus_annual: 23121
+
+  # Health insurance for flat tax: 4.9% of income, minimum 432.54/month
+  flat_health_rate: 0.049
+  flat_health_min_monthly: 432.54
+  flat_health_min_annual: 5190     # 432.54 * 12 = 5,190.48
+
+  # Health contribution deduction limit for flat tax
+  health_deduction_limit: 14100
+
+calculations:
+  # ============================================================================
+  # OVERRIDE: Fixed ZUS for entrepreneurs
+  # ============================================================================
+
+  - id: pension_disability_base
+    type: identity
+    value: 0
+    label: "Not used in B2B flat tax"
+
+  - id: employee_pension_disability
+    type: identity
+    value: 0
+
+  - id: employee_sickness
+    type: identity
+    value: 0
+
+  - id: total_social_contributions
+    type: identity
+    value: "$fixed_zus_annual"
+    category: contribution
+    label: "ZUS Social Contributions (Fixed)"
+    description: "Fixed monthly ZUS for entrepreneurs: pension, disability, sickness, accident, labour fund. Base: 5,652 PLN/month."
+
+  # ============================================================================
+  # OVERRIDE: Health insurance (4.9% for flat tax, with minimum)
+  # ============================================================================
+
+  - id: health_insurance_base
+    type: sub
+    values: ["@gross_annual", "$fixed_zus_annual"]
+    label: "Health Insurance Base (Income after ZUS)"
+
+  # Health = max(4.9% of income after ZUS, minimum annual)
+  - id: health_insurance
+    type: max
+    values:
+      - "$flat_health_min_annual"
+      - type: mul
+        values:
+          - "$health_insurance_base"
+          - "$flat_health_rate"
+    category: contribution
+    label: "Health Insurance (NFZ 4.9%)"
+    description: "4.9% of income after ZUS social contributions, minimum 432.54 PLN/month"
+
+  # ============================================================================
+  # OVERRIDE: Taxable income (income - ZUS - health deduction)
+  # ============================================================================
+
+  - id: under_26_exempt_amount
+    type: identity
+    value: 0
+
+  - id: kup_amount
+    type: identity
+    value: 0
+
+  - id: income_after_social
+    type: sub
+    values: ["@gross_annual", "$fixed_zus_annual"]
+
+  - id: income_after_exemption
+    type: sub
+    values: ["@gross_annual", "$fixed_zus_annual"]
+
+  # Taxable income = gross - ZUS - min(health, 14,100)
+  # No tax-free amount under flat tax
+  - id: taxable_income
+    type: max
+    values:
+      - 0
+      - type: sub
+        values:
+          - "@gross_annual"
+          - "$fixed_zus_annual"
+          - type: min
+            values:
+              - "$health_deduction_limit"
+              - type: max
+                values:
+                  - "$flat_health_min_annual"
+                  - type: mul
+                    values:
+                      - type: sub
+                        values: ["@gross_annual", "$fixed_zus_annual"]
+                      - "$flat_health_rate"
+    label: "Taxable Income"
+    description: "Income after ZUS and health deduction (capped at 14,100 PLN)"
+
+  # Flat 19% tax (no brackets, no tax-free amount)
+  - id: pit_gross
+    type: mul
+    values: ["$taxable_income", "$flat_tax_rate"]
+    label: "Flat Tax (19%)"
+
+  # No tax-reducing amount under flat tax
+  - id: income_tax
+    type: identity
+    value: "$pit_gross"
+    category: income_tax
+    label: "Flat Income Tax (19%)"
+    description: "19% flat rate on income after ZUS and health deductions. No tax-free amount."
+
+  # Solidarity levy still applies for flat tax
+  - id: solidarity_excess
+    type: max
+    values:
+      - 0
+      - type: sub
+        values:
+          - "$taxable_income"
+          - "$solidarity_threshold"
+
+  - id: solidarity_levy
+    type: mul
+    values: ["$solidarity_excess", "$solidarity_rate"]
+    category: surtax
+    label: "Solidarity Levy (4%)"
+    description: "4% surtax on taxable income exceeding 1,000,000 PLN"
+
+  # Totals
+  - id: total_tax
+    type: sum
+    values:
+      - "$income_tax"
+      - "$solidarity_levy"
+
+  - id: total_deductions
+    type: sum
+    values:
+      - "$total_social_contributions"
+      - "$health_insurance"
+      - "$total_tax"
+
+  - id: net_annual
+    type: sub
+    values:
+      - "@gross_annual"
+      - "$total_deductions"

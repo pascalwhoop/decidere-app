@@ -1,6 +1,6 @@
 {
   "name": "Impatriate regime at median income in Lazio",
-  "description": "Expat with impatriate regime earning €60,000 in Lazio (Rome), standard 50% exemption",
+  "description": "Expat with impatriate regime earning €60,000 in Lazio (Rome), standard 50% exemption. INPS contributions are deducted from gross first, then impatriate percentage applied to reduced amount.",
   "variant": "impatriate",
   "inputs": {
     "gross_annual": 60000,
@@ -8,15 +8,20 @@
     "has_minor_children": false
   },
   "expected": {
-    "net": 46387,
-    "effective_rate": 0.2269
+    "net": 47313,
+    "effective_rate": 0.2115
   },
   "tolerance": 150,
   "tolerance_percent": 0.005,
   "sources": [
     {
-      "description": "Impatriate regime 2026: 50% of income exempt. Benefits from 2026 reduced IRPEF second bracket (33% vs 35%).",
+      "description": "Impatriate regime 2026: 50% of income exempt. INPS deducted from gross before exemption calculation.",
       "url": "https://offconsulting.it/italy-impatriate-tax-regime-2025-key-clarifications-you-should-know/",
+      "retrieved_at": "2026-01-22"
+    },
+    {
+      "description": "Benefits from 2026 reduced IRPEF second bracket (33% vs 35%).",
+      "url": "https://www.lexology.com/library/detail.aspx?g=25386883-69ba-499e-a085-f7a5342877ee",
       "retrieved_at": "2026-01-22"
     }
   ]

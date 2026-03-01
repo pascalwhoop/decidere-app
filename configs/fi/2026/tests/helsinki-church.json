@@ -1,0 +1,32 @@
+{
+  "name": "Helsinki - Church member (50k)",
+  "description": "50,000 EUR salary in Helsinki with Evangelical Lutheran church membership (1.00% church tax). Vero.fi reference: 19.0% tax rate at 50k.",
+  "inputs": {
+    "gross_annual": 50000,
+    "municipality": "helsinki",
+    "church_member": true
+  },
+  "expected": {
+    "net": 36496,
+    "effective_rate": 0.27009,
+    "breakdown": {
+      "state_tax": 8604,
+      "municipal_tax": 2393,
+      "church_tax": 452,
+      "tyel_pension": 3650,
+      "unemployment_insurance": 445,
+      "health_care_contribution": 550,
+      "daily_allowance_contribution": 440,
+      "work_income_tax_credit": 3189
+    }
+  },
+  "tolerance": 50,
+  "tolerance_percent": 0.005,
+  "sources": [
+    {
+      "url": "https://www.vero.fi/en/individuals/tax-cards-and-tax-returns/income/earned-income/tax-rates-on-pay-pensions-and-benefits/",
+      "description": "Vero.fi tax rate examples 2026: 19.0% at 50k (Helsinki, church member)",
+      "retrieved_at": "2026-02-28"
+    }
+  ]
+}

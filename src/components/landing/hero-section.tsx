@@ -2,6 +2,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { ArrowRight, Globe, TrendingUp, Share2, Lock } from "lucide-react"
 import { LayoutTextFlip } from "@/components/ui/layout-text-flip"
+import { DecidereLogo } from "@/components/decidere-logo"
 
 const heroFeatures = [
   {
@@ -21,8 +22,8 @@ const heroFeatures = [
   },
   {
     icon: Share2,
-    title: "Share & Collaborate",
-    description: "Shareable links for team decisions",
+    title: "Built in Public",
+    description: "We're building the decision companion—follow along",
   },
 ] as const
 
@@ -31,8 +32,11 @@ export function HeroSection() {
     <section className="relative overflow-hidden bg-gradient-to-b from-background via-background to-muted/30 py-20 md:py-32">
       <div className="container mx-auto px-4">
         <div className="max-w-3xl mx-auto text-center mb-16">
-          <div className="inline-block mb-4 px-3 py-1 text-xs font-medium bg-primary/10 text-primary rounded-full">
-            For Geographically Mobile Professionals
+          <div className="flex flex-col items-center gap-6 mb-8">
+            <DecidereLogo className="size-[250px]" />
+            <div className="inline-block px-3 py-1 text-xs font-medium bg-primary/10 text-primary rounded-full uppercase tracking-widest">
+              Stay home or venture out?
+            </div>
           </div>
           <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 mb-3">
             <LayoutTextFlip
@@ -42,11 +46,10 @@ export function HeroSection() {
             />
           </div>
           <h1 className="text-3xl md:text-5xl font-bold mb-6 tracking-tight">
-            what would I actually take home?
+            how much will I earn?
           </h1>
           <p className="text-xl text-muted-foreground mb-8">
-            Tax-advisor-level accuracy for EU free movers, expats, remote workers, and consultants.
-            Compare real after-tax income across countries and regions—all in one place.
+            Tax-advisor-level accuracy for digital nomads, remote workers and expats. More decision dimensions coming soon.
           </p>
           <Button asChild size="lg" className="gap-2">
             <Link href="/calculator">
