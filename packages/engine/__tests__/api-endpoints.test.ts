@@ -76,6 +76,10 @@ describe('API Endpoints - ConfigLoader Simulation', () => {
       const config = await loader.loadConfig('it', '2025')
       const regionInput = config.inputs.region_level_1
 
+      if (!regionInput || '$delete' in regionInput) {
+        throw new Error('region_level_1 input not found or was deleted')
+      }
+
       expect(regionInput.type).toBe('enum')
       expect(regionInput.required).toBe(true)
 
