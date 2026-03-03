@@ -107,6 +107,15 @@ deploy-prod: build-cloudflare
 	@npx wrangler deploy
 	@echo "✓ Production deployed"
 
+# Secrets management
+secrets:
+	@echo "→ Setting secrets for production from .env..."
+	@./scripts/set-secrets.sh
+
+secrets-preview:
+	@echo "→ Setting secrets for preview environment from .env..."
+	@./scripts/set-secrets.sh preview
+
 # Clean generated files
 clean:
 	@echo "→ Cleaning generated files..."

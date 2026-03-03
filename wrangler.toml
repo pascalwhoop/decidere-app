@@ -8,6 +8,10 @@ workers_dev = true
 binding = "EXCHANGE_RATES_CACHE"
 id = "23769d8b2bf540acb3f6118c87e45f29"
 
+[[kv_namespaces]]
+binding = "FEEDBACK"
+id = "bd28fcf4ed2c44c2a58188a9be18bab2"
+
 [env.preview]
 name = "universal-net-calc-preview"
 
@@ -15,8 +19,16 @@ name = "universal-net-calc-preview"
 binding = "EXCHANGE_RATES_CACHE"
 id = "23769d8b2bf540acb3f6118c87e45f29"
 
+[[env.preview.kv_namespaces]]
+binding = "FEEDBACK"
+id = "bd28fcf4ed2c44c2a58188a9be18bab2"
+
 [env.production]
 
 [[env.production.kv_namespaces]]
 binding = "EXCHANGE_RATES_CACHE"
 id = "23769d8b2bf540acb3f6118c87e45f29"
+
+[[env.production.kv_namespaces]]
+binding = "FEEDBACK"
+id = "bd28fcf4ed2c44c2a58188a9be18bab2"

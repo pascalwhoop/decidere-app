@@ -5,9 +5,10 @@ import { Calculator, History, Settings, HelpCircle, Home, ScrollText } from "luc
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 
-import ModeToggle from "@/components/mode-toggle"
 import { DecidereLogo } from "@/components/decidere-logo"
 import packageJson from "../../package.json"
+import { NavUser } from "@/components/nav-user"
+import { isFeatureEnabled } from "@/lib/feature-flags"
 import {
   Sidebar,
   SidebarContent,
@@ -84,16 +85,21 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarGroupLabel>Navigation</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {navMain.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild isActive={pathname === item.url}>
-                    <Link href={item.url}>
-                      <item.icon className="size-4" />
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {navMain
+                .filter(item => {
+                  if (item.title === "History") return isFeatureEnabled("History")
+                  return true
+                })
+                .map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild isActive={pathname === item.url}>
+                      <Link href={item.url}>
+                        <item.icon className="size-4" />
+                        <span>{item.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -113,12 +119,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
-              <SidebarMenuItem>
-                <ModeToggle />
-              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+        <NavUser />
         <div className="px-2 py-1.5 text-xs text-sidebar-foreground/70">
           <Link
             href="/changelog"

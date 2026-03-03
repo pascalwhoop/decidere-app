@@ -3,6 +3,7 @@
 import { useState, useCallback, useEffect, useRef, useMemo } from "react"
 import { Pin, Plus, Save } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { isFeatureEnabled } from "@/lib/feature-flags"
 import { ComparisonTable } from "./comparison-table"
 import { CountryCalculator } from "./country-calculator"
 import { Toggle } from "@/components/ui/toggle"
@@ -412,15 +413,17 @@ export function ComparisonGrid() {
               <p className="text-sm">Pinned: one gross for all. Unpinned: one gross per country.</p>
             </HoverCardContent>
           </HoverCard>
-          <Button
-            onClick={() => setSaveDialogOpen(true)}
-            disabled={countryResults.size === 0}
-            variant="outline"
-            size="sm"
-          >
-            <Save className="mr-2 h-4 w-4" />
-            Save
-          </Button>
+          {isFeatureEnabled("History") && (
+            <Button
+              onClick={() => setSaveDialogOpen(true)}
+              disabled={countryResults.size === 0}
+              variant="outline"
+              size="sm"
+            >
+              <Save className="mr-2 h-4 w-4" />
+              Save
+            </Button>
+          )}
           <ShareButton disabled={countries.length === 0} />
           <Button
             onClick={addCountry}
@@ -455,22 +458,24 @@ export function ComparisonGrid() {
       />
 
       {/* Save Dialog */}
-      <SaveDialog
-        open={saveDialogOpen}
-        onOpenChange={setSaveDialogOpen}
-        state={{
-          countries: countries.map(c => ({
-            country: c.country,
-            year: c.year,
-            variant: c.variant || undefined,
-            gross_annual: c.gross_annual,
-            formValues: c.formValues,
-            currency: c.currency,
-          })),
-          timestamp: Date.now(),
-        }}
-        results={countryResults}
-      />
+      {isFeatureEnabled("History") && (
+        <SaveDialog
+          open={saveDialogOpen}
+          onOpenChange={setSaveDialogOpen}
+          state={{
+            countries: countries.map(c => ({
+              country: c.country,
+              year: c.year,
+              variant: c.variant || undefined,
+              gross_annual: c.gross_annual,
+              formValues: c.formValues,
+              currency: c.currency,
+            })),
+            timestamp: Date.now(),
+          }}
+          results={countryResults}
+        />
+      )}
 
       {/* Destination Wizard */}
       {wizardTargetId && (() => {

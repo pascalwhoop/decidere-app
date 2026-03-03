@@ -1,9 +1,14 @@
+"use client"
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
+import { useTheme } from "next-themes"
 
 export default function SettingsPage() {
+  const { theme, setTheme } = useTheme()
+
   return (
     <div className="p-6 max-w-2xl">
       <div className="space-y-6">
@@ -18,35 +23,22 @@ export default function SettingsPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Display Preferences</CardTitle>
+            <CardTitle>Appearance</CardTitle>
             <CardDescription>
-              Configure how results are displayed
+              Configure the application theme
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="currency">Default Currency Display</Label>
-              <Select defaultValue="local">
-                <SelectTrigger id="currency">
-                  <SelectValue placeholder="Select currency display" />
+              <Label htmlFor="theme">Theme</Label>
+              <Select value={theme} onValueChange={setTheme}>
+                <SelectTrigger id="theme">
+                  <SelectValue placeholder="Select theme" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="local">Local Currency</SelectItem>
-                  <SelectItem value="usd">USD</SelectItem>
-                  <SelectItem value="eur">EUR</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="period">Default Period</Label>
-              <Select defaultValue="annual">
-                <SelectTrigger id="period">
-                  <SelectValue placeholder="Select period" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="annual">Annual</SelectItem>
-                  <SelectItem value="monthly">Monthly</SelectItem>
+                  <SelectItem value="light">Light</SelectItem>
+                  <SelectItem value="dark">Dark</SelectItem>
+                  <SelectItem value="system">System</SelectItem>
                 </SelectContent>
               </Select>
             </div>
