@@ -16,7 +16,6 @@ interface CalculationResult {
   gross?: number
   net?: number
   effective_rate?: number
-  breakdown?: Record<string, number>
   config_version_hash?: string
   [key: string]: unknown
 }
@@ -25,7 +24,7 @@ interface LogAPIRequestParams {
   request: NextRequest
   endpoint: string
   method: string
-  requestData: CalcRequest
+  requestData: Partial<CalcRequest>
   result?: CalculationResult
   error?: Error
   status: number
