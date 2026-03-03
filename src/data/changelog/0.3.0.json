@@ -1,0 +1,11 @@
+{
+  "version": "0.3.0",
+  "date": "2026-03-03",
+  "improvements": [
+    "Sign in with Google to sync your saved country selections and settings across devices",
+    "Feedback button lets you send quick comments directly from the calculator",
+    "New Changelog page at /changelog shows a full history of updates",
+    "Country comparison is now capped at 8 columns for a cleaner layout on wide screens",
+    "Analytics pipeline upgraded to capture usage patterns and improve the tool over time"
+  ]
+}
