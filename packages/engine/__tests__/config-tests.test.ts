@@ -161,3 +161,83 @@ describe('Config Test Vectors', async () => {
     })
   }
 })
+
+/**
+ * Marginal Rate Validation Tests
+ *
+ * These tests detect tax bracket discontinuities and impossible marginal rates.
+ * A 100% marginal rate indicates a discontinuous jump at a bracket boundary,
+ * which violates fundamental tax principles. This typically means a flat tax
+ * is being applied to the entire income based on bracket thresholds (wrong)
+ * instead of progressive brackets (correct).
+ */
+describe('Marginal Rate Validation', async () => {
+  const tests = await discoverTests()
+
+  // Filter to only tests with income ranges we can interpolate
+  const validTests = tests.filter(t => {
+    const inputs = t.testVector.inputs as Record<string, unknown>
+    return (
+      typeof inputs.gross_annual === 'number' &&
+      inputs.gross_annual > 5000 // Need meaningful income
+    )
+  })
+
+  if (validTests.length === 0) {
+    it('should find tests to validate marginal rates', () => {
+      expect(validTests.length).toBeGreaterThan(0)
+    })
+    return
+  }
+
+  for (const test of validTests) {
+    const testName = `${test.country}/${test.year} - Marginal rates for ${test.testVector.name}`
+
+    it(testName, async () => {
+      const config = await loader.loadConfig(test.country, test.year, test.variant)
+      const engine = new CalculationEngine(config)
+
+      const baseInputs = test.testVector.inputs as Record<string, string | number | boolean | Record<string, unknown> | undefined>
+      const baseGross = baseInputs.gross_annual as number
+
+      // Test at 5 income levels: base, +1%, +5%, +10%, +20%
+      const increments = [0, 0.01, 0.05, 0.1, 0.2]
+      const results: Array<{ gross: number; net: number; marginalRate: number }> = []
+
+      for (const increment of increments) {
+        const testGross = baseGross * (1 + increment)
+
+        const result = engine.calculate({
+          ...baseInputs,
+          gross_annual: testGross,
+        })
+
+        results.push({
+          gross: testGross,
+          net: result.net,
+          marginalRate: increment === 0 ? 0 : (baseInputs.gross_annual as number - result.net) / (testGross - baseGross),
+        })
+      }
+
+      // Check marginal rates between each pair
+      for (let i = 1; i < results.length; i++) {
+        const prev = results[i - 1]
+        const curr = results[i]
+        const marginalRate = 1 - (curr.net - prev.net) / (curr.gross - prev.gross)
+
+        // Marginal rate should be between 0% and 100%
+        // Allow slight overage due to rounding (e.g., 100.5%)
+        expect(
+          marginalRate <= 1.01,
+          `Impossible marginal rate of ${(marginalRate * 100).toFixed(1)}% detected between ${prev.gross.toFixed(0)} and ${curr.gross.toFixed(0)} CHF. This indicates a discontinuous tax calculation - likely a flat rate applied to entire income instead of progressive brackets.`
+        ).toBe(true)
+
+        // Also check for negative marginal rates (taxes decrease as income increases)
+        expect(
+          marginalRate >= -0.01,
+          `Negative marginal rate of ${(marginalRate * 100).toFixed(1)}% detected - net income increased more than gross income increased. This violates tax principles.`
+        ).toBe(true)
+      }
+    })
+  }
+})
