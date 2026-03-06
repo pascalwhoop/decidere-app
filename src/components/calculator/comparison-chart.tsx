@@ -239,7 +239,7 @@ export function ComparisonChart({ countries, baseCurrency }: ComparisonChartProp
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart
                   data={chartData}
-                  margin={{ left: 0, right: 12, top: 12, bottom: 12 }}
+                  margin={{ left: metric === "net" ? 65 : 55, right: 12, top: 12, bottom: 12 }}
                 >
                   <defs>
                     {validCountries.map((c, index) => {
