@@ -174,6 +174,79 @@ parameters:
   childcare_cap_per_child: 25000
   medical_threshold_rate: 0.05
 
+  # Cantonal/municipal tax brackets (progressive rates by income level and canton)
+  # Single filers - Zurich
+  zurich_single_brackets:
+    - threshold: 0
+      rate: 0.08
+    - threshold: 50000
+      rate: 0.12
+    - threshold: 150000
+      rate: 0.15
+
+  # Married filers - Zurich
+  zurich_married_brackets:
+    - threshold: 0
+      rate: 0.06
+    - threshold: 50000
+      rate: 0.10
+    - threshold: 150000
+      rate: 0.13
+
+  # Single filers - Zug
+  zug_single_brackets:
+    - threshold: 0
+      rate: 0.04
+    - threshold: 50000
+      rate: 0.07
+    - threshold: 150000
+      rate: 0.09
+
+  # Married filers - Zug
+  zug_married_brackets:
+    - threshold: 0
+      rate: 0.03
+    - threshold: 50000
+      rate: 0.05
+    - threshold: 150000
+      rate: 0.07
+
+  # Single filers - Geneva
+  geneva_single_brackets:
+    - threshold: 0
+      rate: 0.10
+    - threshold: 50000
+      rate: 0.15
+    - threshold: 150000
+      rate: 0.18
+
+  # Married filers - Geneva
+  geneva_married_brackets:
+    - threshold: 0
+      rate: 0.08
+    - threshold: 50000
+      rate: 0.13
+    - threshold: 150000
+      rate: 0.16
+
+  # Single filers - Neuchâtel
+  neuchatel_single_brackets:
+    - threshold: 0
+      rate: 0.12
+    - threshold: 50000
+      rate: 0.17
+    - threshold: 150000
+      rate: 0.20
+
+  # Married filers - Neuchâtel
+  neuchatel_married_brackets:
+    - threshold: 0
+      rate: 0.10
+    - threshold: 50000
+      rate: 0.15
+    - threshold: 150000
+      rate: 0.18
+
   # Federal income tax brackets for single filers (2026)
   # Source: Official 2026 Bundessteuer Tarif PDF - adjusted for 0.1% cold progression
   # Top bracket threshold adjusted from 783,300 to 793,800 for singles
@@ -455,10 +528,8 @@ calculations:
     label: "Federal Income Tax"
     description: "Swiss direct federal tax (progressive up to 11.5%)"
 
-  # Cantonal/municipal tax estimation
-  # This uses simplified rates based on income level and canton
-  # Cantonal/municipal tax calculation (estimated)
-  - id: cantonal_municipal_rate
+  # Cantonal/municipal tax brackets
+  - id: cantonal_brackets
     type: switch
     on: "@region_level_1"
     cases:
@@ -466,187 +537,43 @@ calculations:
         type: switch
         on: "@filing_status"
         cases:
-          single:
-            type: conditional
-            condition:
-              type: lt
-              left: "@gross_annual"
-              right: 50000
-            then: 0.08
-            else:
-              type: conditional
-              condition:
-                type: gt
-                left: "@gross_annual"
-                right: 150000
-              then: 0.15
-              else: 0.12
-          married:
-            type: conditional
-            condition:
-              type: lt
-              left: "@gross_annual"
-              right: 50000
-            then: 0.06
-            else:
-              type: conditional
-              condition:
-                type: gt
-                left: "@gross_annual"
-                right: 150000
-              then: 0.13
-              else: 0.10
-          _: 0.12
-      bern:
-        type: switch
-        on: "@filing_status"
-        cases:
-          single:
-            type: conditional
-            condition:
-              type: lt
-              left: "@gross_annual"
-              right: 50000
-            then: 0.09
-            else:
-              type: conditional
-              condition:
-                type: gt
-                left: "@gross_annual"
-                right: 150000
-              then: 0.17
-              else: 0.14
-          married:
-            type: conditional
-            condition:
-              type: lt
-              left: "@gross_annual"
-              right: 50000
-            then: 0.07
-            else:
-              type: conditional
-              condition:
-                type: gt
-                left: "@gross_annual"
-                right: 150000
-              then: 0.15
-              else: 0.12
-          _: 0.14
-      geneva:
-        type: switch
-        on: "@filing_status"
-        cases:
-          single:
-            type: conditional
-            condition:
-              type: lt
-              left: "@gross_annual"
-              right: 50000
-            then: 0.10
-            else:
-              type: conditional
-              condition:
-                type: gt
-                left: "@gross_annual"
-                right: 150000
-              then: 0.18
-              else: 0.15
-          married:
-            type: conditional
-            condition:
-              type: lt
-              left: "@gross_annual"
-              right: 50000
-            then: 0.08
-            else:
-              type: conditional
-              condition:
-                type: gt
-                left: "@gross_annual"
-                right: 150000
-              then: 0.16
-              else: 0.13
-          _: 0.15
+          single: "$zurich_single_brackets"
+          married: "$zurich_married_brackets"
+          _: "$zurich_single_brackets"
       zug:
         type: switch
         on: "@filing_status"
         cases:
-          single:
-            type: conditional
-            condition:
-              type: lt
-              left: "@gross_annual"
-              right: 50000
-            then: 0.04
-            else:
-              type: conditional
-              condition:
-                type: gt
-                left: "@gross_annual"
-                right: 150000
-              then: 0.09
-              else: 0.07
-          married:
-            type: conditional
-            condition:
-              type: lt
-              left: "@gross_annual"
-              right: 50000
-            then: 0.03
-            else:
-              type: conditional
-              condition:
-                type: gt
-                left: "@gross_annual"
-                right: 150000
-              then: 0.07
-              else: 0.05
-          _: 0.07
+          single: "$zug_single_brackets"
+          married: "$zug_married_brackets"
+          _: "$zug_single_brackets"
+      geneva:
+        type: switch
+        on: "@filing_status"
+        cases:
+          single: "$geneva_single_brackets"
+          married: "$geneva_married_brackets"
+          _: "$geneva_single_brackets"
       neuchatel:
         type: switch
         on: "@filing_status"
         cases:
-          single:
-            type: conditional
-            condition:
-              type: lt
-              left: "@gross_annual"
-              right: 50000
-            then: 0.12
-            else:
-              type: conditional
-              condition:
-                type: gt
-                left: "@gross_annual"
-                right: 150000
-              then: 0.20
-              else: 0.17
-          married:
-            type: conditional
-            condition:
-              type: lt
-              left: "@gross_annual"
-              right: 50000
-            then: 0.10
-            else:
-              type: conditional
-              condition:
-                type: gt
-                left: "@gross_annual"
-                right: 150000
-              then: 0.18
-              else: 0.15
-          _: 0.17
-      _: 0.12  # Default for any other canton or if none selected
+          single: "$neuchatel_single_brackets"
+          married: "$neuchatel_married_brackets"
+          _: "$neuchatel_single_brackets"
+      _: "$zurich_single_brackets"  # Default to Zurich single
+
+  # Cantonal/municipal tax - Progressive brackets for correct marginal rate calculation
+  # IMPORTANT: Cantonal taxes are applied progressively (marginal rates), not as flat rate on entire income
+  # This avoids discontinuities at bracket thresholds
 
   - id: cantonal_municipal_tax
-    type: mul
-    values:
-      - "@gross_annual"
-      - "$cantonal_municipal_rate"
+    type: bracket_tax
+    base: "@gross_annual"
+    brackets: "$cantonal_brackets"
     category: income_tax
     label: "Cantonal & Municipal Tax"
-    description: "Combined cantonal and municipal income tax (varies by location)"
+    description: "Combined cantonal and municipal income tax (progressive marginal rates by canton and filing status)"
 
   # Total taxes and deductions
   - id: total_income_tax
