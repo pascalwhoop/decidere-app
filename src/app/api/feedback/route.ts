@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getCloudflareContext } from "@opennextjs/cloudflare"
-import { auth } from "@/auth"
+// import { auth } from "@/lib/firebase/client"
 
 export const runtime = "edge"
 
@@ -14,8 +14,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if user is authenticated (optional)
-    const session = await auth()
-    const userEmail = session?.user?.email || "anonymous"
+    // const session = await auth()
+    const userEmail = "anonymous"
 
     const ctx = getCloudflareContext()
     const kv = (ctx.env as any).FEEDBACK as KVNamespace

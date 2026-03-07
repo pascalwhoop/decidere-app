@@ -229,7 +229,7 @@ Create `tests/<name>.json` covering:
 - Each filing status
 - Regional variations if applicable
 
-**IMPORTANT**: Use official government calculators or tax tables to get accurate expected values. Don't estimate!
+**CRITICAL — Test vectors MUST NEVER be derived from the engine.** Expected values must come from an official/authoritative source (official government calculator, official statute, or authoritative reference like PwC Tax Summaries). Third-party calculators are NOT acceptable. Use a deterministic Python script implementing the official formula, then cross-verify against an official government calculator. NEVER use LLM mental arithmetic. If you derive test values from the engine, fixing a bug in the engine will break all tests — making them useless as an independent check.
 
 Test vector format:
 ```json

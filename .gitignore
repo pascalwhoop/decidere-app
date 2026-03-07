@@ -74,3 +74,4 @@ bundle-analysis*.html
 history/
 /data/
 public/generated/
+reports/
