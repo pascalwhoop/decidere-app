@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from "next/server"
 import { CalculationEngine, ConfigLoader } from "../../../../../packages/engine/src"
 import { join } from "path"
+import {
+  convertBaseGrossToLocalGross,
+  countProgressionPoints,
+  PROGRESSION_MIN_STEP_SIZE,
+  PROGRESSION_TARGET_MAX_POINTS,
+} from "@/lib/progression-range"
 
 const configLoader = new ConfigLoader(join(process.cwd(), "configs"))
 
@@ -10,12 +16,11 @@ export interface CalcRequestWithId {
   year: string | number
   gross_annual: number
   variant?: string
+  progression_rate_to_base?: number
   [key: string]: string | number | boolean | undefined | unknown // Allow dynamic inputs
 }
 
 const MAX_REQUESTS = 8
-const MIN_STEP_SIZE = 5000
-const MAX_RANGE = 1_000_000
 
 interface ProgressionRequest {
   requests: CalcRequestWithId[]
@@ -38,12 +43,19 @@ export async function POST(request: NextRequest) {
     }
 
     const range = max_gross - min_gross
-    if (range <= 0 || range > MAX_RANGE) {
-      return NextResponse.json({ error: `Gross range must be between 1 and ${MAX_RANGE}` }, { status: 400 })
+    if (range <= 0) {
+      return NextResponse.json({ error: "Gross range must be greater than 0" }, { status: 400 })
     }
 
-    if (step_size < MIN_STEP_SIZE) {
-      return NextResponse.json({ error: `step_size must be at least ${MIN_STEP_SIZE}` }, { status: 400 })
+    if (step_size < PROGRESSION_MIN_STEP_SIZE) {
+      return NextResponse.json({ error: `step_size must be at least ${PROGRESSION_MIN_STEP_SIZE}` }, { status: 400 })
+    }
+
+    if (countProgressionPoints(min_gross, max_gross, step_size) > PROGRESSION_TARGET_MAX_POINTS) {
+      return NextResponse.json(
+        { error: `Too many progression points; maximum is ${PROGRESSION_TARGET_MAX_POINTS}` },
+        { status: 400 }
+      )
     }
 
     const results: Record<string, Array<{ gross: number, net: number, currency: string, effective_rate: number, marginal_rate?: number }>> = {}
@@ -57,20 +69,32 @@ export async function POST(request: NextRequest) {
 
         const dataPoints = []
         
-        for (let testGross = min_gross; testGross <= max_gross; testGross += step_size) {
-          // exclude 'id' and 'gross_annual' from the calculation inputs
-          const { id: _id, gross_annual: _ga, ...engineInputs } = req
+        const rateToBase =
+          typeof req.progression_rate_to_base === "number" && req.progression_rate_to_base > 0
+            ? req.progression_rate_to_base
+            : 1
+
+        for (let baseGross = min_gross; baseGross <= max_gross; baseGross += step_size) {
+          // Exclude transport fields before passing dynamic inputs into the engine.
+          const {
+            id: _id,
+            gross_annual: _ga,
+            progression_rate_to_base: _progressionRateToBase,
+            ...engineInputs
+          } = req
+
+          const localGross = convertBaseGrossToLocalGross(baseGross, rateToBase)
           
           const engineInputsForCalc = {
             ...engineInputs,
-            gross_annual: testGross
+            gross_annual: localGross
           } as Record<string, string | number | boolean | Record<string, unknown> | undefined>
 
           const result = engine.calculate(engineInputsForCalc)
           const marginalRate = engine.calculateMarginalRate(engineInputsForCalc)
           
           dataPoints.push({
-            gross: testGross,
+            gross: baseGross,
             net: result.net,
             currency: config.meta.currency,
             effective_rate: result.effective_rate,

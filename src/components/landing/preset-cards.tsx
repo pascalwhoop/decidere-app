@@ -20,9 +20,11 @@ const presets: {
     title: "Tech Hubs",
     description: "Compare salaries in the world's top tech centers",
     countries: [
-      { label: "US/CA", param: "us---state:california" },
-      { label: "CH/ZH", param: "ch---region_level_1:zurich" },
-      { label: "NL", param: "nl" },
+      { label: "San Francisco, California", param: "us---state:california" },
+      { label: "New York", param: "us---state:new_york" },
+      { label: "London", param: "gb" },
+      { label: "Berlin", param: "de" },
+      { label: "Paris", param: "fr" },
     ],
     icon: "🏙️",
   },
@@ -31,10 +33,10 @@ const presets: {
     title: "EU Comparison",
     description: "Navigate European tax systems side-by-side",
     countries: [
-      { label: "DE", param: "de" },
-      { label: "FR", param: "fr" },
-      { label: "NL", param: "nl" },
-      { label: "IT", param: "it" },
+      { label: "Germany", param: "de" },
+      { label: "France", param: "fr" },
+      { label: "Netherlands", param: "nl" },
+      { label: "Italy", param: "it" },
     ],
     icon: "🇪🇺",
   },
@@ -43,13 +45,35 @@ const presets: {
     title: "Expat Havens",
     description: "Explore tax-optimized destinations for international workers",
     countries: [
-      { label: "CH", param: "ch" },
-      { label: "NL", param: "nl" },
-      { label: "PT", param: "pt" },
-      { label: "AE", param: "ae" },
+      { label: "Switzerland", param: "ch" },
+      { label: "Netherlands", param: "nl" },
+      { label: "Portugal", param: "pt" },
+      { label: "United Arab Emirates", param: "ae" },
     ],
     variants: "nl:30-ruling",
     icon: "✈️",
+  },
+  {
+    id: "impatriate-regimes",
+    title: "Impatriate Regimes",
+    description: "Compare high-income outcomes across US states, Southern Europe, and Zurich",
+    countries: [
+      { label: "California", param: "us-2026-180000-filing_status:single-state:california" },
+      { label: "Texas", param: "us-2026-180000-filing_status:single-state:texas" },
+      { label: "Greece", param: "gr-2026-152785-filing_status:single" },
+      { label: "Portugal", param: "pt-2026-152785-filing_status:single" },
+      {
+        label: "Italy, Lazio",
+        param: "it-2026-152785-region_level_1:lazio-has_minor_children:false",
+      },
+      {
+        label: "Switzerland, Zurich",
+        param:
+          "ch-2026-140755-filing_status:single-region_level_1:zurich-pillar_3a_contributions:0-mortgage_interest_paid:0-investment_income_annual:0-childcare_costs:0-number_of_children_eligible:1-medical_expenses:0",
+      },
+    ],
+    variants: "gr:article-5c,pt:ifici,it:impatriate",
+    icon: "🌍",
   },
 ]
 
@@ -64,7 +88,7 @@ export function PresetCards() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 max-w-6xl mx-auto">
           {presets.map((preset) => {
             const cParam = preset.countries.map((c) => c.param).join(",")
             const href = `/calculator?c=${cParam}${preset.variants ? `&v=${preset.variants}` : ""}`
@@ -80,7 +104,18 @@ export function PresetCards() {
                     {preset.description}
                   </p>
 
-                  <div className="flex flex-wrap gap-2 mb-6">
+                  <Button
+                    asChild
+                    variant="outline"
+                    className="w-full gap-2 mb-6 group-hover:border-primary group-hover:text-primary"
+                  >
+                    <Link href={href}>
+                      Compare
+                      <ArrowRight className="w-4 h-4" />
+                    </Link>
+                  </Button>
+
+                  <div className="flex flex-wrap gap-2">
                     {preset.countries.map((country) => (
                       <span
                         key={country.param}
@@ -90,17 +125,6 @@ export function PresetCards() {
                       </span>
                     ))}
                   </div>
-
-                  <Button
-                    asChild
-                    variant="outline"
-                    className="w-full gap-2 group-hover:border-primary group-hover:text-primary"
-                  >
-                    <Link href={href}>
-                      Compare
-                      <ArrowRight className="w-4 h-4" />
-                    </Link>
-                  </Button>
                 </div>
               </Card>
             )

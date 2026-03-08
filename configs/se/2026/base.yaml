@@ -309,7 +309,7 @@ calculations:
             right: "$work_credit_phase5_start"
           then:
             # Phase 4: 5,680 - 6.51% of excess above 43,692 (phaseout)
-            type: sub
+            type: sum
             values:
               - "$work_credit_phase4_base"
               - type: mul

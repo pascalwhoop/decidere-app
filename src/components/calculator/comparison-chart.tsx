@@ -16,10 +16,13 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import type { CountryColumnState } from "@/lib/types"
-import { getCountryName } from "@/lib/api"
 import { getExchangeRate } from "@/lib/api"
 import { formatCurrency, formatPercent } from "@/lib/formatters"
 import { formatCountryLabel } from "@/lib/country-metadata"
+import {
+  getProgressionRange,
+  normalizeProgressionSalariesToBaseCurrency,
+} from "@/lib/progression-range"
 
 interface ComparisonChartProps {
   countries: CountryColumnState[]
@@ -56,29 +59,6 @@ export function ComparisonChart({ countries, baseCurrency }: ComparisonChartProp
     return JSON.stringify(validCountries.map(c => ({ id: c.id, c: c.country, y: c.year, v: c.variant })))
   }, [validCountries])
 
-  // Compute a clean range: half the min configured salary → 3× the max, with round step size
-  const { minGross, maxGross, stepSize } = useMemo(() => {
-    const salaries = validCountries
-      .map(c => parseFloat(c.gross_annual))
-      .filter(v => !isNaN(v) && v > 0)
-    if (salaries.length === 0) return { minGross: 10000, maxGross: 300000, stepSize: 10000 }
-
-    const lo = Math.min(...salaries)
-    const hi = Math.max(...salaries)
-    // Round down/up to nearest 10k for clean boundaries
-    const rawMin = Math.floor((lo * 0.5) / 10000) * 10000
-    const rawMax = Math.ceil((hi * 3) / 10000) * 10000
-    const range = rawMax - rawMin
-    // Pick the largest "nice" step that gives >= 50 data points
-    const nice = [20000, 10000, 5000]
-    const step = nice.find(s => range / s >= 50) ?? 10000
-    return {
-      minGross: Math.max(0, rawMin),
-      maxGross: Math.ceil(rawMax / step) * step, // ensure max is a multiple of step
-      stepSize: step,
-    }
-  }, [validCountries])
-
   const chartConfig = useMemo(() => {
     const config: ChartConfig = {}
     validCountries.forEach((c, index) => {
@@ -101,6 +81,24 @@ export function ComparisonChart({ countries, baseCurrency }: ComparisonChartProp
 
       setLoading(true)
       try {
+        const rates: Record<string, number> = {}
+        for (const c of validCountries) {
+          const sourceCurrency = c.result?.currency || c.currency || "EUR"
+          try {
+            rates[c.id] = await getExchangeRate(sourceCurrency, baseCurrency)
+          } catch {
+            rates[c.id] = 1
+          }
+        }
+
+        const normalizedSalaries = normalizeProgressionSalariesToBaseCurrency(
+          validCountries.map(c => ({
+            gross: parseFloat(c.gross_annual),
+            rateToBase: rates[c.id] || 1,
+          }))
+        )
+        const { minGross, maxGross, stepSize } = getProgressionRange(normalizedSalaries)
+
         const res = await fetch("/api/calc/progression", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -111,6 +109,7 @@ export function ComparisonChart({ countries, baseCurrency }: ComparisonChartProp
               year: c.year,
               variant: c.variant,
               gross_annual: c.gross_annual,
+              progression_rate_to_base: rates[c.id] || 1,
               ...c.formValues,
             })),
             min_gross: minGross,
@@ -123,16 +122,6 @@ export function ComparisonChart({ countries, baseCurrency }: ComparisonChartProp
 
         const data = await res.json()
         const results = (data as { results: Record<string, Array<{ gross: number, net: number, currency: string, effective_rate: number, marginal_rate?: number }>> }).results
-
-        const rates: Record<string, number> = {}
-        for (const c of validCountries) {
-          const sourceCurrency = c.result?.currency || c.currency || "EUR"
-          try {
-            rates[c.id] = await getExchangeRate(sourceCurrency, baseCurrency)
-          } catch {
-            rates[c.id] = 1
-          }
-        }
 
         if (!active) return
 
@@ -177,7 +166,7 @@ export function ComparisonChart({ countries, baseCurrency }: ComparisonChartProp
     // validCountriesDeps is the content-based dep; validCountries ref is intentionally
     // excluded to avoid re-fetching when unrelated country state changes.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [baseCurrency, validCountriesDeps, minGross, maxGross, stepSize])
+  }, [baseCurrency, validCountriesDeps])
 
   if (validCountries.length === 0) return null
 
