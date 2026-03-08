@@ -75,3 +75,11 @@ history/
 /data/
 public/generated/
 reports/
+scripts/local-debug/
+
+configs/
+!configs/**/*.json
+!configs/**/*.yaml
+configs/**/__pycache__
+configs-manifest.json
+

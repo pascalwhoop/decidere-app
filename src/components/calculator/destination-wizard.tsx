@@ -49,7 +49,7 @@ import { CostOfLivingSection } from "./cost-of-living-section"
 import { NoticeIcon, filterNoticesForVariant, NoticeRow, getSeverityIcon, getSeverityColor } from "./notices"
 import { CountryColumnState, type CostOfLiving } from "@/lib/types"
 import { getCountryName, getCurrencySymbol, getExchangeRate, calculateSalary, type CalculationResult } from "@/lib/api"
-import { getCountryFlag } from "@/lib/country-metadata"
+import { formatCountryLabel, getCountryFlag } from "@/lib/country-metadata"
 import { useMediaQuery } from "@/lib/hooks"
 import { useCountries, useYears, useVariants, useInputs } from "@/lib/queries"
 import { buildCalcRequest } from "@/lib/calc-utils"
@@ -240,7 +240,7 @@ export function DestinationWizard({
   }
 
   const title = country
-    ? `${getCountryFlag(country)} ${getCountryName(country)}`
+    ? formatCountryLabel(country, formValues, inputsData?.inputs)
     : "New Destination"
 
   // Count active deductions for collapsible label

@@ -180,8 +180,9 @@ calculations:
     category: contribution
     label: "Social Security (INPS - Employee)"
 
-  # Cuneo fiscale 2026 - Tax-exempt sum for incomes up to €20,000
+  # Cuneo fiscale 2026 - Tax-exempt sum for incomes BELOW €20,000
   # This reduces taxable income (replaces the old INPS contribution cuts)
+  # NOTE: Must use "lt" (not "lte") for €20k threshold to avoid double-benefit bug
   - id: cuneo_exempt_rate
     type: conditional
     condition:
@@ -199,7 +200,7 @@ calculations:
       else:
         type: conditional
         condition:
-          type: lte
+          type: lt
           left: "@gross_annual"
           right: "$cuneo_exempt_threshold_3"
         then: "$cuneo_exempt_rate_3"

@@ -1,20 +1,25 @@
 {
   "name": "High income in Lombardia (Milan)",
-  "description": "Employee earning €60,000 in Lombardia region (includes Milan). Employment credit phases out but still provides some benefit.",
+  "description": "Employee earning €60,000 in Lombardia region (includes Milan). Employment credit fully phased out (income >€50,000). Verified using verify_italy_tax.py script implementing official formulas.",
   "inputs": {
     "gross_annual": 60000,
     "region_level_1": "lombardia"
   },
   "expected": {
-    "net": 34198,
-    "effective_rate": 0.4300
+    "net": 34198.00,
+    "effective_rate": 0.430
   },
-  "tolerance": 100,
+  "tolerance": 10,
   "sources": [
     {
       "description": "Lombardia regional tax: ~2.28% average (progressive 1.23% to 3.33%)",
       "url": "https://www.pagheon-line.com/infoter/help/Pa/DOC-IRPEF-ADDIZIONALI.html",
       "retrieved_at": "2026-01-22"
+    },
+    {
+      "description": "Verified using verify_italy_tax.py (independent Python implementation of official formulas)",
+      "url": "file://configs/it/verify_italy_tax.py",
+      "retrieved_at": "2026-03-08"
     }
   ]
 }

@@ -1,25 +1,30 @@
 {
   "name": "Median income single earner",
-  "description": "Employee earning €35,000 annually. INPS contributions (3.19% after 6pp cuneo fiscale cut) are deducted from gross BEFORE calculating IRPEF. Benefits from 2026 rate reduction (33% vs 35%), employment tax credit with €65 bonus, and €1,000 fixed deduction.",
+  "description": "Employee earning €35,000 annually. INPS contributions (9.19%) are deducted from gross BEFORE calculating IRPEF. Benefits from 2026 rate reduction (33% vs 35% on second bracket), employment tax credit, and €625 cuneo fiscale deduction. Verified using verify_italy_tax.py script implementing official formulas.",
   "inputs": {
     "gross_annual": 35000,
     "region_level_1": "marche"
   },
   "expected": {
-    "net": 26012,
-    "effective_rate": 0.2568
+    "net": 25218.10,
+    "effective_rate": 0.280
   },
-  "tolerance": 50,
+  "tolerance": 10,
   "sources": [
     {
-      "description": "INPS employee contributions are deducted from gross before IRPEF calculation (TaxRaven)",
-      "url": "https://www.taxraven.com/",
+      "description": "INPS employee contributions are deducted from gross before IRPEF calculation",
+      "url": "https://www.rivermate.com/",
       "retrieved_at": "2026-01-23"
     },
     {
-      "description": "2026 reduced rate (33% vs 35%) plus employment credit with €65 bonus",
+      "description": "2026 reduced rate (33% vs 35%) on second bracket",
       "url": "https://www.lexology.com/library/detail.aspx?g=25386883-69ba-499e-a085-f7a5342877ee",
       "retrieved_at": "2026-01-22"
+    },
+    {
+      "description": "Verified using verify_italy_tax.py (independent Python implementation of official formulas)",
+      "url": "file://configs/it/verify_italy_tax.py",
+      "retrieved_at": "2026-03-08"
     }
   ]
 }

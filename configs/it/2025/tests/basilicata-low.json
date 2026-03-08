@@ -1,15 +1,15 @@
 {
   "name": "Low income in Basilicata",
-  "description": "Employee earning €20,000 in Basilicata (lowest regional tax rate). Includes employment tax credit (detrazione lavoro dipendente) and INPS contribution cut.",
+  "description": "Employee earning €20,000 in Basilicata (lowest regional tax rate). Includes employment tax credit (detrazione lavoro dipendente) and cuneo fiscale. Verified using verify_italy_tax.py script implementing official formulas.",
   "inputs": {
     "gross_annual": 20000,
     "region_level_1": "basilicata"
   },
   "expected": {
-    "net": 17198,
-    "effective_rate": 0.1401
+    "net": 16798.31,
+    "effective_rate": 0.160
   },
-  "tolerance": 50,
+  "tolerance": 10,
   "sources": [
     {
       "description": "Basilicata has the lowest regional tax rate at 1.23% (national minimum)",
@@ -20,6 +20,11 @@
       "description": "Employment tax credit formula - creates no-tax area at €8,500",
       "url": "https://taxing.it/tax-credit-for-employment-income/",
       "retrieved_at": "2026-01-23"
+    },
+    {
+      "description": "Verified using verify_italy_tax.py (independent Python implementation of official formulas)",
+      "url": "file://configs/it/verify_italy_tax.py",
+      "retrieved_at": "2026-03-08"
     }
   ]
 }

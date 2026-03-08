@@ -195,8 +195,77 @@ calculations:
     category: contribution
     label: "Social Security (INPS - Employee)"
 
+  # Cuneo fiscale 2025 - Tax-exempt sum for incomes BELOW €20,000
+  # This reduces taxable income (replaces the old INPS contribution cuts)
+  # NOTE: Must use "lt" (not "lte") for €20k threshold to avoid double-benefit bug
+  - id: cuneo_exempt_rate
+    type: conditional
+    condition:
+      type: lte
+      left: "@gross_annual"
+      right: "$cuneo_exempt_threshold_1"
+    then: "$cuneo_exempt_rate_1"
+    else:
+      type: conditional
+      condition:
+        type: lte
+        left: "@gross_annual"
+        right: "$cuneo_exempt_threshold_2"
+      then: "$cuneo_exempt_rate_2"
+      else:
+        type: conditional
+        condition:
+          type: lt
+          left: "@gross_annual"
+          right: "$cuneo_exempt_threshold_3"
+        then: "$cuneo_exempt_rate_3"
+        else: 0
+
+  - id: cuneo_exempt_sum
+    type: percent_of
+    base: "@gross_annual"
+    rate: "$cuneo_exempt_rate"
+
+  # Cuneo fiscale 2025 - Tax deduction for incomes €20,000-€40,000
+  - id: cuneo_deduction
+    type: conditional
+    condition:
+      type: lt
+      left: "@gross_annual"
+      right: "$cuneo_deduction_min"
+    then: 0
+    else:
+      type: conditional
+      condition:
+        type: lte
+        left: "@gross_annual"
+        right: "$cuneo_deduction_fixed_max"
+      then: "$cuneo_deduction_amount"
+      else:
+        type: conditional
+        condition:
+          type: lte
+          left: "@gross_annual"
+          right: "$cuneo_deduction_phaseout_max"
+        then:
+          type: mul
+          values:
+            - "$cuneo_deduction_amount"
+            - type: div
+              values:
+                - type: sub
+                  values:
+                    - "$cuneo_deduction_phaseout_max"
+                    - "@gross_annual"
+                - type: sub
+                  values:
+                    - "$cuneo_deduction_phaseout_max"
+                    - "$cuneo_deduction_fixed_max"
+        else: 0
+
   # Taxable income = gross - cuneo fiscale exempt sum (for incomes ≤€20k)
   # For incomes >€20k, the cuneo fiscale operates as a deduction instead
+  # NOTE: INPS is NOT deducted from taxable income in 2025 (changed in 2026)
   - id: taxable_income
     type: sub
     values:
@@ -350,73 +419,6 @@ calculations:
       - "$irpef"
       - "$regional_tax"
       - "$municipal_tax"
-
-  # Cuneo fiscale 2025 - Tax-exempt sum for incomes up to €20,000
-  # This reduces taxable income (replaces the old INPS contribution cuts)
-  - id: cuneo_exempt_rate
-    type: conditional
-    condition:
-      type: lte
-      left: "@gross_annual"
-      right: "$cuneo_exempt_threshold_1"
-    then: "$cuneo_exempt_rate_1"
-    else:
-      type: conditional
-      condition:
-        type: lte
-        left: "@gross_annual"
-        right: "$cuneo_exempt_threshold_2"
-      then: "$cuneo_exempt_rate_2"
-      else:
-        type: conditional
-        condition:
-          type: lte
-          left: "@gross_annual"
-          right: "$cuneo_exempt_threshold_3"
-        then: "$cuneo_exempt_rate_3"
-        else: 0
-
-  - id: cuneo_exempt_sum
-    type: percent_of
-    base: "@gross_annual"
-    rate: "$cuneo_exempt_rate"
-
-  # Cuneo fiscale 2025 - Tax deduction for incomes €20,000-€40,000
-  - id: cuneo_deduction
-    type: conditional
-    condition:
-      type: lt
-      left: "@gross_annual"
-      right: "$cuneo_deduction_min"
-    then: 0
-    else:
-      type: conditional
-      condition:
-        type: lte
-        left: "@gross_annual"
-        right: "$cuneo_deduction_fixed_max"
-      then: "$cuneo_deduction_amount"
-      else:
-        type: conditional
-        condition:
-          type: lte
-          left: "@gross_annual"
-          right: "$cuneo_deduction_phaseout_max"
-        then:
-          type: mul
-          values:
-            - "$cuneo_deduction_amount"
-            - type: div
-              values:
-                - type: sub
-                  values:
-                    - "$cuneo_deduction_phaseout_max"
-                    - "@gross_annual"
-                - type: sub
-                  values:
-                    - "$cuneo_deduction_phaseout_max"
-                    - "$cuneo_deduction_fixed_max"
-        else: 0
 
   # Total Deductions
   - id: total_deductions

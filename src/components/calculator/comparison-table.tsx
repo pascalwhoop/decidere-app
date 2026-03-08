@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import type { CountryColumnState } from "@/lib/types"
 import type { BreakdownItem } from "@/lib/api"
 import { getCountryName } from "@/lib/api"
-import { getCountryFlag } from "@/lib/country-metadata"
+import { formatCountryLabel } from "@/lib/country-metadata"
 import { formatCurrency, formatPercent } from "@/lib/formatters"
 import {
   groupByCategory,
@@ -60,7 +60,7 @@ function MobileSummaryBar({
           >
             <div className="flex flex-col gap-0.5 min-w-0">
               <span className="shrink-0">
-                {c.country ? `${getCountryFlag(c.country)} ${getCountryName(c.country)}` : `Destination ${c.index + 1}`}
+                {c.country ? formatCountryLabel(c.country, c.formValues) : `Destination ${c.index + 1}`}
               </span>
               {bestCountryId === c.id && (
                 <Badge variant="default" className="bg-green-600 hover:bg-green-700 shrink-0 text-[10px] px-1.5 py-0 w-fit">
@@ -139,7 +139,7 @@ function MobileCountryCard({
         <div className="min-w-0">
           <div className="flex items-center gap-1.5">
             <span className="font-medium">
-              {country.country ? `${getCountryFlag(country.country)} ${getCountryName(country.country)}` : `Destination ${country.index + 1}`}
+              {country.country ? formatCountryLabel(country.country, country.formValues) : `Destination ${country.index + 1}`}
             </span>
             {isBest && (
               <Badge variant="default" className="bg-green-600 hover:bg-green-700 shrink-0 text-[10px] px-1.5 py-0">
@@ -383,7 +383,7 @@ export function ComparisonTable({
                   <div className="min-w-0">
                     <div className="flex items-center gap-1.5">
                       <span className="font-medium truncate">
-                        {c.country ? `${getCountryFlag(c.country)} ${getCountryName(c.country)}` : `Destination ${c.index + 1}`}
+                        {c.country ? formatCountryLabel(c.country, c.formValues) : `Destination ${c.index + 1}`}
                       </span>
                       {bestCountryId === c.id && (
                         <Badge variant="default" className="bg-green-600 hover:bg-green-700 shrink-0 text-[10px] px-1.5 py-0">

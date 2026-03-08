@@ -1,18 +1,18 @@
 {
   "name": "High income single earner",
-  "description": "Employee earning €60,000 annually. INPS contributions (9.19% standard rate, no cut for high earners) are deducted from gross BEFORE calculating IRPEF. Benefits from 2026 rate reduction (33% vs 35% on second bracket). Employment credit phases out above €50,000.",
+  "description": "Employee earning €60,000 annually. INPS contributions (9.19%) are deducted from gross BEFORE calculating IRPEF. Benefits from 2026 rate reduction (33% vs 35% on €28k-€50k bracket, saving €440). Employment credit fully phased out above €50,000. Verified using verify_italy_tax.py script implementing official formulas.",
   "inputs": {
     "gross_annual": 60000,
     "region_level_1": "marche"
   },
   "expected": {
-    "net": 37479,
-    "effective_rate": 0.3754
+    "net": 37478.52,
+    "effective_rate": 0.375
   },
-  "tolerance": 50,
+  "tolerance": 10,
   "sources": [
     {
-      "description": "INPS employee contributions are deducted from gross before IRPEF calculation (Official INPS website)",
+      "description": "INPS employee contributions are deducted from gross before IRPEF calculation",
       "url": "https://www.inps.it/",
       "retrieved_at": "2026-01-23"
     },
@@ -20,6 +20,11 @@
       "description": "2026 reduced rate provides savings vs 2025 (€22,000 × 2% rate reduction on second bracket)",
       "url": "https://www.mef.gov.it/en/focus/Main-measures-of-the-2026-Budget-Law-00001/",
       "retrieved_at": "2026-01-22"
+    },
+    {
+      "description": "Verified using verify_italy_tax.py (independent Python implementation of official formulas)",
+      "url": "file://configs/it/verify_italy_tax.py",
+      "retrieved_at": "2026-03-08"
     }
   ]
 }

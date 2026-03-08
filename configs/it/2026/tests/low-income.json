@@ -1,18 +1,18 @@
 {
   "name": "Low income single earner",
-  "description": "Employee earning €20,000 annually. INPS contributions (2.19% after cuneo fiscale) are deducted from gross BEFORE calculating IRPEF. Includes employment tax credit (creates no-tax area), €1,000 fixed deduction for 2026.",
+  "description": "Employee earning €20,000 annually. INPS contributions (9.19%) are deducted from gross BEFORE calculating IRPEF. Includes employment tax credit (creates no-tax area), cuneo fiscale exempt sum (4.8% of income), and €1,000 fixed deduction for 2026. Verified using verify_italy_tax.py script implementing official formulas.",
   "inputs": {
     "gross_annual": 20000,
     "region_level_1": "marche"
   },
   "expected": {
-    "net": 18210,
-    "effective_rate": 0.0895
+    "net": 17167.55,
+    "effective_rate": 0.142
   },
-  "tolerance": 50,
+  "tolerance": 10,
   "sources": [
     {
-      "description": "INPS employee contributions are deducted from gross before IRPEF calculation (Rivermate.com)",
+      "description": "INPS employee contributions are deducted from gross before IRPEF calculation",
       "url": "https://www.rivermate.com/",
       "retrieved_at": "2026-01-23"
     },
@@ -25,6 +25,11 @@
       "description": "2026 Budget Law - €1,000 fixed deduction for incomes up to €32,000",
       "url": "https://www.mef.gov.it/en/focus/Main-measures-of-the-2026-Budget-Law-00001/",
       "retrieved_at": "2026-01-22"
+    },
+    {
+      "description": "Verified using verify_italy_tax.py (independent Python implementation of official formulas)",
+      "url": "file://configs/it/verify_italy_tax.py",
+      "retrieved_at": "2026-03-08"
     }
   ]
 }

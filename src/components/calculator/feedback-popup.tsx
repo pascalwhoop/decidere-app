@@ -1,6 +1,4 @@
 "use client"
-import { signInWithPopup, GoogleAuthProvider } from "firebase/auth"
-import { auth } from "@/lib/firebase/client"
 import { useEffect, useState } from "react"
 import Image from "next/image"
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
@@ -14,6 +12,7 @@ export function FeedbackPopup() {
   const [isOpen, setIsOpen] = useState(false)
   const [feedback, setFeedback] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const authEnabled = isFeatureEnabled("GoogleAuth")
 
   useEffect(() => {
     if (!isFeatureEnabled("FeedbackCTA")) return
@@ -69,8 +68,12 @@ export function FeedbackPopup() {
   }
 
   const handleSocialLogin = async () => {
-    const provider = new GoogleAuthProvider()
     try {
+      const [{ GoogleAuthProvider, signInWithPopup }, { auth }] = await Promise.all([
+        import("firebase/auth"),
+        import("@/lib/firebase/client"),
+      ])
+      const provider = new GoogleAuthProvider()
       await signInWithPopup(auth, provider)
     } catch (error) {
       console.error("Error signing in with Google", error)
@@ -94,7 +97,7 @@ export function FeedbackPopup() {
               </div>
 
               <div className="space-y-4">
-                {isFeatureEnabled("GoogleAuth") && (
+                {authEnabled && (
                   <>
                     <div className="grid grid-cols-1 gap-3">
                       <Button 

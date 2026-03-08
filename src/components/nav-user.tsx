@@ -9,8 +9,6 @@ import {
   Sparkles,
   User,
 } from "lucide-react"
-import { signInWithPopup, GoogleAuthProvider, signOut } from "firebase/auth"
-import { auth } from "@/lib/firebase/client"
 import { useAuth } from "@/components/auth-provider"
 
 import { isFeatureEnabled } from "@/lib/feature-flags"
@@ -39,10 +37,15 @@ import { Button } from "@/components/ui/button"
 export function NavUser() {
   const { isMobile } = useSidebar()
   const { user, loading } = useAuth()
+  const authEnabled = isFeatureEnabled("GoogleAuth")
 
   const handleSignIn = async () => {
-    const provider = new GoogleAuthProvider()
     try {
+      const [{ GoogleAuthProvider, signInWithPopup }, { auth }] = await Promise.all([
+        import("firebase/auth"),
+        import("@/lib/firebase/client"),
+      ])
+      const provider = new GoogleAuthProvider()
       await signInWithPopup(auth, provider)
     } catch (error) {
       console.error("Error signing in with Google", error)
@@ -51,6 +54,10 @@ export function NavUser() {
 
   const handleSignOut = async () => {
     try {
+      const [{ signOut }, { auth }] = await Promise.all([
+        import("firebase/auth"),
+        import("@/lib/firebase/client"),
+      ])
       await signOut(auth)
     } catch (error) {
       console.error("Error signing out", error)
@@ -68,7 +75,7 @@ export function NavUser() {
   }
 
   if (!user) {
-    if (!isFeatureEnabled("GoogleAuth")) {
+    if (!authEnabled) {
       return null
     }
 

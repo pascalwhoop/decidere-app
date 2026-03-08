@@ -19,6 +19,7 @@ import type { CountryColumnState } from "@/lib/types"
 import { getCountryName } from "@/lib/api"
 import { getExchangeRate } from "@/lib/api"
 import { formatCurrency, formatPercent } from "@/lib/formatters"
+import { formatCountryLabel } from "@/lib/country-metadata"
 
 interface ComparisonChartProps {
   countries: CountryColumnState[]
@@ -82,7 +83,7 @@ export function ComparisonChart({ countries, baseCurrency }: ComparisonChartProp
     const config: ChartConfig = {}
     validCountries.forEach((c, index) => {
       config[c.id] = {
-        label: c.country ? getCountryName(c.country) : `Destination ${c.index + 1}`,
+        label: c.country ? formatCountryLabel(c.country, c.formValues) : `Destination ${c.index + 1}`,
         color: `var(--chart-${(index % 5) + 1})`,
       }
     })
@@ -223,7 +224,7 @@ export function ComparisonChart({ countries, baseCurrency }: ComparisonChartProp
                   className="h-2.5 w-2.5 shrink-0 rounded-full"
                   style={{ backgroundColor: `var(--chart-${(index % 5) + 1})` }}
                 />
-                <span>{c.country ? getCountryName(c.country) : `Destination ${c.index + 1}`}</span>
+                <span>{c.country ? formatCountryLabel(c.country, c.formValues) : `Destination ${c.index + 1}`}</span>
               </div>
             ))}
           </div>
@@ -279,6 +280,21 @@ export function ComparisonChart({ countries, baseCurrency }: ComparisonChartProp
                     cursor={false}
                     content={({ active, payload, label }) => {
                       if (!active || !payload) return null
+
+                      // Sort payload by the current metric value (highest first)
+                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                      const sortedPayload = [...payload].sort((a: any, b: any) => {
+                        const aId = (a.dataKey as string).replace(/_(net|effective|marginal)$/, "")
+                        const bId = (b.dataKey as string).replace(/_(net|effective|marginal)$/, "")
+
+                        const isRateMetric = metric === "effective" || metric === "marginal"
+                        const aValue = isRateMetric ? (a.value as number) : (a.payload[`${aId}_net`] as number)
+                        const bValue = isRateMetric ? (b.value as number) : (b.payload[`${bId}_net`] as number)
+
+                        // Sort descending (highest first)
+                        return bValue - aValue
+                      })
+
                       return (
                         <div className="rounded-lg border bg-background p-3 shadow-md min-w-[200px]">
                           <div className="mb-3 text-sm font-semibold text-foreground border-b pb-2">
@@ -286,7 +302,7 @@ export function ComparisonChart({ countries, baseCurrency }: ComparisonChartProp
                           </div>
                           <div className="space-y-1">
                             {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                            {payload.map((entry: any) => {
+                            {sortedPayload.map((entry: any) => {
                               const cId = (entry.dataKey as string).replace(/_(net|effective|marginal)$/, "")
                               const name = chartConfig[cId]?.label || cId
                               const originalNet = entry.payload[`${cId}_original_net`] as number

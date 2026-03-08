@@ -172,3 +172,48 @@ export function getCountryMetadata(countryCode: string): CountryMetadata | null 
     currency: CURRENCY_BY_COUNTRY[code] || "EUR",
   }
 }
+
+/**
+ * Format a country label with optional region info
+ * @param countryCode Country code (e.g., "us", "ch")
+ * @param formValues Optional form values containing region selections
+ * @param inputDefs Optional input definitions to look up region labels
+ * @returns Formatted label like "🇺🇸 US - California" or "🇺🇸 US"
+ */
+export function formatCountryLabel(
+  countryCode: string,
+  formValues?: Record<string, string>,
+  inputDefs?: Record<string, { type: string; options?: Record<string, { label: string }> }>
+): string {
+  const flag = getCountryFlag(countryCode)
+  const code = countryCode.toUpperCase()
+
+  // Check for region info in multiple possible fields (state, region_level_1, etc.)
+  let regionKey: string | undefined
+  let regionInputKey: string | undefined
+
+  // Priority: state > region_level_1 > region_level_2
+  if (formValues?.state) {
+    regionKey = formValues.state
+    regionInputKey = 'state'
+  } else if (formValues?.region_level_1) {
+    regionKey = formValues.region_level_1
+    regionInputKey = 'region_level_1'
+  } else if (formValues?.region_level_2) {
+    regionKey = formValues.region_level_2
+    regionInputKey = 'region_level_2'
+  }
+
+  if (!regionKey || !regionInputKey) {
+    return `${flag} ${code}`
+  }
+
+  // Try to get the label from input definitions, fallback to formatted key
+  let regionLabel = inputDefs?.[regionInputKey]?.options?.[regionKey]?.label
+    || regionKey.split(/[-_]/).map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
+
+  // Clean up labels like "California (CA)" to just "California"
+  regionLabel = regionLabel.replace(/\s*\([^)]+\)$/, '')
+
+  return `${flag} ${code} - ${regionLabel}`
+}
