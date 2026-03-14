@@ -75,11 +75,11 @@ function MobileSummaryBar({
               <div className="font-mono text-right flex flex-col items-end gap-0.5 sm:flex-row sm:items-center sm:gap-1 sm:flex-nowrap">
                 <div className="flex flex-col items-end sm:flex-row sm:items-center sm:gap-1">
                   <span className="font-semibold text-primary">
-                    {needsConversion ? formatCurrency(norm!.base, baseCurrency) : formatCurrency(c.result.net, c.result.currency)}
+                    {formatCurrency(c.result.net, c.result.currency)}
                   </span>
                   {needsConversion && (
                     <span className="text-xs text-muted-foreground font-normal">
-                      ({formatCurrency(norm!.original, norm!.currency)})
+                      ({formatCurrency(norm!.base, baseCurrency)})
                     </span>
                   )}
                 </div>
@@ -493,15 +493,24 @@ export function ComparisonTable({
             countries={countries}
             bestCountryId={bestCountryId}
             stickyColClass={stickyColClass}
-            render={c =>
-              c.isCalculating ? (
-                <Skeleton className="h-6 w-28" />
-              ) : c.result ? (
-                <span className="text-base font-bold text-primary">
-                  {formatCurrency(c.result.net, c.result.currency)}
-                </span>
-              ) : null
-            }
+            render={c => {
+              if (c.isCalculating) return <Skeleton className="h-6 w-28" />
+              if (!c.result) return null
+              const norm = normalizedDisplay?.get(c.id)
+              const needsConversion = norm && norm.currency !== baseCurrency
+              return (
+                <div className="flex flex-col gap-0.5">
+                  <span className="text-base font-bold text-primary">
+                    {formatCurrency(c.result.net, c.result.currency)}
+                  </span>
+                  {needsConversion && (
+                    <span className="text-xs text-muted-foreground font-normal">
+                      ({formatCurrency(norm!.base, baseCurrency)})
+                    </span>
+                  )}
+                </div>
+              )
+            }}
             highlight
           />
 
@@ -511,13 +520,23 @@ export function ComparisonTable({
             countries={countries}
             bestCountryId={bestCountryId}
             stickyColClass={stickyColClass}
-            render={c =>
-              c.result ? (
-                <span className="font-mono">
-                  {formatCurrency(c.result.net / 12, c.result.currency)}
-                </span>
-              ) : null
-            }
+            render={c => {
+              if (!c.result) return null
+              const norm = normalizedDisplay?.get(c.id)
+              const needsConversion = norm && norm.currency !== baseCurrency
+              return (
+                <div className="flex flex-col gap-0.5">
+                  <span className="font-mono">
+                    {formatCurrency(c.result.net / 12, c.result.currency)}
+                  </span>
+                  {needsConversion && (
+                    <span className="text-xs text-muted-foreground font-normal">
+                      ({formatCurrency(norm!.base / 12, baseCurrency)})
+                    </span>
+                  )}
+                </div>
+              )
+            }}
           />
 
           {/* Effective Rate */}
