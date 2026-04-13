@@ -299,8 +299,8 @@ outputs:
       - "@gross_annual"
   breakdown:
     taxes:
-      - "$federal_income_tax"
-      - "$ontario_income_tax"
+      - "$federal_income_tax_before_credits"
+      - "$ontario_income_tax_before_credits"
     contributions:
       - "$cpp_base_contribution"
       - "$cpp2_contribution"

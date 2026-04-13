@@ -281,7 +281,7 @@ outputs:
       - "@gross_annual"
   breakdown:
     taxes:
-      - "$income_tax"
+      - "$income_tax_before_credits"
     contributions:
       - "$usc"
       - "$prsi"

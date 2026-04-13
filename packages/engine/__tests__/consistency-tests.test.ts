@@ -265,14 +265,24 @@ describe('Breakdown Consistency', async () => {
       const result = engine.calculate(inputs)
 
       const totalFromGrossNet = result.gross - result.net
+
+      // Sign-aware sum: taxes/contributions/surtaxes are positive (reduce net),
+      // credits are negative (increase net), deductions are informational
+      // (their effect is already captured in tax amounts on reduced taxable income).
       let breakdownTotal = 0
       for (const item of result.breakdown) {
-        breakdownTotal += item.amount
+        if (item.category === 'credit') {
+          breakdownTotal -= item.amount
+        } else if (item.category === 'deduction') {
+          continue // informational only — already reflected in tax amounts
+        } else {
+          breakdownTotal += item.amount // income_tax, contribution, surtax
+        }
       }
 
       expect(
         Math.abs(totalFromGrossNet - breakdownTotal),
-        `Breakdown total (${breakdownTotal.toFixed(2)}) doesn't match gross-net (${totalFromGrossNet.toFixed(2)}). Diff: ${(totalFromGrossNet - breakdownTotal).toFixed(2)}.`
+        `Breakdown total (${breakdownTotal.toFixed(2)}) doesn't match gross-net (${totalFromGrossNet.toFixed(2)}). Diff: ${(totalFromGrossNet - breakdownTotal).toFixed(2)}. Check if breakdown.taxes references after-credits tax (should be before-credits).`
       ).toBeLessThan(5)
     })
   }

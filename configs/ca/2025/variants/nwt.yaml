@@ -105,8 +105,8 @@ outputs:
       - "@gross_annual"
   breakdown:
     taxes:
-      - "$federal_income_tax"
-      - "$nwt_income_tax"
+      - "$federal_income_tax_before_credits"
+      - "$nwt_income_tax_before_credits"
     contributions:
       - "$cpp_base_contribution"
       - "$cpp2_contribution"

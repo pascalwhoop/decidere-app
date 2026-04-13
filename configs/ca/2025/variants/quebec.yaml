@@ -290,8 +290,8 @@ outputs:
       - "@gross_annual"
   breakdown:
     taxes:
-      - "$federal_income_tax_after_abatement"
-      - "$quebec_income_tax"
+      - "$federal_income_tax_before_credits"
+      - "$quebec_income_tax_before_credits"
     contributions:
       - "$qpp_base_contribution"
       - "$qpp2_contribution"

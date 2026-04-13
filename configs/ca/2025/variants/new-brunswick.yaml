@@ -104,8 +104,8 @@ outputs:
       - "@gross_annual"
   breakdown:
     taxes:
-      - "$federal_income_tax"
-      - "$new_brunswick_income_tax"
+      - "$federal_income_tax_before_credits"
+      - "$new_brunswick_income_tax_before_credits"
     contributions:
       - "$cpp_base_contribution"
       - "$cpp2_contribution"

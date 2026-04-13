@@ -9,7 +9,7 @@
     "net": 56809,
     "effective_rate": 0.2899,
     "breakdown": {
-      "income_tax": 17400,
+      "income_tax_before_credits": 21400,
       "usc": 2431,
       "prsi": 3360,
       "personal_credit": 2000,

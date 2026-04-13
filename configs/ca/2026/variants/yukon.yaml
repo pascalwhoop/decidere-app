@@ -108,8 +108,8 @@ outputs:
       - "@gross_annual"
   breakdown:
     taxes:
-      - "$federal_income_tax"
-      - "$yukon_income_tax"
+      - "$federal_income_tax_before_credits"
+      - "$yukon_income_tax_before_credits"
     contributions:
       - "$cpp_base_contribution"
       - "$cpp2_contribution"

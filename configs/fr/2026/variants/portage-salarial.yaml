@@ -75,7 +75,7 @@ calculations:
     type: percent_of
     base: "@gross_annual"
     rate: "@portage_fee_rate"
-    category: deduction
+    category: contribution
     label: "Portage Company Fee"
     description: "Fee charged by portage salarial company (7-10% typical)"
 
@@ -233,3 +233,26 @@ calculations:
     values:
       - "$gross_after_portage_fee"
       - "$total_deductions"
+
+outputs:
+  gross: "@gross_annual"
+  net: "$net_annual"
+
+  effective_rate:
+    type: div
+    values:
+      - type: sub
+        values:
+          - "@gross_annual"
+          - "$net_annual"
+      - "@gross_annual"
+
+  breakdown:
+    taxes:
+      - "$income_tax"
+    contributions:
+      - "$portage_fee"
+      - "$csg_deductible"
+      - "$csg_nondeductible"
+      - "$crds"
+      - "$pension_contribution"

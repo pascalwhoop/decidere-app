@@ -10,7 +10,7 @@
     "effective_rate": 0.3692,
     "breakdown": {
       "sarp_relief": 30000,
-      "income_tax": 53400,
+      "income_tax_before_credits": 57400,
       "usc": 12044,
       "prsi": 8400,
       "personal_credit": 2000,

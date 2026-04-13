@@ -156,3 +156,20 @@ calculations:
     values:
       - "@gross_annual"
       - "$total_deductions"
+
+outputs:
+  gross: "@gross_annual"
+  net: "$net_annual"
+  effective_rate:
+    type: div
+    values:
+      - type: sub
+        values:
+          - "@gross_annual"
+          - "$net_annual"
+      - "@gross_annual"
+  breakdown:
+    taxes:
+      - "$national_income_tax"
+      - "$social_security_contribution"
+      - "$solidarity_contribution"

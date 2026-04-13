@@ -12,6 +12,7 @@
     "effective_rate": 0.3269,
     "breakdown": {
       "income_tax": 4602,
+      "portage_fee": 4000,
       "csg_deductible": 3073,
       "csg_nondeductible": 1085,
       "crds": 226,

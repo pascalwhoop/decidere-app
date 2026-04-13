@@ -9,7 +9,7 @@
     "net": 49677.52,
     "effective_rate": 0.17204,
     "breakdown": {
-      "federal_income_tax": 5982.73,
+      "federal_income_tax_before_credits": 8496.01,
       "cpp_base_contribution": 3361.75,
       "cpp2_contribution": 0,
       "ei_contribution": 978.00,
