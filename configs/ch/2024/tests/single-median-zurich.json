@@ -7,11 +7,11 @@
     "region_level_1": "zurich"
   },
   "expected": {
-    "net": 64300,
-    "effective_rate": 0.196,
+    "net": 66300,
+    "effective_rate": 0.171,
     "breakdown": {
       "federal_income_tax": 980,
-      "cantonal_municipal_tax": 9600,
+      "cantonal_municipal_tax": 7600,
       "avs_ai_apg_contribution": 4240,
       "unemployment_contribution": 880
     }

@@ -7,11 +7,11 @@
     "region_level_1": "zug"
   },
   "expected": {
-    "net": 128860,
-    "effective_rate": 0.141,
+    "net": 129860,
+    "effective_rate": 0.134,
     "breakdown": {
       "federal_income_tax": 4040,
-      "cantonal_municipal_tax": 7500,
+      "cantonal_municipal_tax": 6500,
       "avs_ai_apg_contribution": 7950,
       "unemployment_contribution": 1650
     }

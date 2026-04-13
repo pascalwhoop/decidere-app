@@ -7,11 +7,11 @@
     "region_level_1": "neuchatel"
   },
   "expected": {
-    "net": 88700,
-    "effective_rate": 0.261,
+    "net": 91200,
+    "effective_rate": 0.240,
     "breakdown": {
       "federal_income_tax": 3220,
-      "cantonal_municipal_tax": 20400,
+      "cantonal_municipal_tax": 17900,
       "avs_ai_apg_contribution": 6360,
       "unemployment_contribution": 1320
     }

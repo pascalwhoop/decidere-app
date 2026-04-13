@@ -7,11 +7,11 @@
     "region_level_1": "neuchatel"
   },
   "expected": {
-    "net": 136959,
-    "effective_rate": 0.315,
+    "net": 143959,
+    "effective_rate": 0.280,
     "breakdown": {
       "federal_income_tax": 10811,
-      "cantonal_municipal_tax": 40000,
+      "cantonal_municipal_tax": 33000,
       "avs_ai_apg_contribution": 10600,
       "unemployment_contribution": 1630
     }
@@ -23,7 +23,7 @@
       "description": "Neuchâtel has among Switzerland's highest tax rates",
       "url": "https://www.moneyland.ch/en/taxes-highest-lowest-municipalities-switzerland",
       "retrieved_at": "2026-01-22",
-      "notes": "High income in Neuchâtel: federal ~8%, cantonal/municipal ~20% of gross, social 6.12% (unemployment capped)"
+      "notes": "Cantonal: bracket_tax (50k×12% + 100k×17% + 50k×20% = 33,000). Federal ~10,811 on taxable income. Social 6.12% (unemployment capped at 148,200)."
     }
   ]
 }
