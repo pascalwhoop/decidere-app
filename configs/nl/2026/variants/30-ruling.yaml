@@ -91,6 +91,20 @@ calculations:
       - "$total_deductions"
     description: "Only 70% of gross income is taxable under 30% ruling, minus deductions"
 
+  # Override mortgage rate cap: use 70% of gross (not full gross) to determine
+  # how much of the deduction falls in the top bracket
+  - id: gross_above_top_bracket
+    type: max
+    values:
+      - 0
+      - type: sub
+        values:
+          - type: mul
+            values:
+              - "@gross_annual"
+              - "$taxable_percentage"
+          - "$top_bracket_threshold"
+
   # Add a calculation to show the tax-free allowance
   - id: tax_free_allowance_30_ruling
     type: mul

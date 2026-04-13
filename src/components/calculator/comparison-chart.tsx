@@ -347,7 +347,7 @@ export function ComparisonChart({ countries, baseCurrency }: ComparisonChartProp
                     return (
                       <Area
                         key={c.id}
-                        type="natural"
+                        type="monotone"
                         dataKey={`${c.id}_${metric}`}
                         stroke={color}
                         fill={`url(#fill-${c.id})`}
