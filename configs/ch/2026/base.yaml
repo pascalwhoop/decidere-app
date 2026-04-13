@@ -124,6 +124,7 @@ inputs:
     required: false
     min: 0
     default: 0
+    effect: reduces_tax
     label: "Pillar 3a contributions (optional)"
     description: "Voluntary pension savings (3a); deductible up to CHF 7,258 (2026)"
 
@@ -132,6 +133,7 @@ inputs:
     required: false
     min: 0
     default: 0
+    effect: reduces_tax
     label: "Mortgage interest paid (optional)"
     description: "Interest on owner-occupied home loan; cap = investment income + CHF 50,000"
 
@@ -149,6 +151,7 @@ inputs:
     required: false
     min: 0
     default: 0
+    effect: reduces_tax
     label: "Childcare costs (optional)"
     description: "Day-care, nanny, etc.; deductible up to CHF 25,000 per child (both parents working)"
 
@@ -166,6 +169,7 @@ inputs:
     required: false
     min: 0
     default: 0
+    effect: reduces_tax
     label: "Medical expenses (optional)"
     description: "Unreimbursed medical/dental costs; only amount above 5% of income is deductible"
 

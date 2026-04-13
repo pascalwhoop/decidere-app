@@ -97,6 +97,7 @@ inputs:
     type: boolean
     required: false
     default: false
+    effect: increases_tax
     label: "Church Member"
     description: "Are you a member of the Evangelical Lutheran or Orthodox Church? Church tax applies (~1.5%)"
 

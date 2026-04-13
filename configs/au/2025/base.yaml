@@ -134,12 +134,15 @@ calculations:
       - $income_tax
       - $medicare_levy
 
-  # Total tax after offsets
+  # Total tax after offsets (clamped to 0 — LITO is non-refundable)
   - id: total_tax
-    type: sub
+    type: max
     values:
-      - $total_tax_before_offsets
-      - $lito_offset
+      - 0
+      - type: sub
+        values:
+          - $total_tax_before_offsets
+          - $lito_offset
 
   # Net income
   - id: net_annual

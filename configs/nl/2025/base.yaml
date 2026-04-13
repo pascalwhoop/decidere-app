@@ -81,6 +81,7 @@ inputs:
     required: false
     min: 0
     default: 0
+    effect: reduces_tax
     label: "Mortgage Interest Paid (Optional)"
     description: "Annual interest paid on your mortgage for primary residence (hypotheekrente)"
 
@@ -99,6 +100,7 @@ inputs:
     required: false
     min: 0
     default: 0
+    effect: reduces_tax
     label: "Pension/Annuity Contributions (Optional)"
     description: "Additional pension or annuity contributions (lijfrentepremies)"
 
@@ -116,6 +118,7 @@ inputs:
     required: false
     min: 0
     default: 0
+    effect: reduces_tax
     label: "Healthcare Expenses (Optional)"
     description: "Out-of-pocket medical and healthcare costs (specifieke zorgkosten)"
 

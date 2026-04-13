@@ -108,6 +108,7 @@ inputs:
     type: boolean
     required: false
     default: false
+    effect: reduces_tax
     label: "Have Children Under 25"
     description: "Parents receive reduced long-term care insurance rates"
 
@@ -173,6 +174,7 @@ inputs:
     default: 2.9
     min: 0
     max: 10
+    effect: increases_tax
     label: "Health Insurance Supplementary Contribution (%)"
     description: "Total additional contribution rate charged by your health insurance (you pay half). Average is 1.7-2.9%"
 

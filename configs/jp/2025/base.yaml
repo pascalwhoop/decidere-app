@@ -105,6 +105,7 @@ inputs:
     min: 0
     max: 10
     default: 0
+    effect: reduces_tax
     label: "Number of Dependents (Age 19-22)"
     description: "Special dependents aged 19-22 (students) - ¥630,000 deduction each"
 
@@ -512,16 +513,19 @@ calculations:
       - "$resident_tax_income_levy"
       - "$resident_tax_percapita_levy"
 
-  # Step 5: Calculate Net Annual Income
+  # Step 5: Calculate Net Annual Income (clamped to 0 — fixed levies can exceed very low gross)
   - id: net_annual
-    type: sub
+    type: max
     values:
-      - "@gross_annual"
-      - type: sum
+      - 0
+      - type: sub
         values:
-          - "$total_national_income_tax"
-          - "$total_resident_tax"
-          - "$total_social_insurance"
+          - "@gross_annual"
+          - type: sum
+            values:
+              - "$total_national_income_tax"
+              - "$total_resident_tax"
+              - "$total_social_insurance"
 
 outputs:
   gross: "@gross_annual"

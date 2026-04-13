@@ -23,11 +23,9 @@ inputs:
     default: 0.08
     min: 0
     max: 0.15
+    effect: increases_tax
     label: "Portage Company Fee Rate"
     description: "Fee charged by portage company as % of gross (typically 7-10%)"
-
-parameters:
-  portage_fee_rate: 0.08  # Default 8% fee
 
 calculations:
   # Delete base nodes that need to reference the fee-adjusted gross
@@ -76,7 +74,7 @@ calculations:
   - id: portage_fee
     type: percent_of
     base: "@gross_annual"
-    rate: "$portage_fee_rate"
+    rate: "@portage_fee_rate"
     category: deduction
     label: "Portage Company Fee"
     description: "Fee charged by portage salarial company (7-10% typical)"

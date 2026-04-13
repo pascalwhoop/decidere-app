@@ -222,8 +222,12 @@ calculations:
       - "$health_insurance"
       - "$total_tax"
 
+  # Net income (clamped to 0 — fixed ZUS contributions can exceed very low gross)
   - id: net_annual
-    type: sub
+    type: max
     values:
-      - "@gross_annual"
-      - "$total_deductions"
+      - 0
+      - type: sub
+        values:
+          - "@gross_annual"
+          - "$total_deductions"

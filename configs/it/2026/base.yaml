@@ -45,6 +45,10 @@ notices:
     title: "Tax Relief for Workers (Cuneo Fiscale 2026)"
     body: "For 2026, the government provides tax relief through: (1) Tax-exempt sums for incomes up to €20,000 (4.8%-7.1% of income), and (2) €1,000 tax deduction for incomes €20,000-€32,000, gradually phasing out to €40,000. This replaces the previous INPS contribution cuts."
     severity: "info"
+  - id: "optional_credits"
+    title: "Optional Personal Tax Credits"
+    body: "You can enter renovation credits, medical expenses, and mortgage interest to see their impact on your net income. These are personal IRPEF credits that directly reduce your income tax bill."
+    severity: "info"
 
 inputs:
   gross_annual:
@@ -53,6 +57,33 @@ inputs:
     min: 0
     label: "Annual Gross Salary"
     description: "Your total yearly salary before any deductions"
+
+  renovation_credit_annual:
+    type: number
+    required: false
+    min: 0
+    default: 0
+    effect: reduces_tax
+    label: "Annual Renovation/Energy Credit (Optional)"
+    description: "Annual IRPEF credit installment from renovation (Bonus Ristrutturazioni) or energy efficiency (Ecobonus) works. E.g. €4,800/yr for a €96,000 renovation at 50% spread over 10 years."
+
+  medical_expenses_annual:
+    type: number
+    required: false
+    min: 0
+    default: 0
+    effect: reduces_tax
+    label: "Annual Medical Expenses (Optional)"
+    description: "Total out-of-pocket medical expenses for the year (spese sanitarie). A 19% credit applies on amounts above €129.11."
+
+  mortgage_interest_paid:
+    type: number
+    required: false
+    min: 0
+    default: 0
+    effect: reduces_tax
+    label: "Mortgage Interest Paid (Optional)"
+    description: "Annual mortgage interest on your primary residence (interessi passivi mutuo prima casa). A 19% credit applies on up to €4,000."
 
   region_level_1:
     type: enum
@@ -169,6 +200,11 @@ parameters:
 
   # Municipal tax - average rate (varies by municipality from 0% to 0.9%)
   municipal_tax_rate: 0.008
+
+  # Optional personal credit parameters
+  medical_expense_threshold: 129.11   # Franchigia: only expenses above this qualify
+  mortgage_interest_cap: 4000         # Max eligible mortgage interest (primary residence)
+  personal_credit_rate: 0.19          # 19% credit rate for medical and mortgage
 
 calculations:
   # Social Security Contributions (INPS) - Employee portion
@@ -323,7 +359,34 @@ calculations:
       - "$employment_credit_base"
       - "$cuneo_deduction"
 
-  # Net IRPEF after employment credit (cannot go below 0)
+  # ============================================================================
+  # OPTIONAL PERSONAL IRPEF CREDITS
+  # ============================================================================
+
+  # Medical expenses credit: 19% on amount above €129.11 (spese sanitarie)
+  - id: medical_credit_amount
+    type: mul
+    values:
+      - type: max
+        values:
+          - 0
+          - type: sub
+            values:
+              - "@medical_expenses_annual"
+              - "$medical_expense_threshold"
+      - "$personal_credit_rate"
+
+  # Mortgage interest credit: 19% on interest paid, capped at €4,000
+  - id: mortgage_credit_amount
+    type: mul
+    values:
+      - type: min
+        values:
+          - "@mortgage_interest_paid"
+          - "$mortgage_interest_cap"
+      - "$personal_credit_rate"
+
+  # Net IRPEF after all credits (cannot go below 0 — credits are non-refundable)
   - id: irpef
     type: max
     values:
@@ -332,6 +395,9 @@ calculations:
         values:
           - "$irpef_gross"
           - "$employment_credit"
+          - "@renovation_credit_annual"
+          - "$medical_credit_amount"
+          - "$mortgage_credit_amount"
     category: income_tax
     label: "IRPEF (National Income Tax)"
 
@@ -343,6 +409,31 @@ calculations:
     category: credit
     label: "Employment Tax Credit (Detrazione)"
     description: "Reduces IRPEF based on income level"
+
+  # Optional credit display nodes (show in breakdown when non-zero)
+  - id: renovation_credit_display
+    type: credit
+    amount: "@renovation_credit_annual"
+    refundable: false
+    category: credit
+    label: "Renovation/Energy Credit"
+    description: "Annual installment from Bonus Ristrutturazioni or Ecobonus"
+
+  - id: medical_credit_display
+    type: credit
+    amount: "$medical_credit_amount"
+    refundable: false
+    category: credit
+    label: "Medical Expenses Credit (19%)"
+    description: "19% credit on medical expenses above €129.11 (spese sanitarie)"
+
+  - id: mortgage_credit_display
+    type: credit
+    amount: "$mortgage_credit_amount"
+    refundable: false
+    category: credit
+    label: "Mortgage Interest Credit (19%)"
+    description: "19% credit on mortgage interest up to €4,000 (interessi passivi)"
 
   # Regional tax rate based on region selection
   - id: regional_tax_rate
@@ -427,3 +518,6 @@ outputs:
       - "$inps_employee"
     credits:
       - "$employment_credit_display"
+      - "$renovation_credit_display"
+      - "$medical_credit_display"
+      - "$mortgage_credit_display"

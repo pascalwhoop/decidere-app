@@ -104,12 +104,15 @@ calculations:
       - 4104
       - "$social_security_employee_amount"
 
-  # Calculate taxable income for IFICI: Gross - Specific Deduction
+  # Calculate taxable income for IFICI: Gross - Specific Deduction (clamped to 0)
   - id: taxable_income_before_quotient
-    type: sub
+    type: max
     values:
-      - "@gross_annual"
-      - "$specific_deduction"
+      - 0
+      - type: sub
+        values:
+          - "@gross_annual"
+          - "$specific_deduction"
 
   # Override quotient and per-quotient calculations (not used in IFICI)
   - id: quotient

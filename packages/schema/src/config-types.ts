@@ -64,6 +64,7 @@ export const NumberInputSchema = z.object({
   max: z.number().optional(),
   default: z.number().optional(),
   group: z.string().optional(),
+  effect: z.enum(['reduces_tax', 'increases_tax', 'neutral']).optional(),
 })
 
 export const EnumInputSchema = z.object({
@@ -85,6 +86,7 @@ export const BooleanInputSchema = z.object({
   label: z.string().optional(),
   description: z.string().optional(),
   default: z.boolean().optional(),
+  effect: z.enum(['reduces_tax', 'increases_tax', 'neutral']).optional(),
 })
 
 export const InputSchema = z.discriminatedUnion('type', [

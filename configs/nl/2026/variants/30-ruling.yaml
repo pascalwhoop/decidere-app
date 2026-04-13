@@ -82,11 +82,14 @@ calculations:
   # Override taxable income calculation
   # Only 70% of gross salary is taxable under 30% ruling
   - id: taxable_income
-    type: mul
+    type: sub
     values:
-      - "@gross_annual"
-      - "$taxable_percentage"
-    description: "Only 70% of gross income is taxable under 30% ruling"
+      - type: mul
+        values:
+          - "@gross_annual"
+          - "$taxable_percentage"
+      - "$total_deductions"
+    description: "Only 70% of gross income is taxable under 30% ruling, minus deductions"
 
   # Add a calculation to show the tax-free allowance
   - id: tax_free_allowance_30_ruling

@@ -104,6 +104,7 @@ inputs:
     default: 0
     min: 0
     max: 10
+    effect: reduces_tax
     label: "Number of Dependent Children"
     description: "Children under 18 or students under 25 living with you"
 
