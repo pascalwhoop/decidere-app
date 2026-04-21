@@ -212,13 +212,14 @@ export class ConfigLoader {
 
     // Merge outputs (replace if variant defines it)
     if (variant.outputs) {
+      const baseBreakdown = merged.outputs.breakdown
       merged.outputs = { ...merged.outputs, ...variant.outputs }
 
       // Deep merge breakdown if both exist
-      if (merged.outputs.breakdown && variant.outputs.breakdown) {
+      if (baseBreakdown && variant.outputs.breakdown) {
         merged.outputs.breakdown = {
-          ...merged.outputs.breakdown,
-          ...variant.outputs.breakdown
+          ...baseBreakdown,
+          ...variant.outputs.breakdown,
         }
       }
     }

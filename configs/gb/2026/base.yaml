@@ -57,8 +57,7 @@ meta:
     - Overseas Workday Relief (OWR) allows relief on employment income for duties
       performed overseas, capped at lower of 30% of qualifying income or £300,000
     - OWR claims cause loss of Personal Allowance (£12,570) and CGT annual exemption
-    - OWR is highly individual (depends on proportion of overseas vs UK workdays)
-      and cannot be reliably modelled as a simple variant
+    - OWR is modelled as a variant with days-abroad / total-work-days inputs
     - Scotland has different income tax rates and bands (see Scotland variant)
 
     Important notes:
