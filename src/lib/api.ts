@@ -46,6 +46,7 @@ export interface InputDefinition {
   label?: string
   description?: string
   default?: string | number | boolean
+  effect?: "reduces_tax" | "increases_tax" | "neutral"
   // For number inputs
   min?: number
   max?: number

@@ -5,7 +5,7 @@ import { toast } from "sonner"
 import { getCountryName } from "@/lib/api"
 import { CountryColumnState } from "@/lib/types"
 import { useYears, useInputs, useCalculateSalary } from "@/lib/queries"
-import { buildCalcRequest } from "@/lib/calc-utils"
+import { buildCalcRequest, hasRequiredInputs } from "@/lib/calc-utils"
 
 /**
  * Headless hook that manages calculation lifecycle for a single country.
@@ -50,26 +50,31 @@ export function useCountryCalculation(
       }
     }
 
-    const newFormValues = { ...formValues }
+    const newFormValues: Record<string, string> = {}
     let hasNewDefaults = false
 
     for (const [k, def] of Object.entries(inputsData.inputs)) {
-      if (!(k in formValues)) {
-        hasNewDefaults = true
+      if (k in formValues) {
+        newFormValues[k] = formValues[k]
+      } else {
         if (def.default !== undefined) {
+          hasNewDefaults = true
           newFormValues[k] = String(def.default)
-        } else if (def.type === "enum" && def.options) {
+        } else if (def.type === "enum" && def.options && !def.required) {
+          hasNewDefaults = true
           const firstOption = Object.keys(def.options)[0]
           if (firstOption) {
             newFormValues[k] = firstOption
           }
         } else if (def.type === "boolean") {
+          hasNewDefaults = true
           newFormValues[k] = "false"
         }
       }
     }
 
-    if (hasNewDefaults) {
+    const removedStaleKeys = Object.keys(formValues).some(k => !(k in inputsData.inputs))
+    if (hasNewDefaults || removedStaleKeys) {
       updates.formValues = newFormValues
     }
 
@@ -82,6 +87,11 @@ export function useCountryCalculation(
   const calcRequest = useMemo(
     () => buildCalcRequest({ country, year, variant, gross_annual, formValues }, inputsData?.inputs),
     [country, year, gross_annual, variant, formValues, inputsData]
+  )
+
+  const hasRequiredValues = useMemo(
+    () => hasRequiredInputs(inputsData?.inputs, formValues),
+    [inputsData?.inputs, formValues]
   )
 
   const calculate = useCallback(() => {
@@ -100,7 +110,12 @@ export function useCountryCalculation(
       return
     }
 
-    if (!calcRequest) return
+    if (!calcRequest || !hasRequiredValues) {
+      if (result) {
+        onUpdate({ result: null, isCalculating: false, calculationError: null })
+      }
+      return
+    }
 
     onUpdate({ isCalculating: true })
 
@@ -125,7 +140,7 @@ export function useCountryCalculation(
       },
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [country, year, variant, gross_annual, formValues, inputsData])
+  }, [country, year, variant, gross_annual, formValues, inputsData, hasRequiredValues])
 
   // Debounced auto-calculation
   useEffect(() => {

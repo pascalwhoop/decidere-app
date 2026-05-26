@@ -52,7 +52,7 @@ import { getCountryName, getCurrencySymbol, getExchangeRate, calculateSalary, ty
 import { formatCountryLabel, getCountryFlag } from "@/lib/country-metadata"
 import { useMediaQuery } from "@/lib/hooks"
 import { useCountries, useYears, useVariants, useInputs } from "@/lib/queries"
-import { buildCalcRequest } from "@/lib/calc-utils"
+import { buildCalcRequest, hasRequiredInputs } from "@/lib/calc-utils"
 import { formatCurrency } from "@/lib/formatters"
 import ReactMarkdown from "react-markdown"
 import {
@@ -151,15 +151,17 @@ export function DestinationWizard({
       updates.gross_annual = leaderGrossRef.current
     }
 
-    const newFormValues = { ...formValues }
+    const newFormValues: Record<string, string> = {}
     let hasNewDefaults = false
 
     for (const [key, def] of Object.entries(inputsData.inputs)) {
-      if (!(key in formValues)) {
+      if (key in formValues) {
+        newFormValues[key] = formValues[key]
+      } else {
         hasNewDefaults = true
         if (def.default !== undefined) {
           newFormValues[key] = String(def.default)
-        } else if (def.type === "enum" && def.options) {
+        } else if (def.type === "enum" && def.options && !def.required) {
           const firstOption = Object.keys(def.options)[0]
           if (firstOption) newFormValues[key] = firstOption
         } else if (def.type === "boolean") {
@@ -168,7 +170,8 @@ export function DestinationWizard({
       }
     }
 
-    if (hasNewDefaults) updates.formValues = newFormValues
+    const removedStaleKeys = Object.keys(formValues).some(key => !(key in inputsData.inputs))
+    if (hasNewDefaults || removedStaleKeys) updates.formValues = newFormValues
     if (Object.keys(updates).length > 0) setDraft(prev => ({ ...prev, ...updates }))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inputsData?.currency, country, year, variant])
@@ -210,6 +213,7 @@ export function DestinationWizard({
   }, [previewCalcRequest])
 
   const inputDefs = inputsData?.inputs || {}
+  const requiredInputsReady = hasRequiredInputs(inputDefs, formValues)
   const filteredNotices = useMemo(() => {
     const list = filterNoticesForVariant(inputsData?.notices ?? [], variant)
     const severityRank = { error: 0, warning: 1, info: 2 } as const
@@ -231,7 +235,7 @@ export function DestinationWizard({
     }))
   }
 
-  const canSave = !!(country && year && gross_annual)
+  const canSave = !!(country && year && gross_annual && requiredInputsReady)
   const currencySymbol = getCurrencySymbol(currency || "EUR")
 
   const handleSave = () => {
@@ -243,8 +247,9 @@ export function DestinationWizard({
     ? formatCountryLabel(country, formValues, inputsData?.inputs)
     : "New Destination"
 
-  // Count active deductions for collapsible label
-  const activeDeductionCount = Object.entries(inputDefs)
+  // Count active inputs that configs explicitly mark as changing tax/net outcome.
+  const activeTaxAdjustmentCount = Object.entries(inputDefs)
+    .filter(([, def]) => def.effect === "reduces_tax" || def.effect === "increases_tax")
     .filter(([key, def]) => def.type === "number" && !def.group && key !== "gross_annual")
     .filter(([key]) => {
       const val = parseFloat(formValues[key] || "0")
@@ -351,7 +356,7 @@ export function DestinationWizard({
                 <Select
                   value={country}
                   onValueChange={value =>
-                    setDraft(prev => ({ ...prev, country: value, year: "", variant: "" }))
+                    setDraft(prev => ({ ...prev, country: value, year: "", variant: "", formValues: {} }))
                   }
                 >
                   <SelectTrigger className="h-9">
@@ -373,7 +378,7 @@ export function DestinationWizard({
                 <Label className="text-xs text-muted-foreground">Year</Label>
                 <Select
                   value={year}
-                  onValueChange={value => setDraft(prev => ({ ...prev, year: value }))}
+                  onValueChange={value => setDraft(prev => ({ ...prev, year: value, variant: "", formValues: {} }))}
                   disabled={!country || years.length === 0}
                 >
                   <SelectTrigger className="h-9">
@@ -451,7 +456,7 @@ export function DestinationWizard({
                 <Select
                   value={variant || "default"}
                   onValueChange={v =>
-                    setDraft(prev => ({ ...prev, variant: v === "default" ? "" : v }))
+                    setDraft(prev => ({ ...prev, variant: v === "default" ? "" : v, formValues: {} }))
                   }
                 >
                   <SelectTrigger className="h-9">
@@ -476,7 +481,14 @@ export function DestinationWizard({
                   <div key={key} className="space-y-1.5">
                     <Label className="text-xs text-muted-foreground">{def.label || key}</Label>
                     <Select
-                      value={formValues[key] || (def.default ? String(def.default) : "__none__")}
+                      value={
+                        formValues[key]
+                        || (def.default !== undefined
+                          ? String(def.default)
+                          : def.required
+                            ? ""
+                            : "__none__")
+                      }
                       onValueChange={v => updateFormValue(key, v === "__none__" ? "" : v)}
                     >
                       <SelectTrigger className="h-9">
@@ -542,7 +554,7 @@ export function DestinationWizard({
 
             {country && year && Object.keys(inputDefs).length > 0 && (
               <AccordionItem value="deductions">
-                <AccordionTrigger>Tax Deductions ({activeDeductionCount} active)</AccordionTrigger>
+                <AccordionTrigger>Tax Adjustments ({activeTaxAdjustmentCount} active)</AccordionTrigger>
                 <AccordionContent>
                   <DeductionManager
                     inputDefs={inputDefs}

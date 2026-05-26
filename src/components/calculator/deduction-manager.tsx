@@ -21,6 +21,15 @@ interface DeductionInput {
   def: InputDefinition
 }
 
+function canPreviewEffect(def: InputDefinition): boolean {
+  return def.effect === "reduces_tax" || def.effect === "increases_tax"
+}
+
+function formatImpactLabel(impact: number, currency: string): string {
+  const verb = impact > 0 ? "saves" : "costs"
+  return `${verb} ${formatCurrency(Math.abs(impact), currency)}/yr`
+}
+
 export function DeductionManager({
   inputDefs,
   formValues,
@@ -38,16 +47,17 @@ export function DeductionManager({
 
   const primaryDeductions = deductionInputs.filter(({ def }) => !def.group)
 
-  // Calculate per-field tax savings
+  // Calculate per-field net impact for inputs explicitly marked with a tax effect.
   useEffect(() => {
     if (!calcRequest || !previewResult) {
       setSavings({})
       return
     }
 
-    // Find deduction keys with non-zero values
+    // Find inputs with non-zero values where the config declares a tax effect.
     const activeKeys = deductionInputs
-      .filter(({ key }) => {
+      .filter(({ key, def }) => {
+        if (!canPreviewEffect(def)) return false
         const val = parseFloat(formValues[key] || "0")
         return !isNaN(val) && val > 0
       })
@@ -70,7 +80,7 @@ export function DeductionManager({
         try {
           const withoutDeduction = { ...calcRequest, [key]: 0 }
           const result = await calculateSalary(withoutDeduction, controller.signal)
-          // Savings = how much MORE net you get with the deduction
+          // Positive means the active input increases net; negative means it reduces net.
           newSavings[key] = previewResult.net - result.net
         } catch {
           // Aborted or failed — skip
@@ -116,9 +126,9 @@ export function DeductionManager({
                 value={formValues[key] || ""}
                 onChange={e => onUpdateFormValue(key, e.target.value)}
               />
-              {fieldSavings != null && fieldSavings !== 0 && (
-                <p className="text-[11px] font-medium text-green-600">
-                  saves {formatCurrency(Math.abs(fieldSavings), currency)}/yr
+              {def.effect && def.effect !== "neutral" && fieldSavings != null && fieldSavings !== 0 && (
+                <p className={`text-[11px] font-medium ${fieldSavings > 0 ? "text-green-600" : "text-destructive"}`}>
+                  {formatImpactLabel(fieldSavings, currency)}
                 </p>
               )}
               {def.description && (

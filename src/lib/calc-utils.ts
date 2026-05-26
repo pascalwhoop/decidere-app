@@ -20,12 +20,15 @@ export function buildCalcRequest(
   const grossNum = parseFloat(gross_annual)
   if (isNaN(grossNum) || grossNum <= 0) return null
 
+  if (!hasRequiredInputs(inputDefs, formValues)) return null
+
   const request: CalcRequest = { country, year, gross_annual: grossNum }
   if (variant) request.variant = variant
 
   for (const [key, value] of Object.entries(formValues)) {
     if (key === "gross_annual") continue
     const inputDef = inputDefs?.[key] as InputDefinition | undefined
+    if (inputDefs && !inputDef) continue
     if (inputDef?.type === "boolean") {
       request[key] = value === "true"
     } else if (inputDef?.type === "number") {
@@ -36,4 +39,19 @@ export function buildCalcRequest(
     }
   }
   return request
+}
+
+export function hasRequiredInputs(
+  inputDefs: Record<string, InputDefinition> | undefined,
+  formValues: Record<string, string>
+): boolean {
+  if (!inputDefs) return true
+
+  for (const [key, def] of Object.entries(inputDefs)) {
+    if (!def.required || key === "gross_annual") continue
+    const value = formValues[key]
+    if (value === undefined || value === "") return false
+  }
+
+  return true
 }

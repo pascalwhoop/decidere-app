@@ -33,6 +33,7 @@ export const COUNTRY_FLAGS: Record<string, string> = {
   at: "🇦🇹",
   fi: "🇫🇮",
   pl: "🇵🇱",
+  be: "🇧🇪",
 }
 
 /**
@@ -67,6 +68,7 @@ export const COUNTRY_NAMES: Record<string, string> = {
   at: "Austria",
   fi: "Finland",
   pl: "Poland",
+  be: "Belgium",
 }
 
 /**
@@ -101,6 +103,7 @@ export const CURRENCY_BY_COUNTRY: Record<string, string> = {
   at: "EUR",
   fi: "EUR",
   pl: "PLN",
+  be: "EUR",
 }
 
 /**
@@ -187,24 +190,33 @@ export function formatCountryLabel(
 ): string {
   const flag = getCountryFlag(countryCode)
   const code = countryCode.toUpperCase()
+  const normalizedCountry = countryCode.toLowerCase()
+  const locationFieldsByCountry: Record<string, string[]> = {
+    be: ["municipality"],
+    ch: ["region_level_1"],
+    it: ["region_level_1"],
+    us: ["state"],
+  }
+  const locationFields = locationFieldsByCountry[normalizedCountry] ?? []
 
   // Check for region info in multiple possible fields (state, region_level_1, etc.)
   let regionKey: string | undefined
   let regionInputKey: string | undefined
 
-  // Priority: state > region_level_1 > region_level_2
-  if (formValues?.state) {
-    regionKey = formValues.state
-    regionInputKey = 'state'
-  } else if (formValues?.region_level_1) {
-    regionKey = formValues.region_level_1
-    regionInputKey = 'region_level_1'
-  } else if (formValues?.region_level_2) {
-    regionKey = formValues.region_level_2
-    regionInputKey = 'region_level_2'
+  for (const field of locationFields) {
+    const value = formValues?.[field]
+    if (value) {
+      regionKey = value
+      regionInputKey = field
+      break
+    }
   }
 
   if (!regionKey || !regionInputKey) {
+    return `${flag} ${code}`
+  }
+
+  if (inputDefs && !inputDefs[regionInputKey]) {
     return `${flag} ${code}`
   }
 
