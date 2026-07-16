@@ -7,18 +7,24 @@
     "region_level_1": "zug"
   },
   "expected": {
-    "net": 129860,
-    "effective_rate": 0.134,
+    "net": 129862.06,
+    "effective_rate": 0.1343,
     "breakdown": {
-      "federal_income_tax": 4040,
+      "federal_income_tax": 4057.74,
       "cantonal_municipal_tax": 6500,
       "avs_ai_apg_contribution": 7950,
-      "unemployment_contribution": 1650
+      "unemployment_contribution": 1630.20
     }
   },
   "tolerance": 100,
   "tolerance_percent": 0.02,
   "sources": [
+    {
+      "description": "Corrected 2026-07-13: the previous expected values applied the 1.1% ALV rate to the full CHF 150,000 gross without the CHF 148,200 annual cap. Recomputed with the cap: unemployment_contribution = min(150000, 148200) x 1.1% = CHF 1,630.20 (no contribution, and no solidarity surcharge - abolished 1 Jan 2023 - above the cap). avs_ai_apg = 150000 x 5.3% = 7,950. total_social = 9,580.20. standard deductions (married, 2024) = 3,200 + 3,600 + 2,600 = 9,400. taxable_income_federal = 150000 - 9,580.20 - 9,400 = 131,019.80. Federal tax (2024 married brackets, marginal): 200 + 160 + 510 + 600 + 650 + 660 + 660 + 8.8% x 7,019.80 = 617.74; total 4,057.74. Zug married cantonal (on gross): 50000 x 3% + 100000 x 5% = 6,500. Net = 150000 - 20,137.94 = 129,862.06. Effective rate = 0.1343.",
+      "url": "https://www.weka.ch/themen/personal/sozialversicherungen/sozialversicherungsbeitraege/article/alv-beitrag-die-hoechstlohngrenze-ist-massgebend/",
+      "date": "2026-07-13",
+      "notes": "Confirms ALV employee rate 1.10% with maximum insured salary CHF 148,200/year; solidarity contribution above the cap abolished 1 Jan 2023 (AVIG Art. 90a)."
+    },
     {
       "description": "Zug is known for having Switzerland's lowest tax rates, effective rate ~18-20% for this profile",
       "url": "https://www.moneyland.ch/en/taxes-highest-lowest-municipalities-switzerland",

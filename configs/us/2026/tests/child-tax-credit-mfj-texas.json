@@ -1,0 +1,37 @@
+{
+  "name": "Child Tax Credit - Married Filing Jointly, Texas, 2 children (no phaseout)",
+  "description": "MFJ couple earning $150,000 in Texas (no state tax, no SDI) with 2 dependent children - well under the $400,000 MFJ CTC phaseout threshold",
+  "inputs": {
+    "gross_annual": 150000,
+    "filing_status": "married_joint",
+    "state": "texas",
+    "dependent_children": 2
+  },
+  "expected": {
+    "net": 127585,
+    "effective_rate": 0.14943,
+    "breakdown": {
+      "federal_income_tax": 15340,
+      "state_income_tax": 0,
+      "social_security_tax": 9300,
+      "medicare_tax": 2175,
+      "additional_medicare_tax": 0,
+      "child_tax_credit": 4400
+    }
+  },
+  "tolerance": 5,
+  "tolerance_percent": 0.001,
+  "sources": [
+    {
+      "description": "IRS 2026 brackets/standard deduction (Rev. Proc. 2025-32) plus IRS Child Tax Credit page",
+      "url": "https://www.irs.gov/newsroom/irs-releases-tax-inflation-adjustments-for-tax-year-2026-including-amendments-from-the-one-big-beautiful-bill",
+      "date": "2026-07-13",
+      "notes": "Standard deduction (MFJ 2026) = $32,200. Taxable income = 150,000-32,200=117,800. Federal tax: 10%*24,800=2,480; 12%*76,000=9,120; 22%*17,000=3,740. Total=15,340. State tax (Texas)=0. SS=150,000*6.2%=9,300. Medicare=150,000*1.45%=2,175. Additional Medicare: MFJ threshold $250,000>150,000 => 0. total_fica=11,475. total_deductions (pre-credit)=15,340+0+11,475=26,815. CTC: MAGI proxy=150,000<$400,000 MFJ threshold => no phaseout. ctc_raw=2*$2,200=$4,400, capped at federal_income_tax (15,340) => not binding, child_tax_credit=4,400. net_tax_burden=26,815-4,400=22,415. net=150,000-22,415=127,585. effective_rate=22,415/150,000=0.14943."
+    },
+    {
+      "description": "IRS - Official Child Tax Credit page: $2,200/qualifying child, full credit up to $400,000 (MFJ)",
+      "url": "https://www.irs.gov/credits-deductions/individuals/child-tax-credit",
+      "date": "2026-07-13"
+    }
+  ]
+}

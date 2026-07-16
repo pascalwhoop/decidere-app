@@ -243,3 +243,29 @@ CONFIG_SOURCE=bundle npm run test:configs
 ```
 
 **Note:** In non-production runs, `ConfigLoader` now warns once when it is reading from `.generated/config-bundle.ts`.
+
+## Out-of-order bracket_tax thresholds silently produce wrong tax
+
+**Problem:** The `bracket_tax` evaluator assumes brackets are listed in ascending threshold order. It computes each band width as `nextThreshold - threshold`, so an out-of-order row yields a *negative* band amount that silently reduces the total tax — no error, no warning.
+
+**Symptoms:**
+- Tax understated only in a specific income range (everything else looks fine)
+- Found in the wild: `ca_tax_brackets_married_joint` in `configs/us/2026/base.yaml` listed threshold 1,442,640 before 1,000,000, understating CA tax for joint filers above ~$890k
+
+**Solution:**
+- Always list brackets in strictly ascending threshold order
+- When folding a surtax (e.g. CA Mental Health Services Tax at a flat $1M) into a bracket table, re-derive the combined table per filing status instead of appending the surtax threshold
+- Add a test vector above the highest threshold — the bug only shows up there
+
+## Gitignore rule silently blocks new files under configs/
+
+**Problem:** `.gitignore` had `configs/` (ignore the whole dir) followed by `!configs/**/*.json` and `!configs/**/*.yaml` negation patterns. Git cannot re-include files inside a directory that is itself ignored — the negation only "worked" for files already tracked before the ignore rule existed. Any *new* JSON/YAML file added under `configs/` was invisible to `git status`/`git add .`, silently never getting committed.
+
+**Symptoms:**
+- New country configs, variants, or test vectors don't show up in `git status` after being created
+- `git add .` + `git commit` appears to succeed but the new file isn't in the diff
+
+**Solution:**
+- Never ignore a parent directory and try to negate files inside it — ignore specific unwanted patterns directly instead
+- Fixed in this repo: replaced `configs/` + negation with direct excludes (`configs/**/*.py`, `configs/**/*.md`, `configs/**/__pycache__`)
+- After creating new config/test files, sanity-check with `git status --porcelain -- configs/` before assuming they're tracked

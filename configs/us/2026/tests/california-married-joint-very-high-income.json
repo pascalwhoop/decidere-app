@@ -1,0 +1,41 @@
+{
+  "name": "California - Married filing jointly at very high income (Mental Health Services Tax + SDI)",
+  "description": "Married couple earning $1,600,000 in California - exercises the corrected CA MFJ brackets including the 1% Mental Health Services Tax band above $1,000,000 taxable income, plus uncapped CA SDI",
+  "inputs": {
+    "gross_annual": 1600000,
+    "filing_status": "married_joint",
+    "state": "california"
+  },
+  "expected": {
+    "net": 867205,
+    "effective_rate": 0.458,
+    "breakdown": {
+      "federal_income_tax": 502251,
+      "state_income_tax": 162955,
+      "social_security_tax": 11439,
+      "medicare_tax": 23200,
+      "additional_medicare_tax": 12150,
+      "sdi_contribution": 20800
+    }
+  },
+  "tolerance": 50,
+  "tolerance_percent": 0.001,
+  "sources": [
+    {
+      "description": "Federal per IRS Rev. Proc. 2025-32; CA per official FTB 2025 Schedule Y + RTC §17043 MHST worksheet; CA SDI per EDD 2026 (1.3%, uncapped)",
+      "url": "https://www.ftb.ca.gov/forms/2025/2025-540-tax-rate-schedules.pdf",
+      "date": "2026-07-13",
+      "notes": "Federal: std ded $32,200; taxable $1,567,800. Tax = 10%*24,800=2,480 + 12%*76,000=9,120 + 22%*110,600=24,332 + 24%*192,150=46,116 + 32%*108,900=34,848 + 35%*256,250=89,687.50 + 37%*799,100=295,667 = $502,250.50. CA (Schedule Y + MHST, std ded $11,412): taxable $1,588,588. Base FTB formula: $144,439.65 + 12.3%*(1,588,588-1,485,906)=$12,629.89 = $157,069.54; MHST = 1%*(1,588,588-1,000,000)=$5,885.88; total $162,955.42. SS: min(1,600,000, 184,500)*6.2%=$11,439. Medicare: 1,600,000*1.45%=$23,200. Additional Medicare: (1,600,000-250,000)*0.9%=$12,150. SDI: 1,600,000*1.3%=$20,800 (uncapped). Total deductions $732,795. Net $867,205. Effective rate 0.45800."
+    },
+    {
+      "description": "California EDD - 2026 SDI employee contribution rate of 1.3%, uncapped since 2024 (SB 951)",
+      "url": "https://edd.ca.gov/en/disability/Contribution_Rates_and_Benefit_Amounts/",
+      "date": "2026-07-13"
+    },
+    {
+      "description": "Cal. Rev. & Tax. Code §17043 - flat $1,000,000 MHST threshold for all filing statuses",
+      "url": "https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?sectionNum=17043.&lawCode=RTC",
+      "date": "2026-07-13"
+    }
+  ]
+}

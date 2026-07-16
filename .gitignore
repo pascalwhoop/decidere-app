@@ -77,9 +77,8 @@ public/generated/
 reports/
 scripts/local-debug/
 
-configs/
-!configs/**/*.json
-!configs/**/*.yaml
+configs/**/*.py
+configs/**/*.md
 configs/**/__pycache__
 configs-manifest.json
 

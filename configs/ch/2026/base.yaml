@@ -2,7 +2,7 @@ meta:
   country: "ch"
   year: 2026
   currency: "CHF"
-  version: "1.0.0"
+  version: "1.0.1"
   sources:
     - url: "https://www.estv.admin.ch/estv/en/home/federal-direct-tax.html"
       description: "Swiss Federal Tax Administration (ESTV) - Direct Federal Tax overview"
@@ -16,16 +16,25 @@ meta:
     - url: "https://www.bsv.admin.ch/bsv/de/home/sozialversicherungen/ahv/grundlagen-gesetze/ahv-beitragssaetze.html"
       description: "Official BSV AHV/IV/EO contribution rates (5.3% employee share, unchanged for 2026)"
       retrieved_at: "2026-03-07"
-    - url: "https://www.bsv.admin.ch/bsv/de/home/sozialversicherungen/alv/grundlagen-gesetze.html"
-      description: "Official BSV ALV (unemployment insurance) rates: 1.1% up to CHF 148,200, then 0.5% solidarity contribution above cap"
-      retrieved_at: "2026-03-07"
+    - url: "https://www.bsv.admin.ch/dam/de/sd-web/G-958u9abUZ4/ALV_AC_Neuerungen.pdf"
+      description: "Official BSV ALV timeline: the solidarity contribution (1% on wages above the CHF 148,200 ceiling) automatically expired by law on 1.1.2023 (AVIG Art. 90a) and has not been reinstated. ALV employee rate is 1.1% up to the CHF 148,200 cap; no contribution above the cap."
+      retrieved_at: "2026-07-13"
     - url: "https://www.efd.admin.ch/de/newnsb/VzaAUrhkPx2EPde4a6e3O"
       description: "EFD: Cold progression adjustment for 2026 federal tax brackets (0.1% inflation adjustment)"
       retrieved_at: "2026-03-07"
     - url: "https://www.zh.ch/content/dam/zhweb/bilder-dokumente/themen/steuern-finanzen/steuern/natuerlichepersonen/2026/est-wegleitungen-uj/305%20Wegleitung%20ZH%202026%20UJ%20bf.pdf"
       description: "Canton Zurich 2026 tax return guide - confirms married deduction CHF 2,800"
       retrieved_at: "2026-03-07"
-  updated_at: "2026-02-22"
+    - url: "https://www.bsv.admin.ch/dam/de/sd-web/sAgdISSXenMT/d_Betr%C3%A4ge%202026.pdf"
+      description: "Official BSV circular 'Beträge gültig ab dem 1. Januar 2026' - BVG entry threshold CHF 22,680, coordination deduction CHF 26,460, max annual salary CHF 90,720, min/max coordinated salary CHF 3,780/CHF 64,260 (all unchanged from 2025)"
+      retrieved_at: "2026-07-13"
+    - url: "https://www.fedlex.admin.ch/eli/cc/1983/797_797_797/de"
+      description: "BVG statute (SR 831.40) - Art. 16 age-banded credit rates (25-34: 7%, 35-44: 10%, 45-54: 15%, 55-65: 18%); Art. 66 employer-at-least-half parity rule"
+      retrieved_at: "2026-07-13"
+    - url: "https://www.kmu.admin.ch/kmu/de/home/praktisches-wissen/personal/personalmanagement/pflichten-der-arbeitgebenden/sozialversicherungen/uvg-und-nbu.html"
+      description: "Swiss SME portal - confirms NBU premiums are employee-paid and capped at the CHF 148,200 max insured salary (same as UVG/ALV)"
+      retrieved_at: "2026-07-13"
+  updated_at: "2026-07-13"
   notes: |
     Switzerland has a complex three-level tax system: federal, cantonal, and municipal.
     Federal tax rates are progressive up to 11.5% maximum.
@@ -40,6 +49,10 @@ meta:
     - ALV (unemployment insurance) rate unchanged at 1.1% up to CHF 148,200 cap.
     - Standard professional expense deductions (Berufskosten) unchanged due to minimal inflation.
     - Cantonal multipliers carried forward from 2025 data (minimal year-to-year variation).
+    - Added NBU (non-occupational accident insurance, representative 1% employee rate) and BVG
+      (occupational pension, statutory-minimum age-banded employee contribution on the coordinated
+      salary) as mandatory payroll deductions. See the nbu_bvg_representative notice for the
+      documented assumptions (representative NBU rate; 50/50 employer/employee BVG split).
 
 notices:
   - id: "multi_level_taxation"
@@ -55,8 +68,26 @@ notices:
     title: "Social Security Contributions"
     body: |
       Swiss employees contribute to AVS/AI/APG (old-age, disability, loss of income) at 5.3%
-      and unemployment insurance (ALV) at 1.1% up to CHF 148,200 annual income. Above CHF 148,200,
-      a 0.5% solidarity contribution applies to the portion exceeding the cap.
+      and unemployment insurance (ALV) at 1.1% up to CHF 148,200 annual income. There is no
+      ALV contribution on income above this cap; the former ALV solidarity contribution was
+      abolished by law effective 1 January 2023. NBU (accident insurance) and BVG (occupational
+      pension) contributions are also included - see the NBU & BVG notice below.
+    severity: "info"
+
+  - id: "nbu_bvg_representative"
+    title: "NBU & BVG - Representative Mandatory Minimums"
+    body: |
+      NBU (non-occupational accident insurance) is employee-paid and mandatory for anyone
+      working 8+ hours/week, but the exact rate is set per insurer/branch by Suva or a private
+      insurer. This calculator uses 1% as a representative, commonly-cited figure; your actual
+      payslip deduction may differ (documented range roughly 0.5%-2%).
+
+      BVG (2nd pillar occupational pension) shown here is the STATUTORY MINIMUM employee
+      contribution only (Art. 16 BVG age-banded credit rates of 7/10/15/18% of coordinated
+      salary), assuming a 50/50 employer/employee split of the total credit (Art. 66 BVG only
+      guarantees the employer pays at least half). Many pension plans, especially at larger or
+      more generous employers, contribute above the legal minimum, which would lower your own
+      deduction relative to what is modeled here.
     severity: "info"
 
   - id: "cantonal_approximation"
@@ -95,6 +126,22 @@ inputs:
       married:
         label: "Married"
         description: "Married or in registered partnership (joint taxation)"
+
+  age_band:
+    type: enum
+    required: false
+    default: "35_44"
+    label: "Age band (for BVG pension contribution)"
+    description: "Your age bracket; determines the statutory BVG occupational-pension credit rate"
+    options:
+      25_34:
+        label: "25–34"
+      35_44:
+        label: "35–44"
+      45_54:
+        label: "45–54"
+      55_65:
+        label: "55–65"
 
   region_level_1:
     type: enum
@@ -181,6 +228,33 @@ parameters:
   avs_ai_apg_rate: 0.053    # 5.3% for AVS (old-age), AI (disability), APG (loss of income)
   unemployment_rate: 0.011   # 1.1% for ALV (unemployment insurance) up to cap
 
+  # NBU (non-occupational accident insurance) - employee-paid, representative rate.
+  # The actual rate is set per insurer/branch by Suva or a private insurer; documented
+  # range is roughly 0.5%-2% (up to ~2.4% in high-risk branches). 1% is a commonly cited
+  # representative rate for office/service-sector employees. Capped at the same
+  # CHF 148,200 max insured salary (Höchstversicherter Verdienst UVG) that also governs ALV.
+  nbu_rate: 0.01
+
+  # BVG (occupational pension, 2nd pillar) - statutory minimum figures, 2026 (BSV circular
+  # "Beträge gültig ab dem 1. Januar 2026", confirmed unchanged from 2025).
+  bvg_entry_threshold: 22680        # Mindestjahreslohn - minimum AHV salary for mandatory BVG enrolment
+  bvg_coordination_deduction: 26460 # Koordinationsabzug
+  bvg_max_annual_salary: 90720      # Obere Limite des Jahreslohns (cap applied before coordination deduction)
+  bvg_min_coordinated_salary: 3780  # Minimaler koordinierter Lohn
+  bvg_max_coordinated_salary: 64260 # Maximaler koordinierter Lohn (90720 - 26460)
+
+  # Representative assumption that the employee pays exactly half of the statutory-minimum
+  # BVG credit. Art. 66 BVG (collective parity) only requires the employer to pay AT LEAST
+  # 50% of the total across all employees - not a universal per-employee mandate.
+  bvg_employee_share_rate: 0.5
+
+  # Statutory minimum age-banded BVG credit rates (Art. 16 BVG), % of coordinated salary,
+  # combined employer+employee (employee share derived via bvg_employee_share_rate above).
+  bvg_age_credit_rate_25_34: 0.07
+  bvg_age_credit_rate_35_44: 0.10
+  bvg_age_credit_rate_45_54: 0.15
+  bvg_age_credit_rate_55_65: 0.18
+
   # Standard deductions for federal tax calculation (2026)
   # Source: EFD announcement Sept 2025 - deductions unchanged due to 0.1% inflation
   business_expense_deduction_single: 3200    # Max CHF 3,200 for commuting/professional expenses (federal cap)
@@ -212,6 +286,78 @@ parameters:
       rate: 0.10
     - threshold: 150000
       rate: 0.13
+
+  # Single filers - Bern (carried forward from 2025)
+  bern_single_brackets:
+    - threshold: 0
+      rate: 0.09
+    - threshold: 50000
+      rate: 0.14
+    - threshold: 150000
+      rate: 0.17
+
+  # Married filers - Bern
+  bern_married_brackets:
+    - threshold: 0
+      rate: 0.07
+    - threshold: 50000
+      rate: 0.12
+    - threshold: 150000
+      rate: 0.15
+
+  # Single filers - Basel-Stadt (carried forward from 2025)
+  basel_stadt_single_brackets:
+    - threshold: 0
+      rate: 0.09
+    - threshold: 50000
+      rate: 0.13
+    - threshold: 150000
+      rate: 0.16
+
+  # Married filers - Basel-Stadt
+  basel_stadt_married_brackets:
+    - threshold: 0
+      rate: 0.07
+    - threshold: 50000
+      rate: 0.11
+    - threshold: 150000
+      rate: 0.14
+
+  # Single filers - Vaud (carried forward from 2025)
+  vaud_single_brackets:
+    - threshold: 0
+      rate: 0.10
+    - threshold: 50000
+      rate: 0.14
+    - threshold: 150000
+      rate: 0.17
+
+  # Married filers - Vaud
+  vaud_married_brackets:
+    - threshold: 0
+      rate: 0.08
+    - threshold: 50000
+      rate: 0.12
+    - threshold: 150000
+      rate: 0.15
+
+  # Single filers - Schwyz (carried forward from 2025)
+  schwyz_single_brackets:
+    - threshold: 0
+      rate: 0.05
+    - threshold: 50000
+      rate: 0.08
+    - threshold: 150000
+      rate: 0.10
+
+  # Married filers - Schwyz
+  schwyz_married_brackets:
+    - threshold: 0
+      rate: 0.04
+    - threshold: 50000
+      rate: 0.06
+    - threshold: 150000
+      rate: 0.08
 
   # Single filers - Zug
   zug_single_brackets:
@@ -322,68 +468,6 @@ parameters:
     - threshold: 941200
       rate: 0.1150
 
-  # Cantonal/municipal effective tax rates (combined estimates as % of gross income)
-  # These are simplified representative rates for comparison
-  # Actual rates are complex and vary by municipality within cantons
-  # Carried forward from 2025 - canton multipliers rarely change significantly year to year
-  cantonal_municipal_rates:
-    zurich:
-      single_low: 0.08      # For income < CHF 50,000
-      single_mid: 0.12      # For income CHF 50,000 - 150,000
-      single_high: 0.15     # For income > CHF 150,000
-      married_low: 0.06
-      married_mid: 0.10
-      married_high: 0.13
-    bern:
-      single_low: 0.09
-      single_mid: 0.14
-      single_high: 0.17
-      married_low: 0.07
-      married_mid: 0.12
-      married_high: 0.15
-    geneva:
-      single_low: 0.10
-      single_mid: 0.15
-      single_high: 0.18
-      married_low: 0.08
-      married_mid: 0.13
-      married_high: 0.16
-    basel_stadt:
-      single_low: 0.09
-      single_mid: 0.13
-      single_high: 0.16
-      married_low: 0.07
-      married_mid: 0.11
-      married_high: 0.14
-    vaud:
-      single_low: 0.10
-      single_mid: 0.14
-      single_high: 0.17
-      married_low: 0.08
-      married_mid: 0.12
-      married_high: 0.15
-    zug:
-      single_low: 0.04      # Zug has very low taxes
-      single_mid: 0.07
-      single_high: 0.09
-      married_low: 0.03
-      married_mid: 0.05
-      married_high: 0.07
-    schwyz:
-      single_low: 0.05
-      single_mid: 0.08
-      single_high: 0.10
-      married_low: 0.04
-      married_mid: 0.06
-      married_high: 0.08
-    neuchatel:
-      single_low: 0.12      # Neuchâtel has high taxes
-      single_mid: 0.17
-      single_high: 0.20
-      married_low: 0.10
-      married_mid: 0.15
-      married_high: 0.18
-
 calculations:
   # Social security contributions
   - id: avs_ai_apg_contribution
@@ -400,42 +484,88 @@ calculations:
       - "@gross_annual"
       - "$unemployment_cap"
 
-  - id: unemployment_contribution_below_cap
+  - id: unemployment_contribution
     type: percent_of
     base: "$unemployment_base"
     rate: "$unemployment_rate"
+    category: contribution
+    label: "Unemployment Insurance (ALV)"
+    description: "Unemployment insurance contribution (1.1% up to CHF 148,200)"
 
-  - id: income_above_cap
-    type: sub
+  # NBU - Non-Occupational Accident Insurance (employee-paid, representative rate)
+  - id: nbu_base
+    type: min
     values:
       - "@gross_annual"
       - "$unemployment_cap"
 
-  - id: income_above_cap_positive
-    type: max
-    values:
-      - "$income_above_cap"
-      - 0
-
-  - id: unemployment_solidarity_contribution
+  - id: nbu_contribution
     type: percent_of
-    base: "$income_above_cap_positive"
-    rate: 0.005
-
-  - id: unemployment_contribution
-    type: sum
-    values:
-      - "$unemployment_contribution_below_cap"
-      - "$unemployment_solidarity_contribution"
+    base: "$nbu_base"
+    rate: "$nbu_rate"
     category: contribution
-    label: "Unemployment Insurance (ALV)"
-    description: "Unemployment insurance contribution (1.1% up to CHF 148,200, then 0.5% solidarity contribution above cap)"
+    label: "NBU (Non-Occupational Accident Insurance)"
+    description: "Non-occupational accident insurance - employee-paid; representative 1% rate (insurer/branch-specific; typical range ~0.5%-2%), capped at CHF 148,200 (same cap as UVG/ALV)."
+
+  # BVG - Occupational Pension (2nd pillar), statutory minimum, employee share
+  - id: bvg_capped_gross
+    type: min
+    values:
+      - "@gross_annual"
+      - "$bvg_max_annual_salary"
+
+  - id: bvg_coordinated_raw
+    type: sub
+    values:
+      - "$bvg_capped_gross"
+      - "$bvg_coordination_deduction"
+
+  - id: bvg_coordinated_salary
+    type: clamp
+    value: "$bvg_coordinated_raw"
+    min: "$bvg_min_coordinated_salary"
+    max: "$bvg_max_coordinated_salary"
+
+  - id: bvg_age_credit_rate
+    type: switch
+    on: "@age_band"
+    cases:
+      25_34: "$bvg_age_credit_rate_25_34"
+      35_44: "$bvg_age_credit_rate_35_44"
+      45_54: "$bvg_age_credit_rate_45_54"
+      55_65: "$bvg_age_credit_rate_55_65"
+      _: "$bvg_age_credit_rate_35_44"
+
+  - id: bvg_total_credit
+    type: percent_of
+    base: "$bvg_coordinated_salary"
+    rate: "$bvg_age_credit_rate"
+
+  - id: bvg_employee_credit_raw
+    type: mul
+    values:
+      - "$bvg_total_credit"
+      - "$bvg_employee_share_rate"
+
+  - id: bvg_pension_contribution
+    type: conditional
+    condition:
+      type: gte
+      left: "@gross_annual"
+      right: "$bvg_entry_threshold"
+    then: "$bvg_employee_credit_raw"
+    else: 0
+    category: contribution
+    label: "BVG Occupational Pension (Employee Share)"
+    description: "Statutory-minimum occupational pension (2nd pillar) employee contribution on the coordinated salary, using age-banded credit rates (7/10/15/18%) and an assumed 50/50 employer/employee split; only applies once AHV salary reaches CHF 22,680."
 
   - id: total_social_contributions
     type: sum
     values:
       - "$avs_ai_apg_contribution"
       - "$unemployment_contribution"
+      - "$nbu_contribution"
+      - "$bvg_pension_contribution"
 
   # Standard deductions for federal tax calculation
   - id: business_expense_deduction
@@ -583,6 +713,34 @@ calculations:
           single: "$zurich_single_brackets"
           married: "$zurich_married_brackets"
           _: "$zurich_single_brackets"
+      bern:
+        type: switch
+        on: "@filing_status"
+        cases:
+          single: "$bern_single_brackets"
+          married: "$bern_married_brackets"
+          _: "$bern_single_brackets"
+      basel_stadt:
+        type: switch
+        on: "@filing_status"
+        cases:
+          single: "$basel_stadt_single_brackets"
+          married: "$basel_stadt_married_brackets"
+          _: "$basel_stadt_single_brackets"
+      vaud:
+        type: switch
+        on: "@filing_status"
+        cases:
+          single: "$vaud_single_brackets"
+          married: "$vaud_married_brackets"
+          _: "$vaud_single_brackets"
+      schwyz:
+        type: switch
+        on: "@filing_status"
+        cases:
+          single: "$schwyz_single_brackets"
+          married: "$schwyz_married_brackets"
+          _: "$schwyz_single_brackets"
       zug:
         type: switch
         on: "@filing_status"
@@ -604,7 +762,13 @@ calculations:
           single: "$neuchatel_single_brackets"
           married: "$neuchatel_married_brackets"
           _: "$neuchatel_single_brackets"
-      _: "$zurich_single_brackets"  # Default to Zurich single
+      _:  # Default to Zurich (respecting filing status) when no canton selected
+        type: switch
+        on: "@filing_status"
+        cases:
+          single: "$zurich_single_brackets"
+          married: "$zurich_married_brackets"
+          _: "$zurich_single_brackets"
 
   # Cantonal/municipal tax - Progressive brackets for correct marginal rate calculation
   # IMPORTANT: Cantonal taxes are applied progressively (marginal rates), not as flat rate on entire income
@@ -655,6 +819,8 @@ outputs:
     contributions:
       - "$avs_ai_apg_contribution"
       - "$unemployment_contribution"
+      - "$nbu_contribution"
+      - "$bvg_pension_contribution"
     deductions:
       - "$pillar_3a_deduction"
       - "$mortgage_interest_deduction"

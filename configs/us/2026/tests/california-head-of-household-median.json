@@ -1,0 +1,36 @@
+{
+  "name": "California - Head of household at $120,000",
+  "description": "Head of household earning $120,000 in California - exercises the distinct CA Schedule Z brackets (previously fell back to Single) plus uncapped CA SDI",
+  "inputs": {
+    "gross_annual": 120000,
+    "filing_status": "head_of_household",
+    "state": "california"
+  },
+  "expected": {
+    "net": 90763,
+    "effective_rate": 0.24364,
+    "breakdown": {
+      "federal_income_tax": 13988,
+      "state_income_tax": 4509,
+      "social_security_tax": 7440,
+      "medicare_tax": 1740,
+      "additional_medicare_tax": 0,
+      "sdi_contribution": 1560
+    }
+  },
+  "tolerance": 5,
+  "tolerance_percent": 0.001,
+  "sources": [
+    {
+      "description": "Federal per IRS Rev. Proc. 2025-32; CA per official FTB 2025 Schedule Z (Head of Household); CA SDI per EDD 2026 (1.3%, uncapped)",
+      "url": "https://www.ftb.ca.gov/forms/2025/2025-540-tax-rate-schedules.pdf",
+      "date": "2026-07-13",
+      "notes": "Federal: std ded $24,150; taxable $95,850. Tax = 10%*17,700=1,770 + 12%*49,750=5,970 + 22%*28,400=6,248 = $13,988. CA (Schedule Z, std ded $11,412): taxable $108,588. Tax = cumulative at $98,990 = $3,616.45, plus 9.3%*(108,588-98,990)=9.3%*9,598=$892.61 = $4,509.06. SS: 120,000*6.2%=$7,440. Medicare: 120,000*1.45%=$1,740. Additional Medicare: $0 (below $200,000 HoH threshold). SDI: 120,000*1.3%=$1,560 (uncapped). Total deductions $29,237.06. Net $90,762.94. Effective rate 0.24364."
+    },
+    {
+      "description": "California EDD - 2026 SDI employee contribution rate of 1.3%, uncapped since 2024 (SB 951)",
+      "url": "https://edd.ca.gov/en/disability/Contribution_Rates_and_Benefit_Amounts/",
+      "date": "2026-07-13"
+    }
+  ]
+}

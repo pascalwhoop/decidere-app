@@ -1,0 +1,37 @@
+{
+  "name": "Rhode Island - Single filer with TDI",
+  "description": "Single person earning $75,000 annually in Rhode Island, exercising the RI TDI (state disability insurance) contribution",
+  "inputs": {
+    "gross_annual": 75000,
+    "filing_status": "single",
+    "state": "rhode_island"
+  },
+  "expected": {
+    "net": 58375,
+    "effective_rate": 0.22167,
+    "breakdown": {
+      "federal_income_tax": 7670,
+      "state_income_tax": 2393,
+      "social_security_tax": 4650,
+      "medicare_tax": 1088,
+      "additional_medicare_tax": 0,
+      "sdi_contribution": 825
+    }
+  },
+  "tolerance": 15,
+  "tolerance_percent": 0.001,
+  "sources": [
+    {
+      "description": "Calculated using 2026 IRS tax brackets (Rev. Proc. 2025-32) and RI DLT 2026 TDI rate",
+      "url": "https://www.irs.gov/newsroom/irs-releases-tax-inflation-adjustments-for-tax-year-2026-including-amendments-from-the-one-big-beautiful-bill",
+      "date": "2026-07-13",
+      "notes": "Federal: std deduction $16,100, taxable $58,900, tax 10%*$12,400=$1,240+12%*$38,000=$4,560+22%*$8,500=$1,870=$7,670. RI state tax figure ($2,393) uses this config's existing RI brackets/std-deduction params as-is; a wide tolerance (+/-15 abs or +/-0.001 x gross) is used since RI's exact 2026 state bracket figures were not independently re-verified as part of this SDI-focused vector. SS: $75,000*6.2%=$4,650. Medicare: $75,000*1.45%=$1,087.50. Additional Medicare: $0 (below $200k). TDI: $75,000*1.1%=$825.00 (RI 2026 wage base is $100,000; $75,000 is under the cap)."
+    },
+    {
+      "description": "RI Department of Labor & Training - 2026 TDI tax rate (1.1%) and taxable wage base ($100,000), down from 1.3% / $89,200 in 2025",
+      "url": "https://dlt.ri.gov/press-releases/2026-tax-rates-unemployment-insurance-and-temporary-disability-insurance",
+      "date": "2026-07-13",
+      "notes": "TDI contribution rate 1.1% for CY2026 on a taxable wage base of $100,000 (max annual employee contribution $1,100)."
+    }
+  ]
+}

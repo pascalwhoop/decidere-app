@@ -19,7 +19,52 @@ meta:
     - url: "https://taxfoundation.org/data/all/state/state-income-tax-rates-2026/"
       description: "Tax Foundation - 2026 state income tax rates and brackets"
       retrieved_at: "2026-02-22"
-  updated_at: "2026-02-22"
+    - url: "https://www.ftb.ca.gov/forms/2025/2025-540-tax-rate-schedules.pdf"
+      description: "CA FTB - Official 2025 Tax Rate Schedules (Schedule X/Y/Z) - latest official CA tables, carried forward for 2026"
+      retrieved_at: "2026-07-13"
+    - url: "https://www.ftb.ca.gov/forms/2025/2025-540-booklet.html"
+      description: "CA FTB 2025 Booklet - CA standard deduction ($5,706 single/MFS, $11,412 MFJ/HoH) and Mental Health Services Tax worksheet (flat $1,000,000 threshold, 1%, all filing statuses)"
+      retrieved_at: "2026-07-13"
+    - url: "https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?sectionNum=17043.&lawCode=RTC"
+      description: "Cal. Rev. & Tax. Code §17043 - 1% tax on taxable income over $1,000,000; threshold NOT doubled for joint filers per (c)(3)"
+      retrieved_at: "2026-07-13"
+    - url: "https://www.tax.nd.gov/individual-income-tax"
+      description: "North Dakota Office of State Tax Commissioner - official ND rates (0%, 1.95%, 2.5%); MFJ thresholds $80,975/$298,075"
+      retrieved_at: "2026-07-13"
+    - url: "https://edd.ca.gov/en/disability/Contribution_Rates_and_Benefit_Amounts/"
+      description: "California EDD - 2026 SDI employee rate 1.3%, uncapped since Jan 1 2024 (SB 951)"
+      retrieved_at: "2026-07-13"
+    - url: "https://www.nj.gov/labor/ea/employer-services/rate-info/"
+      description: "NJ Department of Labor - 2026 TDI (0.19%) and FLI (0.23%) employee rates, taxable wage base $171,100"
+      retrieved_at: "2026-07-13"
+    - url: "https://paidfamilyleave.ny.gov/2026"
+      description: "NY Paid Family Leave - 2026 employee contribution rate 0.432% of wages, max annual contribution $411.91"
+      retrieved_at: "2026-07-13"
+    - url: "https://dlt.ri.gov/press-releases/2026-tax-rates-unemployment-insurance-and-temporary-disability-insurance"
+      description: "RI Department of Labor & Training - 2026 TDI tax rate 1.1%, taxable wage base $100,000"
+      retrieved_at: "2026-07-13"
+    - url: "https://labor.hawaii.gov/dcd/files/2025/12/2026-Maximum-Weekly-Wage-Base.pdf"
+      description: "Hawaii DLIR - 2026 Maximum Weekly Wage Base and Maximum Weekly Deduction ($7.50, i.e. 0.5%) for TDI"
+      retrieved_at: "2026-07-13"
+    - url: "https://www.irs.gov/credits-deductions/individuals/child-tax-credit"
+      description: "IRS - Official Child Tax Credit page: $2,200/qualifying child, full credit up to $200,000 ($400,000 MFJ)"
+      retrieved_at: "2026-07-13"
+    - url: "https://www.law.cornell.edu/uscode/text/26/24"
+      description: "26 U.S.C. §24 - CTC phaseout mechanism ($50 per $1,000 of MAGI over threshold) and OBBBA-permanent thresholds"
+      retrieved_at: "2026-07-13"
+    - url: "https://www.irs.gov/newsroom/401k-limit-increases-to-24500-for-2026-ira-limit-increases-to-7500"
+      description: "IRS - 2026 401(k) elective deferral limit ($24,500)"
+      retrieved_at: "2026-07-13"
+    - url: "https://www.irs.gov/pub/irs-drop/rp-25-19.pdf"
+      description: "IRS Rev. Proc. 2025-19 - 2026 HSA contribution limits ($4,400 self-only / $8,750 family)"
+      retrieved_at: "2026-07-13"
+    - url: "https://www.pa.gov/agencies/revenue/forms-and-publications/pa-personal-income-tax-guide/gross-compensation"
+      description: "PA Dept. of Revenue - 401(k) employee elective deferrals are taxable PA compensation (nonconformity)"
+      retrieved_at: "2026-07-13"
+    - url: "https://www.nj.gov/treasury/taxation/njit5.shtml"
+      description: "NJ Division of Taxation - 401(k) contributions ARE excluded from NJ taxable wages (conforms); HSA is not"
+      retrieved_at: "2026-07-13"
+  updated_at: "2026-07-13"
   notes: |
     This configuration covers federal AND state taxation for the United States in 2026.
 
@@ -35,21 +80,41 @@ meta:
     State tax rates carried forward from 2025 where 2026 state-specific data is not yet available.
     Local taxes are NOT included in this configuration.
 
+    California brackets are the FTB 2025 Schedule X/Y/Z tables (latest official) with the 1%
+    Mental Health Services Tax (RTC §17043) folded in at a flat $1,000,000 taxable-income
+    threshold for every filing status. Schedule X covers both Single and MFS; Schedule Z
+    (Head of Household) is a distinct table and must not fall back to Single.
+
+    - State disability / paid family leave insurance: CA SDI (1.3%, uncapped), NJ TDI (0.19%) + FLI (0.23%)
+      capped at $171,100, NY PFL (0.432%, capped at $411.91/yr), RI TDI (1.1%, capped at $100,000),
+      HI TDI (0.5%, capped at $390/yr). NY DBL excluded (negligible, max $31.20/yr).
+    - Optional 401(k) and HSA payroll-deduction inputs (2026 IRS limits: $24,500 / $4,400) reduce
+      federal and state taxable wages; HSA also reduces FICA and SDI/TDI/PFL wages. See the
+      pretax_deductions_state_conformity notice for state nonconformity caveats.
+    - Federal Child Tax Credit: $2,200/qualifying child (OBBBA, made permanent), phased out $50 per
+      $1,000 of income over $200,000 (single/HoH/MFS) or $400,000 (MFJ). Only the non-refundable
+      portion (capped at federal income tax) is modeled.
+
 notices:
   - id: "state_tax_included"
     title: "Federal and State Taxes Included"
     body: |
-      This calculator includes FEDERAL income tax, state income tax, and FICA (Social Security + Medicare).
-      It does NOT include local taxes, state disability insurance (CA, NY), or city taxes (NYC, etc.).
+      This calculator includes FEDERAL income tax, state income tax, FICA (Social Security + Medicare),
+      and employee-paid state disability / paid family leave insurance contributions where applicable:
+      California (SDI), New Jersey (TDI + FLI), New York (Paid Family Leave), Rhode Island (TDI), and
+      Hawaii (TDI).
+      It does NOT include local taxes, city taxes (NYC, etc.), or New York's separate Disability Benefits
+      Law (DBL) contribution, which is capped at $0.60/week ($31.20/year) and considered negligible.
       Your actual take-home pay may vary based on local taxes and other deductions.
     severity: "info"
 
   - id: "gross_salary_info"
     title: "Annual Gross Salary"
     body: |
-      Enter your total annual gross salary before any deductions. This is your W-2 Box 1
-      wages (or equivalent for self-employed). Include all regular compensation but exclude
-      pre-tax deductions like 401(k) contributions or health insurance premiums.
+      Enter your total annual gross salary before ANY deductions, including amounts you elect
+      to contribute to a 401(k) or HSA via payroll. This is typically your W-2 Box 1 wages PLUS
+      any 401(k)/HSA payroll contributions (Box 1 already excludes those). Enter your 401(k) and
+      HSA contributions separately using the optional fields below so they are modeled correctly.
     severity: "info"
 
   - id: "filing_status_info"
@@ -71,6 +136,33 @@ notices:
       - $125,000 (Married Filing Separately)
     severity: "info"
 
+  - id: "child_tax_credit_info"
+    title: "Child Tax Credit"
+    body: |
+      This calculator applies the federal Child Tax Credit ($2,200/qualifying child under OBBBA),
+      phased out $50 per $1,000 of income over $200,000 (Single/HoH/MFS) or $400,000 (MFJ). Only
+      the non-refundable portion (capped at your federal income tax) is modeled; the refundable
+      Additional Child Tax Credit (up to $1,700/child) is NOT included. Income used for the
+      phaseout is approximated as gross wages minus 401(k)/HSA payroll deductions, since this
+      calculator does not model other above-the-line adjustments to MAGI.
+    severity: "info"
+
+  - id: "pretax_deductions_state_conformity"
+    title: "State Conformity for 401(k)/HSA Is Not Universal (Simplification)"
+    body: |
+      This calculator reduces STATE taxable wages by both 401(k) and HSA contributions in every
+      state, which is the majority treatment but not universal:
+      - Pennsylvania (PA) taxes traditional 401(k) elective deferrals as PA compensation - PA
+        does NOT conform to the federal exclusion. This calculator does not add the deferral
+        back for PA, so PA state tax is understated for 401(k) contributors.
+      - California (CA) and New Jersey (NJ) tax HSA contributions as state income - neither
+        state conforms to the federal Section 223 HSA exclusion. This calculator does not add
+        the contribution back for CA/NJ, so CA/NJ state tax is understated for HSA contributors.
+      - New Jersey DOES conform for 401(k) (excluded from NJ wages, unlike most other
+        deferred-compensation plans), so no adjustment is needed there.
+      - All other states and DC follow the federal exclusion for both 401(k) and HSA.
+    severity: "warning"
+
 inputs:
   gross_annual:
     type: number
@@ -88,23 +180,15 @@ inputs:
       single:
         label: "Single"
         description: "Unmarried, divorced, or legally separated"
-        standard_deduction: 16100
-        additional_medicare_threshold: 200000
       married_joint:
         label: "Married Filing Jointly"
         description: "Married couple filing one combined return"
-        standard_deduction: 32200
-        additional_medicare_threshold: 250000
       married_separate:
         label: "Married Filing Separately"
         description: "Married couple filing separate returns"
-        standard_deduction: 16100
-        additional_medicare_threshold: 125000
       head_of_household:
         label: "Head of Household"
         description: "Unmarried with qualifying dependents"
-        standard_deduction: 24150
-        additional_medicare_threshold: 200000
 
   state:
     type: enum
@@ -267,6 +351,33 @@ inputs:
         label: "District of Columbia (DC)"
         description: "Progressive tax: 4% to 10.75%"
 
+  dependent_children:
+    type: number
+    required: false
+    min: 0
+    default: 0
+    effect: reduces_tax
+    label: "Number of Dependent Children (Optional)"
+    description: "Number of qualifying children under age 17 for the federal Child Tax Credit"
+
+  retirement_401k_contributions:
+    type: number
+    required: false
+    min: 0
+    default: 0
+    effect: reduces_tax
+    label: "401(k) Contributions (Annual)"
+    description: "Your annual pre-tax elective deferral to a traditional 401(k)/403(b)/457(b) via payroll. The 2026 IRS elective deferral limit is $24,500 (age-50+ catch-up of $8,000, or $11,250 for ages 60-63, is not modeled). Reduces federal and state taxable wages, but does NOT reduce Social Security/Medicare (FICA) wages."
+
+  hsa_contributions:
+    type: number
+    required: false
+    min: 0
+    default: 0
+    effect: reduces_tax
+    label: "HSA Contributions (Annual, via payroll)"
+    description: "Your annual pre-tax payroll contribution to a Health Savings Account. The 2026 IRS limit is $4,400 for self-only HDHP coverage or $8,750 for family coverage (age-55+ catch-up of $1,000 not modeled); this calculator caps at the lower self-only limit of $4,400 as a documented simplification since HDHP coverage type is not collected. Reduces federal, state, AND FICA (Social Security/Medicare) taxable wages."
+
 parameters:
   # Standard deductions by filing status (2026) - per IRS Rev. Proc. 2025-32
   standard_deduction_single: 16100
@@ -352,6 +463,31 @@ parameters:
   additional_medicare_threshold_married_separate: 125000
   additional_medicare_threshold_head_of_household: 200000
 
+  # Pre-tax payroll deduction limits (2026 IRS limits)
+  retirement_401k_contribution_limit_2026: 24500
+  hsa_contribution_limit_2026: 4400
+
+  # Federal Child Tax Credit (OBBBA, made permanent) - 2026
+  # Phaseout rate ($50 per $1,000 of MAGI = 0.05) is a raw literal on the ctc_after_phaseout
+  # node below because the engine's phaseout evaluator reads rate/start/end directly, not via references.
+  ctc_amount_per_child: 2200
+  ctc_phaseout_threshold_single: 200000
+  ctc_phaseout_threshold_married_joint: 400000
+  ctc_phaseout_threshold_married_separate: 200000
+  ctc_phaseout_threshold_head_of_household: 200000
+
+  # State Disability Insurance / Paid Family Leave parameters (2026)
+  ca_sdi_rate: 0.013                 # CA SDI employee rate, uncapped since 2024 (SB 951)
+  nj_tdi_rate: 0.0019                # NJ TDI employee rate (2026)
+  nj_fli_rate: 0.0023                # NJ FLI employee rate (2026)
+  nj_tdi_fli_wage_base: 171100       # NJ TDI/FLI taxable wage base (2026)
+  ny_pfl_rate: 0.00432                # NY PFL employee rate (2026)
+  ny_pfl_max_annual: 411.91          # NY PFL max annual employee contribution (2026)
+  ri_tdi_rate: 0.011                 # RI TDI employee rate (2026)
+  ri_tdi_wage_base: 100000           # RI TDI taxable wage base (2026)
+  hi_tdi_rate: 0.005                 # HI TDI employee rate (max 0.5% of weekly wage)
+  hi_tdi_max_annual: 390.00          # HI TDI max annual deduction: $7.50/week x 52 (2026)
+
   # STATE TAX RATES AND BRACKETS
 
   # Alabama - Progressive
@@ -404,51 +540,99 @@ parameters:
   ar_standard_deduction_married_joint: 4820
 
   # California - Progressive
-  ca_standard_deduction_single: 5540
-  ca_standard_deduction_married_joint: 11080
-  ca_standard_deduction_married_separate: 5540
-  ca_standard_deduction_head_of_household: 11080
+  # Brackets from CA FTB 2025 Schedule X/Y/Z (latest official, carried forward for 2026)
+  # with the 1% Mental Health Services Tax (RTC §17043) folded in at a flat $1,000,000
+  # taxable-income threshold for ALL filing statuses (not doubled for joint filers).
+  ca_standard_deduction_single: 5706
+  ca_standard_deduction_married_joint: 11412
+  ca_standard_deduction_married_separate: 5706
+  ca_standard_deduction_head_of_household: 11412
   ca_tax_brackets_single:
     - threshold: 0
       rate: 0.01
-    - threshold: 10756
+    - threshold: 11079
       rate: 0.02
-    - threshold: 25500
+    - threshold: 26264
       rate: 0.04
-    - threshold: 40246
+    - threshold: 41452
       rate: 0.06
-    - threshold: 55868
+    - threshold: 57542
       rate: 0.08
-    - threshold: 70610
+    - threshold: 72724
       rate: 0.093
-    - threshold: 360660
+    - threshold: 371479
       rate: 0.103
-    - threshold: 432792
+    - threshold: 445771
       rate: 0.113
-    - threshold: 721320
+    - threshold: 742953
       rate: 0.123
     - threshold: 1000000
       rate: 0.133
   ca_tax_brackets_married_joint:
     - threshold: 0
       rate: 0.01
-    - threshold: 21512
+    - threshold: 22158
       rate: 0.02
-    - threshold: 51000
+    - threshold: 52528
       rate: 0.04
-    - threshold: 80492
+    - threshold: 82904
       rate: 0.06
-    - threshold: 111736
+    - threshold: 115084
       rate: 0.08
-    - threshold: 141220
+    - threshold: 145448
       rate: 0.093
-    - threshold: 721320
+    - threshold: 742958
       rate: 0.103
-    - threshold: 865584
+    - threshold: 891542
       rate: 0.113
-    - threshold: 1442640
+    - threshold: 1000000
+      rate: 0.123
+    - threshold: 1485906
+      rate: 0.133
+  # CA Schedule X covers both Single and Married/RDP Filing Separately (identical tables)
+  ca_tax_brackets_married_separate:
+    - threshold: 0
+      rate: 0.01
+    - threshold: 11079
+      rate: 0.02
+    - threshold: 26264
+      rate: 0.04
+    - threshold: 41452
+      rate: 0.06
+    - threshold: 57542
+      rate: 0.08
+    - threshold: 72724
+      rate: 0.093
+    - threshold: 371479
+      rate: 0.103
+    - threshold: 445771
+      rate: 0.113
+    - threshold: 742953
       rate: 0.123
     - threshold: 1000000
+      rate: 0.133
+  # CA Schedule Z (Head of Household) — distinct table; MHST creates a narrow 12.3%
+  # band between $1,000,000 and the Schedule Z top threshold $1,010,417
+  ca_tax_brackets_head_of_household:
+    - threshold: 0
+      rate: 0.01
+    - threshold: 22173
+      rate: 0.02
+    - threshold: 52530
+      rate: 0.04
+    - threshold: 67716
+      rate: 0.06
+    - threshold: 83805
+      rate: 0.08
+    - threshold: 98990
+      rate: 0.093
+    - threshold: 505208
+      rate: 0.103
+    - threshold: 606251
+      rate: 0.113
+    - threshold: 1000000
+      rate: 0.123
+    - threshold: 1010417
       rate: 0.133
 
   # Colorado - Flat tax
@@ -871,16 +1055,12 @@ parameters:
       rate: 0.0195
     - threshold: 244825
       rate: 0.025
-    - threshold: 335000
-      rate: 0.025
   nd_tax_brackets_married_joint:
     - threshold: 0
       rate: 0.0
-    - threshold: 96950
+    - threshold: 80975
       rate: 0.0195
-    - threshold: 489650
-      rate: 0.025
-    - threshold: 670000
+    - threshold: 298075
       rate: 0.025
   nd_standard_deduction_single: 15000
   nd_standard_deduction_married_joint: 30000
@@ -1142,6 +1322,53 @@ parameters:
   dc_standard_deduction_married_joint: 30000
 
 calculations:
+  # ============================================================================
+  # PRE-TAX PAYROLL DEDUCTIONS (401(k) and HSA)
+  # ============================================================================
+  # 401(k): reduces federal + state taxable wages, does NOT reduce FICA wages
+  # HSA (payroll/cafeteria plan): reduces federal + state taxable wages AND FICA wages
+  - id: retirement_401k_deduction
+    type: deduction
+    amount: "@retirement_401k_contributions"
+    cap: "$retirement_401k_contribution_limit_2026"
+    category: deduction
+    label: "401(k) Elective Deferral"
+    description: "Pre-tax 401(k) contribution, capped at the 2026 IRS elective deferral limit of $24,500"
+
+  - id: hsa_deduction
+    type: deduction
+    amount: "@hsa_contributions"
+    cap: "$hsa_contribution_limit_2026"
+    category: deduction
+    label: "HSA Contribution"
+    description: "Pre-tax HSA payroll contribution, capped at the 2026 IRS self-only limit of $4,400 (family limit is $8,750; not modeled)"
+
+  - id: pretax_income_deductions
+    type: sum
+    values:
+      - "$retirement_401k_deduction"
+      - "$hsa_deduction"
+
+  # Wage base for FEDERAL and STATE taxable income (both 401k and HSA reduce this)
+  - id: state_wage_base
+    type: max
+    values:
+      - 0
+      - type: sub
+        values:
+          - "@gross_annual"
+          - "$pretax_income_deductions"
+
+  # Wage base for FICA (Social Security + Medicare) and SDI/TDI/PFL - only HSA reduces this
+  - id: fica_wage_base
+    type: max
+    values:
+      - 0
+      - type: sub
+        values:
+          - "@gross_annual"
+          - "$hsa_deduction"
+
   # Determine standard deduction based on filing status
   - id: standard_deduction
     type: switch
@@ -1159,7 +1386,7 @@ calculations:
       - 0
       - type: sub
         values:
-          - "@gross_annual"
+          - "$state_wage_base"
           - "$standard_deduction"
 
   # Select appropriate tax brackets based on filing status
@@ -1206,7 +1433,7 @@ calculations:
       - 0
       - type: sub
         values:
-          - "@gross_annual"
+          - "$state_wage_base"
           - "$al_standard_deduction"
   - id: al_income_tax
     type: bracket_tax
@@ -1216,7 +1443,7 @@ calculations:
   # Arizona
   - id: az_income_tax
     type: percent_of
-    base: "@gross_annual"
+    base: "$state_wage_base"
     rate: "$az_tax_rate"
 
   # Arkansas
@@ -1242,7 +1469,7 @@ calculations:
       - 0
       - type: sub
         values:
-          - "@gross_annual"
+          - "$state_wage_base"
           - "$ar_standard_deduction"
   - id: ar_income_tax
     type: bracket_tax
@@ -1264,7 +1491,7 @@ calculations:
       - 0
       - type: sub
         values:
-          - "@gross_annual"
+          - "$state_wage_base"
           - "$ca_standard_deduction"
   - id: ca_tax_brackets
     type: switch
@@ -1272,8 +1499,8 @@ calculations:
     cases:
       single: "$ca_tax_brackets_single"
       married_joint: "$ca_tax_brackets_married_joint"
-      married_separate: "$ca_tax_brackets_single"
-      head_of_household: "$ca_tax_brackets_single"
+      married_separate: "$ca_tax_brackets_married_separate"
+      head_of_household: "$ca_tax_brackets_head_of_household"
   - id: ca_income_tax
     type: bracket_tax
     base: "$ca_taxable_income"
@@ -1282,7 +1509,7 @@ calculations:
   # Colorado
   - id: co_income_tax
     type: percent_of
-    base: "@gross_annual"
+    base: "$state_wage_base"
     rate: "$co_tax_rate"
 
   # Connecticut
@@ -1308,7 +1535,7 @@ calculations:
       - 0
       - type: sub
         values:
-          - "@gross_annual"
+          - "$state_wage_base"
           - "$ct_standard_deduction"
   - id: ct_income_tax
     type: bracket_tax
@@ -1338,7 +1565,7 @@ calculations:
       - 0
       - type: sub
         values:
-          - "@gross_annual"
+          - "$state_wage_base"
           - "$de_standard_deduction"
   - id: de_income_tax
     type: bracket_tax
@@ -1348,7 +1575,7 @@ calculations:
   # Georgia
   - id: ga_income_tax
     type: percent_of
-    base: "@gross_annual"
+    base: "$state_wage_base"
     rate: "$ga_tax_rate"
 
   # Hawaii
@@ -1374,7 +1601,7 @@ calculations:
       - 0
       - type: sub
         values:
-          - "@gross_annual"
+          - "$state_wage_base"
           - "$hi_standard_deduction"
   - id: hi_income_tax
     type: bracket_tax
@@ -1384,25 +1611,25 @@ calculations:
   # Idaho
   - id: id_income_tax
     type: percent_of
-    base: "@gross_annual"
+    base: "$state_wage_base"
     rate: "$id_tax_rate"
 
   # Illinois
   - id: il_income_tax
     type: percent_of
-    base: "@gross_annual"
+    base: "$state_wage_base"
     rate: "$il_tax_rate"
 
   # Indiana
   - id: in_income_tax
     type: percent_of
-    base: "@gross_annual"
+    base: "$state_wage_base"
     rate: "$in_tax_rate"
 
   # Iowa
   - id: ia_income_tax
     type: percent_of
-    base: "@gross_annual"
+    base: "$state_wage_base"
     rate: "$ia_tax_rate"
 
   # Kansas
@@ -1428,7 +1655,7 @@ calculations:
       - 0
       - type: sub
         values:
-          - "@gross_annual"
+          - "$state_wage_base"
           - "$ks_standard_deduction"
   - id: ks_income_tax
     type: bracket_tax
@@ -1438,13 +1665,13 @@ calculations:
   # Kentucky
   - id: ky_income_tax
     type: percent_of
-    base: "@gross_annual"
+    base: "$state_wage_base"
     rate: "$ky_tax_rate"
 
   # Louisiana
   - id: la_income_tax
     type: percent_of
-    base: "@gross_annual"
+    base: "$state_wage_base"
     rate: "$la_tax_rate"
 
   # Maine
@@ -1470,7 +1697,7 @@ calculations:
       - 0
       - type: sub
         values:
-          - "@gross_annual"
+          - "$state_wage_base"
           - "$me_standard_deduction"
   - id: me_income_tax
     type: bracket_tax
@@ -1500,7 +1727,7 @@ calculations:
       - 0
       - type: sub
         values:
-          - "@gross_annual"
+          - "$state_wage_base"
           - "$md_standard_deduction"
   - id: md_income_tax
     type: bracket_tax
@@ -1510,13 +1737,13 @@ calculations:
   # Massachusetts
   - id: ma_income_tax
     type: percent_of
-    base: "@gross_annual"
+    base: "$state_wage_base"
     rate: "$ma_tax_rate"
 
   # Michigan
   - id: mi_income_tax
     type: percent_of
-    base: "@gross_annual"
+    base: "$state_wage_base"
     rate: "$mi_tax_rate"
 
   # Minnesota
@@ -1542,7 +1769,7 @@ calculations:
       - 0
       - type: sub
         values:
-          - "@gross_annual"
+          - "$state_wage_base"
           - "$mn_standard_deduction"
   - id: mn_income_tax
     type: bracket_tax
@@ -1552,7 +1779,7 @@ calculations:
   # Mississippi
   - id: ms_income_tax
     type: percent_of
-    base: "@gross_annual"
+    base: "$state_wage_base"
     rate: "$ms_tax_rate"
 
   # Missouri
@@ -1566,7 +1793,7 @@ calculations:
       head_of_household: "$mo_tax_brackets_single"
   - id: mo_income_tax
     type: bracket_tax
-    base: "@gross_annual"
+    base: "$state_wage_base"
     brackets: "$mo_tax_brackets"
 
   # Montana
@@ -1580,7 +1807,7 @@ calculations:
       head_of_household: "$mt_tax_brackets_single"
   - id: mt_income_tax
     type: bracket_tax
-    base: "@gross_annual"
+    base: "$state_wage_base"
     brackets: "$mt_tax_brackets"
 
   # Nebraska
@@ -1606,7 +1833,7 @@ calculations:
       - 0
       - type: sub
         values:
-          - "@gross_annual"
+          - "$state_wage_base"
           - "$ne_standard_deduction"
   - id: ne_income_tax
     type: bracket_tax
@@ -1636,7 +1863,7 @@ calculations:
       - 0
       - type: sub
         values:
-          - "@gross_annual"
+          - "$state_wage_base"
           - "$nj_standard_deduction"
   - id: nj_income_tax
     type: bracket_tax
@@ -1666,7 +1893,7 @@ calculations:
       - 0
       - type: sub
         values:
-          - "@gross_annual"
+          - "$state_wage_base"
           - "$nm_standard_deduction"
   - id: nm_income_tax
     type: bracket_tax
@@ -1688,7 +1915,7 @@ calculations:
       - 0
       - type: sub
         values:
-          - "@gross_annual"
+          - "$state_wage_base"
           - "$ny_standard_deduction"
   - id: ny_tax_brackets
     type: switch
@@ -1706,7 +1933,7 @@ calculations:
   # North Carolina
   - id: nc_income_tax
     type: percent_of
-    base: "@gross_annual"
+    base: "$state_wage_base"
     rate: "$nc_tax_rate"
 
   # North Dakota
@@ -1732,7 +1959,7 @@ calculations:
       - 0
       - type: sub
         values:
-          - "@gross_annual"
+          - "$state_wage_base"
           - "$nd_standard_deduction"
   - id: nd_income_tax
     type: bracket_tax
@@ -1750,7 +1977,7 @@ calculations:
       head_of_household: "$oh_tax_brackets_single"
   - id: oh_income_tax
     type: bracket_tax
-    base: "@gross_annual"
+    base: "$state_wage_base"
     brackets: "$oh_tax_brackets"
 
   # Oklahoma
@@ -1776,7 +2003,7 @@ calculations:
       - 0
       - type: sub
         values:
-          - "@gross_annual"
+          - "$state_wage_base"
           - "$ok_standard_deduction"
   - id: ok_income_tax
     type: bracket_tax
@@ -1806,7 +2033,7 @@ calculations:
       - 0
       - type: sub
         values:
-          - "@gross_annual"
+          - "$state_wage_base"
           - "$or_standard_deduction"
   - id: or_income_tax
     type: bracket_tax
@@ -1816,7 +2043,7 @@ calculations:
   # Pennsylvania
   - id: pa_income_tax
     type: percent_of
-    base: "@gross_annual"
+    base: "$state_wage_base"
     rate: "$pa_tax_rate"
 
   # Rhode Island
@@ -1842,7 +2069,7 @@ calculations:
       - 0
       - type: sub
         values:
-          - "@gross_annual"
+          - "$state_wage_base"
           - "$ri_standard_deduction"
   - id: ri_income_tax
     type: bracket_tax
@@ -1860,13 +2087,13 @@ calculations:
       head_of_household: "$sc_tax_brackets_single"
   - id: sc_income_tax
     type: bracket_tax
-    base: "@gross_annual"
+    base: "$state_wage_base"
     brackets: "$sc_tax_brackets"
 
   # Utah
   - id: ut_income_tax
     type: percent_of
-    base: "@gross_annual"
+    base: "$state_wage_base"
     rate: "$ut_tax_rate"
 
   # Vermont
@@ -1892,7 +2119,7 @@ calculations:
       - 0
       - type: sub
         values:
-          - "@gross_annual"
+          - "$state_wage_base"
           - "$vt_standard_deduction"
   - id: vt_income_tax
     type: bracket_tax
@@ -1922,7 +2149,7 @@ calculations:
       - 0
       - type: sub
         values:
-          - "@gross_annual"
+          - "$state_wage_base"
           - "$va_standard_deduction"
   - id: va_income_tax
     type: bracket_tax
@@ -1952,7 +2179,7 @@ calculations:
       - 0
       - type: sub
         values:
-          - "@gross_annual"
+          - "$state_wage_base"
           - "$wv_standard_deduction"
   - id: wv_income_tax
     type: bracket_tax
@@ -1982,7 +2209,7 @@ calculations:
       - 0
       - type: sub
         values:
-          - "@gross_annual"
+          - "$state_wage_base"
           - "$wi_standard_deduction"
   - id: wi_income_tax
     type: bracket_tax
@@ -2012,7 +2239,7 @@ calculations:
       - 0
       - type: sub
         values:
-          - "@gross_annual"
+          - "$state_wage_base"
           - "$dc_standard_deduction"
   - id: dc_income_tax
     type: bracket_tax
@@ -2083,7 +2310,7 @@ calculations:
   - id: social_security_base
     type: min
     values:
-      - "@gross_annual"
+      - "$fica_wage_base"
       - "$social_security_wage_base"
 
   - id: social_security_tax
@@ -2097,7 +2324,7 @@ calculations:
   # Medicare tax (1.45% on all wages, no cap)
   - id: medicare_tax
     type: percent_of
-    base: "@gross_annual"
+    base: "$fica_wage_base"
     rate: "$medicare_rate"
     category: contribution
     label: "Medicare Tax"
@@ -2120,7 +2347,7 @@ calculations:
       - 0
       - type: sub
         values:
-          - "@gross_annual"
+          - "$fica_wage_base"
           - "$additional_medicare_threshold"
 
   - id: additional_medicare_tax
@@ -2139,6 +2366,140 @@ calculations:
       - "$medicare_tax"
       - "$additional_medicare_tax"
 
+  # STATE DISABILITY INSURANCE / PAID FAMILY LEAVE (SDI/TDI/PFL/FLI)
+  # Base is $fica_wage_base (excludes HSA, includes 401k deferrals), matching how
+  # these state-mandated payroll insurance wages are actually computed - they follow
+  # the same wage concept as UI/FICA wages, not federal/state taxable income.
+
+  # California SDI - uncapped since 2024 (SB 951), 1.3% for 2026
+  - id: ca_sdi
+    type: percent_of
+    base: "$fica_wage_base"
+    rate: "$ca_sdi_rate"
+
+  # New Jersey TDI + FLI - both capped at $171,100 wage base for 2026
+  - id: nj_tdi_fli_base
+    type: min
+    values:
+      - "$fica_wage_base"
+      - "$nj_tdi_fli_wage_base"
+  - id: nj_tdi
+    type: percent_of
+    base: "$nj_tdi_fli_base"
+    rate: "$nj_tdi_rate"
+  - id: nj_fli
+    type: percent_of
+    base: "$nj_tdi_fli_base"
+    rate: "$nj_fli_rate"
+  - id: nj_sdi
+    type: sum
+    values:
+      - "$nj_tdi"
+      - "$nj_fli"
+
+  # New York Paid Family Leave - 0.432% of wages, capped at $411.91/year for 2026
+  # (NY DBL is deliberately excluded: employee share is capped at $0.60/week / $31.20/year, negligible)
+  - id: ny_pfl_uncapped
+    type: percent_of
+    base: "$fica_wage_base"
+    rate: "$ny_pfl_rate"
+  - id: ny_pfl
+    type: min
+    values:
+      - "$ny_pfl_uncapped"
+      - "$ny_pfl_max_annual"
+
+  # Rhode Island TDI - 1.1% up to $100,000 wage base for 2026
+  - id: ri_tdi_base
+    type: min
+    values:
+      - "$fica_wage_base"
+      - "$ri_tdi_wage_base"
+  - id: ri_tdi
+    type: percent_of
+    base: "$ri_tdi_base"
+    rate: "$ri_tdi_rate"
+
+  # Hawaii TDI - 0.5% of wages, capped at $390.00/year ($7.50/week x 52) for 2026
+  - id: hi_tdi_uncapped
+    type: percent_of
+    base: "$fica_wage_base"
+    rate: "$hi_tdi_rate"
+  - id: hi_tdi
+    type: min
+    values:
+      - "$hi_tdi_uncapped"
+      - "$hi_tdi_max_annual"
+
+  # Select SDI/TDI/PFL/FLI contribution based on state of residence
+  - id: sdi_contribution
+    type: switch
+    on: "@state"
+    cases:
+      california: "$ca_sdi"
+      new_jersey: "$nj_sdi"
+      new_york: "$ny_pfl"
+      rhode_island: "$ri_tdi"
+      hawaii: "$hi_tdi"
+    default: 0
+    category: contribution
+    label: "State Disability / Paid Family Leave Insurance"
+    description: "Employee-paid state disability insurance / paid family leave contribution (CA SDI, NJ TDI+FLI, NY PFL, RI TDI, HI TDI); 0 for other states"
+
+  # Child Tax Credit (federal, non-refundable against federal income tax)
+  - id: ctc_magi_threshold
+    type: switch
+    on: "@filing_status"
+    cases:
+      single: "$ctc_phaseout_threshold_single"
+      married_joint: "$ctc_phaseout_threshold_married_joint"
+      married_separate: "$ctc_phaseout_threshold_married_separate"
+      head_of_household: "$ctc_phaseout_threshold_head_of_household"
+
+  # MAGI is approximated as the federal/state wage base (gross minus 401k/HSA payroll
+  # deductions), since this calculator does not model other above-the-line adjustments.
+  - id: ctc_magi_excess
+    type: max
+    values:
+      - 0
+      - type: sub
+        values:
+          - "$state_wage_base"
+          - "$ctc_magi_threshold"
+
+  - id: ctc_raw_amount
+    type: mul
+    values:
+      - "@dependent_children"
+      - "$ctc_amount_per_child"
+
+  - id: ctc_after_phaseout
+    type: credit
+    amount: "$ctc_raw_amount"
+    refundable: false
+    phaseout:
+      base: "$ctc_magi_excess"
+      start: 0
+      end: 1000000000
+      rate: 0.05
+    label: "Child Tax Credit (before non-refundable cap)"
+    description: "OBBBA federal CTC, $2,200/qualifying child, phased out $50 per $1,000 of MAGI (approximated as gross wages minus 401k/HSA deductions) over $200k (single/HoH/MFS) or $400k (MFJ)"
+
+  - id: child_tax_credit
+    type: min
+    values:
+      - "$ctc_after_phaseout"
+      - "$federal_income_tax"
+    category: credit
+    label: "Child Tax Credit"
+    description: "Non-refundable federal Child Tax Credit ($2,200/qualifying child under OBBBA), capped at federal income tax liability. The refundable Additional Child Tax Credit (up to $1,700/child) is out of scope of this calculator."
+
+  # Total credits
+  - id: total_credits
+    type: sum
+    values:
+      - "$child_tax_credit"
+
   # Total taxes and deductions
   - id: total_deductions
     type: sum
@@ -2146,13 +2507,22 @@ calculations:
       - "$federal_income_tax"
       - "$state_income_tax"
       - "$total_fica"
+      - "$sdi_contribution"
+      - "$pretax_income_deductions"
+
+  # Total tax burden after non-refundable credits
+  - id: net_tax_burden
+    type: sub
+    values:
+      - "$total_deductions"
+      - "$total_credits"
 
   # Net annual income
   - id: net_annual
     type: sub
     values:
       - "@gross_annual"
-      - "$total_deductions"
+      - "$net_tax_burden"
 
 outputs:
   gross: "@gross_annual"
@@ -2161,7 +2531,7 @@ outputs:
   effective_rate:
     type: div
     values:
-      - "$total_deductions"
+      - "$net_tax_burden"
       - "@gross_annual"
 
   breakdown:
@@ -2172,3 +2542,9 @@ outputs:
       - "$social_security_tax"
       - "$medicare_tax"
       - "$additional_medicare_tax"
+      - "$sdi_contribution"
+    credits:
+      - "$child_tax_credit"
+    deductions:
+      - "$retirement_401k_deduction"
+      - "$hsa_deduction"

@@ -1,0 +1,44 @@
+{
+  "name": "Single filer, Texas, $120k with $20k 401(k) + $4,000 HSA pre-tax payroll deductions",
+  "description": "Exercises 401(k) reducing federal taxable wages only, and HSA reducing federal AND FICA taxable wages",
+  "inputs": {
+    "gross_annual": 120000,
+    "filing_status": "single",
+    "state": "texas",
+    "retirement_401k_contributions": 20000,
+    "hsa_contributions": 4000
+  },
+  "expected": {
+    "net": 74836,
+    "effective_rate": 0.37637,
+    "breakdown": {
+      "federal_income_tax": 12290,
+      "state_income_tax": 0,
+      "social_security_tax": 7192,
+      "medicare_tax": 1682,
+      "additional_medicare_tax": 0,
+      "retirement_401k_deduction": 20000,
+      "hsa_deduction": 4000
+    }
+  },
+  "tolerance": 5,
+  "tolerance_percent": 0.001,
+  "sources": [
+    {
+      "description": "IRS 2026 brackets/standard deduction (Rev. Proc. 2025-32); IRS 2026 401(k) limit $24,500; IRS Rev. Proc. 2025-19 HSA limit $4,400",
+      "url": "https://www.irs.gov/newsroom/irs-releases-tax-inflation-adjustments-for-tax-year-2026-including-amendments-from-the-one-big-beautiful-bill",
+      "date": "2026-07-13",
+      "notes": "401(k) deduction = min(20000, cap 24500) = 20000. HSA deduction = min(4000, cap 4400) = 4000. pretax_income_deductions = 24000. state_wage_base (federal/state taxable base) = max(0, 120000-24000) = 96000. fica_wage_base = max(0, 120000-4000) = 116000 (401k does NOT reduce FICA; HSA does). FEDERAL: standard deduction (single, 2026) = $16,100 -> taxable = max(0, 96000-16100) = 79900. Tax: 10%*12400=1240; 12%*38000=4560; 22%*29500(=79900-50400)=6490. Federal tax = 12290. STATE (Texas) = 0. FICA: SS = min(116000,184500)*6.2% = 7192. Medicare = 116000*1.45% = 1682. Additional Medicare: max(0,116000-200000)=0. total_fica = 8874. total_deductions = federal(12290) + state(0) + fica(8874) + pretax_income_deductions(24000) = 45164. net = 120000-45164 = 74836. effective_rate = 45164/120000 = 0.37637."
+    },
+    {
+      "description": "IRS - 2026 401(k) elective deferral limit ($24,500)",
+      "url": "https://www.irs.gov/newsroom/401k-limit-increases-to-24500-for-2026-ira-limit-increases-to-7500",
+      "date": "2026-07-13"
+    },
+    {
+      "description": "IRS Rev. Proc. 2025-19 - 2026 HSA contribution limits ($4,400 self-only / $8,750 family)",
+      "url": "https://www.irs.gov/pub/irs-drop/rp-25-19.pdf",
+      "date": "2026-07-13"
+    }
+  ]
+}

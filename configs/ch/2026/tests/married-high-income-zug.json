@@ -20,14 +20,14 @@
   "tolerance_percent": 0.03,
   "sources": [
     {
-      "description": "Verified using Swiss tax calculation engine with progressive cantonal brackets. Federal tax calculated using official 2026 Bundessteuer tariff for married filers (includes CHF 2,800 married deduction). Zug cantonal/municipal tax uses progressive marginal rates for married: 3% up to CHF 50k, 5% from CHF 50k-150k = (50000×3% + 100000×5%) = CHF 6,500. Zug has Switzerland's lowest tax burden. Social security includes ALV solidarity contribution (0.5% above CHF 148,200 cap).",
+      "description": "Verified using Swiss tax calculation engine with progressive cantonal brackets. Federal tax calculated using official 2026 Bundessteuer tariff for married filers (includes CHF 2,800 married deduction). Zug cantonal/municipal tax uses progressive marginal rates for married: 3% up to CHF 50k, 5% from CHF 50k-150k = (50000×3% + 100000×5%) = CHF 6,500. Zug has Switzerland's lowest tax burden. Social security uses ALV at 1.1% capped at CHF 148,200; no contribution applies above the cap (ALV solidarity contribution abolished by law effective 1 January 2023, AVIG Art. 90a).",
       "url": "https://www.zg.ch/behoerden/finanzdirektion/steuerverwaltung/steuerrechner",
       "retrieved_at": "2026-03-07"
     },
     {
-      "description": "Social security rates verified against BSV official documentation (ALV: 1.1% up to CHF 148,200, then 0.5% solidarity contribution)",
-      "url": "https://www.bsv.admin.ch/bsv/de/home/sozialversicherungen/alv/grundlagen-gesetze.html",
-      "retrieved_at": "2026-03-07"
+      "description": "Social security rates verified against official BSV documentation. ALV: 1.1% employee contribution up to CHF 148,200 cap. The former solidarity contribution above the cap automatically expired by law on 1 January 2023 per AVIG Art. 90a and has not been reinstated for 2024-2026.",
+      "url": "https://www.bsv.admin.ch/dam/de/sd-web/G-958u9abUZ4/ALV_AC_Neuerungen.pdf",
+      "retrieved_at": "2026-07-13"
     },
     {
       "description": "Cross-verification via third-party calculator (single filer approximation)",
