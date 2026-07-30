@@ -1,0 +1,3048 @@
+meta:
+  country: "be"
+  year: 2026
+  currency: "EUR"
+  version: "1.0.0"
+  sources:
+    - url: "https://fin.belgium.be/en/private-individuals/tax-return/tax-rates-income/tax-rates"
+      description: "FPS Finance official 2026 income tax brackets and personal tax allowance"
+      retrieved_at: "2026-05-26"
+    - url: "https://www.socialsecurity.be/employer/instructions/dmfa/fr/latest/instructions/socialsecuritycontributions/contributions.html"
+      description: "ONSS administrative instructions 2026/1, employee social security contribution rates"
+      retrieved_at: "2026-05-26"
+    - url: "https://www.socialsecurity.be/employer/instructions/dmfa/fr/latest/instructions/deductions/workers_reductions/workbonus.html"
+      description: "ONSS administrative instructions 2026/1, employee work bonus reduction"
+      retrieved_at: "2026-05-26"
+    - url: "https://www.socialsecurity.be/employer/instructions/dmfa/fr/latest/instructions/special_contributions/other_specialcontributions/specialsocialsecuritycontribution.html"
+      description: "ONSS administrative instructions 2026/1, special social security contribution withholding"
+      retrieved_at: "2026-05-26"
+    - url: "https://www.bdo.be/en-gb/insights/news-alerts/2026/key-figures-indexed-amounts-of-income-tax-for-the-2025-2026-2027-tax-year"
+      description: "Indexed 2026 Belgian tax amounts including child allowance and flat-rate professional expenses cap"
+      retrieved_at: "2026-05-26"
+    - url: "https://www.wikifin.be/nl/belasting-werk-en-inkomen/belastingaangifte/belastingverminderingen/pensioensparen"
+      description: "Wikifin pension savings tax reduction limits for the 2026 Belgian tax return"
+      retrieved_at: "2026-05-26"
+    - url: "https://emploi.belgique.be/fr/titres-repas"
+      description: "FPS Employment 2026 meal voucher employer and employee contribution limits"
+      retrieved_at: "2026-05-26"
+    - url: "https://fin.belgium.be/fr/particuliers/declaration-impot/revenus/voitures-de-societe"
+      description: "FPS Finance company car taxable benefit formula and 2026 minimum benefit"
+      retrieved_at: "2026-05-26"
+    - url: "https://www.bdo.be/en-gb/insights/news-alerts/2026/mobility-budget-2026-what-your-company-needs-to-know"
+      description: "Belgian mobility budget 2026 tax treatment and pillar 3 contribution"
+      retrieved_at: "2026-05-26"
+    - url: "https://fin.belgium.be/sites/default/files/media/documents/taux-taxe-communale-2026.pdf"
+      description: "FPS Finance official 2026 municipal personal income tax surcharge rates by commune"
+      retrieved_at: "2026-05-26"
+  updated_at: "2026-05-26"
+  notes: |
+    Belgium 2026 standard resident employee salary calculation.
+
+    This model covers regular private-sector employees declared at 100% gross salary
+    and calculates employee-side ordinary social security, the low-wage work bonus,
+    flat-rate professional expenses, federal personal income tax, a configurable
+    municipal surcharge, and the payroll withholding estimate for the special social
+    security contribution.
+
+    Key assumptions and limitations:
+    - Single regular employment income only; no spouse income, replacement income,
+      bonuses with special withholding, or full tax-return optimization.
+    - Municipal surcharge defaults to 7%, close to a common Belgian local tax rate,
+      but municipalities vary.
+    - The special social security contribution is modeled using ONSS employer
+      withholding bands for a stable monthly salary. Final annual reconciliation is
+      household-based and can differ.
+    - The employee work bonus is annualized from the 2026/1 monthly ONSS formula for
+      full-time white-collar employees. It is capped at ordinary employee social
+      security due.
+    - Company cars are modeled from the annual taxable benefit shown by the employer
+      or calculated separately. This calculator does not derive the benefit from car
+      catalogue value, age, fuel type, and CO2.
+    - Housing and mortgage benefits are modeled as a direct regional tax-reduction
+      input because Belgian housing tax benefits depend on region, loan date, dwelling
+      status, and legacy regime.
+
+notices:
+  - id: "municipal_tax"
+    title: "Municipal Surcharge"
+    body: |
+      Belgian resident income tax includes a municipal surcharge. This calculator
+      defaults to 7%, but actual commune rates vary.
+    severity: "info"
+
+  - id: "special_social_security"
+    title: "Special Social Security Contribution"
+    body: |
+      The special social security contribution is estimated from ONSS payroll
+      withholding bands for stable monthly pay. The final annual amount is reconciled
+      on household income and may differ from payroll withholding.
+    severity: "warning"
+
+  - id: "salary_scope"
+    title: "Regular Employee Salary"
+    body: |
+      This configuration models regular employee salary and common benefits. It does
+      not include spouse income, bonuses with special withholding, replacement income,
+      or full tax-return optimization.
+    severity: "info"
+
+inputs:
+  gross_annual:
+    type: number
+    required: true
+    min: 0
+    label: "Annual Gross Salary"
+    description: "Your yearly gross employee salary before Belgian employee social security and tax"
+
+  municipality:
+    type: enum
+    required: true
+    label: "Municipality"
+    description: "Belgian municipality for the additional municipal income tax rate"
+    options:
+      aalst:
+        label: "Aalst"
+        description: "7.5% municipal surcharge"
+      aalter:
+        label: "Aalter"
+        description: "6.5% municipal surcharge"
+      aarschot:
+        label: "Aarschot"
+        description: "8% municipal surcharge"
+      aartselaar:
+        label: "Aartselaar"
+        description: "5% municipal surcharge"
+      affligem:
+        label: "Affligem"
+        description: "7% municipal surcharge"
+      aiseau-presles:
+        label: "Aiseau-Presles"
+        description: "8.5% municipal surcharge"
+      alken:
+        label: "Alken"
+        description: "7% municipal surcharge"
+      alveringem:
+        label: "Alveringem"
+        description: "8% municipal surcharge"
+      amay:
+        label: "Amay"
+        description: "8.5% municipal surcharge"
+      amel:
+        label: "Amel"
+        description: "6% municipal surcharge"
+      andenne:
+        label: "Andenne"
+        description: "8.6% municipal surcharge"
+      anderlecht:
+        label: "Anderlecht"
+        description: "7% municipal surcharge"
+      anderlues:
+        label: "Anderlues"
+        description: "8.8% municipal surcharge"
+      anhee:
+        label: "Anhée"
+        description: "8.5% municipal surcharge"
+      ans:
+        label: "Ans"
+        description: "8.5% municipal surcharge"
+      anthisnes:
+        label: "Anthisnes"
+        description: "8.5% municipal surcharge"
+      antoing:
+        label: "Antoing"
+        description: "7% municipal surcharge"
+      antwerpen:
+        label: "Antwerpen"
+        description: "7% municipal surcharge"
+      anzegem:
+        label: "Anzegem"
+        description: "8% municipal surcharge"
+      ardooie:
+        label: "Ardooie"
+        description: "6% municipal surcharge"
+      arendonk:
+        label: "Arendonk"
+        description: "7.5% municipal surcharge"
+      arlon:
+        label: "Arlon"
+        description: "7% municipal surcharge"
+      as:
+        label: "As"
+        description: "7.5% municipal surcharge"
+      asse:
+        label: "Asse"
+        description: "6.9% municipal surcharge"
+      assenede:
+        label: "Assenede"
+        description: "7% municipal surcharge"
+      assesse:
+        label: "Assesse"
+        description: "8.5% municipal surcharge"
+      ath:
+        label: "Ath"
+        description: "8.8% municipal surcharge"
+      attert:
+        label: "Attert"
+        description: "7% municipal surcharge"
+      aubange:
+        label: "Aubange"
+        description: "8% municipal surcharge"
+      aubel:
+        label: "Aubel"
+        description: "7.7% municipal surcharge"
+      auderghem:
+        label: "Auderghem"
+        description: "6% municipal surcharge"
+      avelgem:
+        label: "Avelgem"
+        description: "7% municipal surcharge"
+      awans:
+        label: "Awans"
+        description: "8.5% municipal surcharge"
+      aywaille:
+        label: "Aywaille"
+        description: "8.5% municipal surcharge"
+      baarle-hertog:
+        label: "Baarle-Hertog"
+        description: "7.2% municipal surcharge"
+      baelen:
+        label: "Baelen"
+        description: "7.7% municipal surcharge"
+      balen:
+        label: "Balen"
+        description: "8% municipal surcharge"
+      bassenge:
+        label: "Bassenge"
+        description: "8% municipal surcharge"
+      bastogne:
+        label: "Bastogne"
+        description: "7% municipal surcharge"
+      beaumont:
+        label: "Beaumont"
+        description: "8.8% municipal surcharge"
+      beauraing:
+        label: "Beauraing"
+        description: "8% municipal surcharge"
+      beauvechain:
+        label: "Beauvechain"
+        description: "7% municipal surcharge"
+      beernem:
+        label: "Beernem"
+        description: "7.8% municipal surcharge"
+      beerse:
+        label: "Beerse"
+        description: "6.9% municipal surcharge"
+      beersel:
+        label: "Beersel"
+        description: "6.9% municipal surcharge"
+      begijnendijk:
+        label: "Begijnendijk"
+        description: "7.9% municipal surcharge"
+      bekkevoort:
+        label: "Bekkevoort"
+        description: "7.6% municipal surcharge"
+      beloeil:
+        label: "Beloeil"
+        description: "8.5% municipal surcharge"
+      berchem-sainte-agathe:
+        label: "Berchem-Sainte- Agathe"
+        description: "6.5% municipal surcharge"
+      beringen:
+        label: "Beringen"
+        description: "7.6% municipal surcharge"
+      berlaar:
+        label: "Berlaar"
+        description: "7.8% municipal surcharge"
+      berlare:
+        label: "Berlare"
+        description: "7.6% municipal surcharge"
+      berloz:
+        label: "Berloz"
+        description: "8.5% municipal surcharge"
+      bernissart:
+        label: "Bernissart"
+        description: "8.5% municipal surcharge"
+      bertem:
+        label: "Bertem"
+        description: "7.5% municipal surcharge"
+      bertrix:
+        label: "Bertrix"
+        description: "8% municipal surcharge"
+      bever:
+        label: "Bever"
+        description: "8% municipal surcharge"
+      beveren-kruibeke-zwijndrecht:
+        label: "Beveren-Kruibeke- Zwijndrecht"
+        description: "5% municipal surcharge"
+      beyne-heusay:
+        label: "Beyne-Heusay"
+        description: "8.5% municipal surcharge"
+      bierbeek:
+        label: "Bierbeek"
+        description: "7% municipal surcharge"
+      bievre:
+        label: "Bièvre"
+        description: "6% municipal surcharge"
+      bilzen-hoeselt:
+        label: "Bilzen-Hoeselt"
+        description: "7.9% municipal surcharge"
+      binche:
+        label: "Binche"
+        description: "8% municipal surcharge"
+      blankenberge:
+        label: "Blankenberge"
+        description: "6% municipal surcharge"
+      blegny:
+        label: "Blégny"
+        description: "8.5% municipal surcharge"
+      bocholt:
+        label: "Bocholt"
+        description: "8% municipal surcharge"
+      boechout:
+        label: "Boechout"
+        description: "7.1% municipal surcharge"
+      bonheiden:
+        label: "Bonheiden"
+        description: "7.5% municipal surcharge"
+      boom:
+        label: "Boom"
+        description: "7.9% municipal surcharge"
+      boortmeerbeek:
+        label: "Boortmeerbeek"
+        description: "7.2% municipal surcharge"
+      bornem:
+        label: "Bornem"
+        description: "7.3% municipal surcharge"
+      bouillon:
+        label: "Bouillon"
+        description: "8% municipal surcharge"
+      boussu:
+        label: "Boussu"
+        description: "8.5% municipal surcharge"
+      boutersem:
+        label: "Boutersem"
+        description: "7.6% municipal surcharge"
+      braine-l-alleud:
+        label: "Braine-l'Alleud"
+        description: "5.5% municipal surcharge"
+      braine-le-chateau:
+        label: "Braine-le-Château"
+        description: "8% municipal surcharge"
+      braine-le-comte:
+        label: "Braine-le-Comte"
+        description: "8.8% municipal surcharge"
+      braives:
+        label: "Braives"
+        description: "8% municipal surcharge"
+      brakel:
+        label: "Brakel"
+        description: "8% municipal surcharge"
+      brasschaat:
+        label: "Brasschaat"
+        description: "6% municipal surcharge"
+      brecht:
+        label: "Brecht"
+        description: "7% municipal surcharge"
+      bredene:
+        label: "Bredene"
+        description: "7% municipal surcharge"
+      bree:
+        label: "Bree"
+        description: "8% municipal surcharge"
+      brugelette:
+        label: "Brugelette"
+        description: "8.5% municipal surcharge"
+      brugge:
+        label: "Brugge"
+        description: "6.9% municipal surcharge"
+      brunehaut:
+        label: "Brunehaut"
+        description: "8.8% municipal surcharge"
+      bruxelles:
+        label: "Bruxelles"
+        description: "4.9% municipal surcharge"
+      buggenhout:
+        label: "Buggenhout"
+        description: "7.8% municipal surcharge"
+      bullingen:
+        label: "Büllingen"
+        description: "6% municipal surcharge"
+      burdinne:
+        label: "Burdinne"
+        description: "8% municipal surcharge"
+      burg-reuland:
+        label: "Burg-Reuland"
+        description: "7% municipal surcharge"
+      butgenbach:
+        label: "Bütgenbach"
+        description: "7% municipal surcharge"
+      celles:
+        label: "Celles"
+        description: "8.2% municipal surcharge"
+      cerfontaine:
+        label: "Cerfontaine"
+        description: "7.5% municipal surcharge"
+      chapelle-lez-herlaimont:
+        label: "Chapelle-lez- Herlaimont"
+        description: "8.8% municipal surcharge"
+      charleroi:
+        label: "Charleroi"
+        description: "8.5% municipal surcharge"
+      chastre:
+        label: "Chastre"
+        description: "8% municipal surcharge"
+      chatelet:
+        label: "Châtelet"
+        description: "8% municipal surcharge"
+      chaudfontaine:
+        label: "Chaudfontaine"
+        description: "8% municipal surcharge"
+      chaumont-gistoux:
+        label: "Chaumont-Gistoux"
+        description: "8% municipal surcharge"
+      chievres:
+        label: "Chièvres"
+        description: "8.8% municipal surcharge"
+      chimay:
+        label: "Chimay"
+        description: "8% municipal surcharge"
+      chiny:
+        label: "Chiny"
+        description: "8% municipal surcharge"
+      ciney:
+        label: "Ciney"
+        description: "8% municipal surcharge"
+      clavier:
+        label: "Clavier"
+        description: "8.5% municipal surcharge"
+      colfontaine:
+        label: "Colfontaine"
+        description: "8.5% municipal surcharge"
+      comblain-au-pont:
+        label: "Comblain-au-Pont"
+        description: "8.8% municipal surcharge"
+      comines-warneton:
+        label: "Comines-Warneton"
+        description: "7.5% municipal surcharge"
+      courcelles:
+        label: "Courcelles"
+        description: "8.8% municipal surcharge"
+      court-saint-etienne:
+        label: "Court-Saint-Etienne"
+        description: "8% municipal surcharge"
+      couvin:
+        label: "Couvin"
+        description: "8.5% municipal surcharge"
+      crisnee:
+        label: "Crisnée"
+        description: "8% municipal surcharge"
+      dalhem:
+        label: "Dalhem"
+        description: "7.5% municipal surcharge"
+      damme:
+        label: "Damme"
+        description: "8% municipal surcharge"
+      daverdisse:
+        label: "Daverdisse"
+        description: "6.5% municipal surcharge"
+      de-haan:
+        label: "De Haan"
+        description: "5% municipal surcharge"
+      de-panne:
+        label: "De Panne"
+        description: "5% municipal surcharge"
+      deerlijk:
+        label: "Deerlijk"
+        description: "8% municipal surcharge"
+      deinze:
+        label: "Deinze"
+        description: "6.9% municipal surcharge"
+      denderleeuw:
+        label: "Denderleeuw"
+        description: "7.3% municipal surcharge"
+      dendermonde:
+        label: "Dendermonde"
+        description: "7.5% municipal surcharge"
+      dentergem:
+        label: "Dentergem"
+        description: "7.5% municipal surcharge"
+      dessel:
+        label: "Dessel"
+        description: "6% municipal surcharge"
+      destelbergen:
+        label: "Destelbergen"
+        description: "6.9% municipal surcharge"
+      diepenbeek:
+        label: "Diepenbeek"
+        description: "8% municipal surcharge"
+      diest:
+        label: "Diest"
+        description: "7.9% municipal surcharge"
+      diksmuide:
+        label: "Diksmuide"
+        description: "8% municipal surcharge"
+      dilbeek:
+        label: "Dilbeek"
+        description: "6.9% municipal surcharge"
+      dilsen-stokkem:
+        label: "Dilsen-Stokkem"
+        description: "8% municipal surcharge"
+      dinant:
+        label: "Dinant"
+        description: "8.8% municipal surcharge"
+      dison:
+        label: "Dison"
+        description: "8.2% municipal surcharge"
+      doische:
+        label: "Doische"
+        description: "8% municipal surcharge"
+      donceel:
+        label: "Donceel"
+        description: "8.8% municipal surcharge"
+      dour:
+        label: "Dour"
+        description: "8.4% municipal surcharge"
+      drogenbos:
+        label: "Drogenbos"
+        description: "7% municipal surcharge"
+      duffel:
+        label: "Duffel"
+        description: "6.5% municipal surcharge"
+      durbuy:
+        label: "Durbuy"
+        description: "8% municipal surcharge"
+      ecaussinnes:
+        label: "Ecaussinnes"
+        description: "7.6% municipal surcharge"
+      edegem:
+        label: "Edegem"
+        description: "6.5% municipal surcharge"
+      eeklo:
+        label: "Eeklo"
+        description: "7.5% municipal surcharge"
+      eghezee:
+        label: "Eghezée"
+        description: "7.5% municipal surcharge"
+      ellezelles:
+        label: "Ellezelles"
+        description: "8% municipal surcharge"
+      enghien:
+        label: "Enghien"
+        description: "8.2% municipal surcharge"
+      engis:
+        label: "Engis"
+        description: "8% municipal surcharge"
+      erezee:
+        label: "Erezée"
+        description: "8% municipal surcharge"
+      erpe-mere:
+        label: "Erpe-Mere"
+        description: "7% municipal surcharge"
+      erquelinnes:
+        label: "Erquelinnes"
+        description: "8.5% municipal surcharge"
+      esneux:
+        label: "Esneux"
+        description: "8.1% municipal surcharge"
+      essen:
+        label: "Essen"
+        description: "7% municipal surcharge"
+      estaimpuis:
+        label: "Estaimpuis"
+        description: "8.8% municipal surcharge"
+      estinnes:
+        label: "Estinnes"
+        description: "8.5% municipal surcharge"
+      etalle:
+        label: "Etalle"
+        description: "7% municipal surcharge"
+      etterbeek:
+        label: "Etterbeek"
+        description: "5.8% municipal surcharge"
+      eupen:
+        label: "Eupen"
+        description: "8% municipal surcharge"
+      evere:
+        label: "Evere"
+        description: "7% municipal surcharge"
+      evergem:
+        label: "Evergem"
+        description: "7.4% municipal surcharge"
+      faimes:
+        label: "Faimes"
+        description: "8.8% municipal surcharge"
+      farciennes:
+        label: "Farciennes"
+        description: "8.8% municipal surcharge"
+      fauvillers:
+        label: "Fauvillers"
+        description: "7% municipal surcharge"
+      fernelmont:
+        label: "Fernelmont"
+        description: "7.5% municipal surcharge"
+      ferrieres:
+        label: "Ferrières"
+        description: "8.5% municipal surcharge"
+      fexhe-le-haut-clocher:
+        label: "Fexhe-le-Haut-Clocher"
+        description: "8.8% municipal surcharge"
+      flemalle:
+        label: "Flémalle"
+        description: "8% municipal surcharge"
+      fleron:
+        label: "Fléron"
+        description: "8.5% municipal surcharge"
+      fleurus:
+        label: "Fleurus"
+        description: "8.5% municipal surcharge"
+      flobecq:
+        label: "Flobecq"
+        description: "8% municipal surcharge"
+      floreffe:
+        label: "Floreffe"
+        description: "8.3% municipal surcharge"
+      florennes:
+        label: "Florennes"
+        description: "8.5% municipal surcharge"
+      florenville:
+        label: "Florenville"
+        description: "8% municipal surcharge"
+      fontaine-l-eveque:
+        label: "Fontaine-l'Evêque"
+        description: "8.8% municipal surcharge"
+      forest:
+        label: "Forest"
+        description: "7% municipal surcharge"
+      fosses-la-ville:
+        label: "Fosses-la-Ville"
+        description: "8.5% municipal surcharge"
+      frameries:
+        label: "Frameries"
+        description: "8.6% municipal surcharge"
+      frasnes-lez-anvaing:
+        label: "Frasnes-lez-Anvaing"
+        description: "7.8% municipal surcharge"
+      froidchapelle:
+        label: "Froidchapelle"
+        description: "8.5% municipal surcharge"
+      ganshoren:
+        label: "Ganshoren"
+        description: "6.5% municipal surcharge"
+      gavere:
+        label: "Gavere"
+        description: "7.3% municipal surcharge"
+      gedinne:
+        label: "Gedinne"
+        description: "6.5% municipal surcharge"
+      geel:
+        label: "Geel"
+        description: "7% municipal surcharge"
+      geer:
+        label: "Geer"
+        description: "7.7% municipal surcharge"
+      geetbets:
+        label: "Geetbets"
+        description: "8% municipal surcharge"
+      gembloux:
+        label: "Gembloux"
+        description: "7.6% municipal surcharge"
+      genappe:
+        label: "Genappe"
+        description: "8% municipal surcharge"
+      genk:
+        label: "Genk"
+        description: "7.5% municipal surcharge"
+      gent:
+        label: "Gent"
+        description: "6.5% municipal surcharge"
+      geraardsbergen:
+        label: "Geraardsbergen"
+        description: "7.8% municipal surcharge"
+      gerpinnes:
+        label: "Gerpinnes"
+        description: "8% municipal surcharge"
+      gesves:
+        label: "Gesves"
+        description: "8.5% municipal surcharge"
+      gingelom:
+        label: "Gingelom"
+        description: "8% municipal surcharge"
+      gistel:
+        label: "Gistel"
+        description: "7% municipal surcharge"
+      glabbeek:
+        label: "Glabbeek"
+        description: "7.8% municipal surcharge"
+      gouvy:
+        label: "Gouvy"
+        description: "8% municipal surcharge"
+      grace-hollogne:
+        label: "Grâce-Hollogne"
+        description: "8% municipal surcharge"
+      grez-doiceau:
+        label: "Grez-Doiceau"
+        description: "6.9% municipal surcharge"
+      grimbergen:
+        label: "Grimbergen"
+        description: "7.4% municipal surcharge"
+      grobbendonk:
+        label: "Grobbendonk"
+        description: "7.5% municipal surcharge"
+      haacht:
+        label: "Haacht"
+        description: "6.7% municipal surcharge"
+      haaltert:
+        label: "Haaltert"
+        description: "7.2% municipal surcharge"
+      habay:
+        label: "Habay"
+        description: "8% municipal surcharge"
+      halen:
+        label: "Halen"
+        description: "8% municipal surcharge"
+      halle:
+        label: "Halle"
+        description: "7.1% municipal surcharge"
+      hamme:
+        label: "Hamme"
+        description: "8% municipal surcharge"
+      hamoir:
+        label: "Hamoir"
+        description: "8.8% municipal surcharge"
+      hamois:
+        label: "Hamois"
+        description: "8% municipal surcharge"
+      hamont-achel:
+        label: "Hamont-Achel"
+        description: "7% municipal surcharge"
+      ham-sur-heure-nalinnes:
+        label: "Ham-sur-Heure- Nalinnes"
+        description: "8% municipal surcharge"
+      hannut:
+        label: "Hannut"
+        description: "8.5% municipal surcharge"
+      harelbeke:
+        label: "Harelbeke"
+        description: "7.5% municipal surcharge"
+      hasselt:
+        label: "Hasselt"
+        description: "7% municipal surcharge"
+      hastiere:
+        label: "Hastière"
+        description: "8.2% municipal surcharge"
+      havelange:
+        label: "Havelange"
+        description: "8.8% municipal surcharge"
+      hechtel-eksel:
+        label: "Hechtel-Eksel"
+        description: "7.5% municipal surcharge"
+      heers:
+        label: "Heers"
+        description: "7.5% municipal surcharge"
+      heist-op-den-berg:
+        label: "Heist-op-den-Berg"
+        description: "7.5% municipal surcharge"
+      helecine:
+        label: "Hélécine"
+        description: "8.8% municipal surcharge"
+      hemiksem:
+        label: "Hemiksem"
+        description: "7.5% municipal surcharge"
+      hensies:
+        label: "Hensies"
+        description: "8.5% municipal surcharge"
+      herbeumont:
+        label: "Herbeumont"
+        description: "7% municipal surcharge"
+      herent:
+        label: "Herent"
+        description: "7.7% municipal surcharge"
+      herentals:
+        label: "Herentals"
+        description: "7.2% municipal surcharge"
+      herenthout:
+        label: "Herenthout"
+        description: "7.5% municipal surcharge"
+      herk-de-stad:
+        label: "Herk-de-Stad"
+        description: "7% municipal surcharge"
+      heron:
+        label: "Héron"
+        description: "8.2% municipal surcharge"
+      herselt:
+        label: "Herselt"
+        description: "7.3% municipal surcharge"
+      herstal:
+        label: "Herstal"
+        description: "8.5% municipal surcharge"
+      herstappe:
+        label: "Herstappe"
+        description: "5% municipal surcharge"
+      herve:
+        label: "Herve"
+        description: "8% municipal surcharge"
+      herzele:
+        label: "Herzele"
+        description: "7.5% municipal surcharge"
+      heusden-zolder:
+        label: "Heusden-Zolder"
+        description: "7.5% municipal surcharge"
+      heuvelland:
+        label: "Heuvelland"
+        description: "8% municipal surcharge"
+      hoegaarden:
+        label: "Hoegaarden"
+        description: "8% municipal surcharge"
+      hoeilaart:
+        label: "Hoeilaart"
+        description: "6.8% municipal surcharge"
+      holsbeek:
+        label: "Holsbeek"
+        description: "7% municipal surcharge"
+      honnelles:
+        label: "Honnelles"
+        description: "8.2% municipal surcharge"
+      hooglede:
+        label: "Hooglede"
+        description: "7.9% municipal surcharge"
+      hoogstraten:
+        label: "Hoogstraten"
+        description: "5.7% municipal surcharge"
+      horebeke:
+        label: "Horebeke"
+        description: "7.7% municipal surcharge"
+      hotton:
+        label: "Hotton"
+        description: "8.5% municipal surcharge"
+      houffalize:
+        label: "Houffalize"
+        description: "8% municipal surcharge"
+      houthalen-helchteren:
+        label: "Houthalen-Helchteren"
+        description: "8% municipal surcharge"
+      houthulst:
+        label: "Houthulst"
+        description: "7.5% municipal surcharge"
+      houyet:
+        label: "Houyet"
+        description: "8% municipal surcharge"
+      hove:
+        label: "Hove"
+        description: "7.5% municipal surcharge"
+      huldenberg:
+        label: "Huldenberg"
+        description: "8% municipal surcharge"
+      hulshout:
+        label: "Hulshout"
+        description: "7% municipal surcharge"
+      huy:
+        label: "Huy"
+        description: "8.8% municipal surcharge"
+      ichtegem:
+        label: "Ichtegem"
+        description: "7.7% municipal surcharge"
+      ieper:
+        label: "Ieper"
+        description: "8% municipal surcharge"
+      incourt:
+        label: "Incourt"
+        description: "8% municipal surcharge"
+      ingelmunster:
+        label: "Ingelmunster"
+        description: "8% municipal surcharge"
+      ittre:
+        label: "Ittre"
+        description: "7.9% municipal surcharge"
+      ixelles:
+        label: "Ixelles"
+        description: "7.5% municipal surcharge"
+      izegem:
+        label: "Izegem"
+        description: "7% municipal surcharge"
+      jabbeke:
+        label: "Jabbeke"
+        description: "7.7% municipal surcharge"
+      jalhay:
+        label: "Jalhay"
+        description: "6.8% municipal surcharge"
+      jemeppe-sur-sambre:
+        label: "Jemeppe-sur-Sambre"
+        description: "6% municipal surcharge"
+      jette:
+        label: "Jette"
+        description: "7.4% municipal surcharge"
+      jodoigne:
+        label: "Jodoigne"
+        description: "8.8% municipal surcharge"
+      juprelle:
+        label: "Juprelle"
+        description: "7.5% municipal surcharge"
+      jurbise:
+        label: "Jurbise"
+        description: "8.5% municipal surcharge"
+      kalmthout:
+        label: "Kalmthout"
+        description: "7.5% municipal surcharge"
+      kampenhout:
+        label: "Kampenhout"
+        description: "7% municipal surcharge"
+      kapellen:
+        label: "Kapellen"
+        description: "5.5% municipal surcharge"
+      kapelle-op-den-bos:
+        label: "Kapelle-op-den-Bos"
+        description: "7.8% municipal surcharge"
+      kaprijke:
+        label: "Kaprijke"
+        description: "7.5% municipal surcharge"
+      kasterlee:
+        label: "Kasterlee"
+        description: "7% municipal surcharge"
+      keerbergen:
+        label: "Keerbergen"
+        description: "6.5% municipal surcharge"
+      kelmis:
+        label: "Kelmis"
+        description: "7.5% municipal surcharge"
+      kinrooi:
+        label: "Kinrooi"
+        description: "7% municipal surcharge"
+      kluisbergen:
+        label: "Kluisbergen"
+        description: "7.5% municipal surcharge"
+      knokke-heist:
+        label: "Knokke-Heist"
+        description: "0% municipal surcharge"
+      koekelare:
+        label: "Koekelare"
+        description: "7% municipal surcharge"
+      koekelberg:
+        label: "Koekelberg"
+        description: "7% municipal surcharge"
+      koksijde:
+        label: "Koksijde"
+        description: "5% municipal surcharge"
+      kontich:
+        label: "Kontich"
+        description: "5.7% municipal surcharge"
+      kortemark:
+        label: "Kortemark"
+        description: "7.8% municipal surcharge"
+      kortenaken:
+        label: "Kortenaken"
+        description: "7.8% municipal surcharge"
+      kortenberg:
+        label: "Kortenberg"
+        description: "7.9% municipal surcharge"
+      kortrijk:
+        label: "Kortrijk"
+        description: "7.9% municipal surcharge"
+      kraainem:
+        label: "Kraainem"
+        description: "7% municipal surcharge"
+      kruisem:
+        label: "Kruisem"
+        description: "7.5% municipal surcharge"
+      kuurne:
+        label: "Kuurne"
+        description: "7.9% municipal surcharge"
+      la-bruyere:
+        label: "La Bruyère"
+        description: "8% municipal surcharge"
+      la-hulpe:
+        label: "La Hulpe"
+        description: "6.6% municipal surcharge"
+      la-louviere:
+        label: "La Louvière"
+        description: "8.8% municipal surcharge"
+      la-roche-en-ardenne:
+        label: "La Roche-en-Ardenne"
+        description: "8% municipal surcharge"
+      laakdal:
+        label: "Laakdal"
+        description: "7.5% municipal surcharge"
+      laarne:
+        label: "Laarne"
+        description: "7.8% municipal surcharge"
+      lanaken:
+        label: "Lanaken"
+        description: "6.9% municipal surcharge"
+      landen:
+        label: "Landen"
+        description: "7.9% municipal surcharge"
+      langemark-poelkapelle:
+        label: "Langemark-Poelkapelle"
+        description: "8% municipal surcharge"
+      lasne:
+        label: "Lasne"
+        description: "5.8% municipal surcharge"
+      le-roeulx:
+        label: "Le Roeulx"
+        description: "8.5% municipal surcharge"
+      lebbeke:
+        label: "Lebbeke"
+        description: "7.5% municipal surcharge"
+      lede:
+        label: "Lede"
+        description: "7.9% municipal surcharge"
+      ledegem:
+        label: "Ledegem"
+        description: "7.5% municipal surcharge"
+      leglise:
+        label: "Léglise"
+        description: "8% municipal surcharge"
+      lendelede:
+        label: "Lendelede"
+        description: "7.8% municipal surcharge"
+      lennik:
+        label: "Lennik"
+        description: "7.9% municipal surcharge"
+      lens:
+        label: "Lens"
+        description: "8% municipal surcharge"
+      leopoldsburg:
+        label: "Leopoldsburg"
+        description: "8% municipal surcharge"
+      les-bons-villers:
+        label: "Les-Bons-Villers"
+        description: "8% municipal surcharge"
+      lessines:
+        label: "Lessines"
+        description: "8.8% municipal surcharge"
+      leuven:
+        label: "Leuven"
+        description: "6.7% municipal surcharge"
+      leuze-en-hainaut:
+        label: "Leuze-en-Hainaut"
+        description: "8.8% municipal surcharge"
+      libin:
+        label: "Libin"
+        description: "7.3% municipal surcharge"
+      libramont-chevigny:
+        label: "Libramont-Chevigny"
+        description: "7.5% municipal surcharge"
+      lichtervelde:
+        label: "Lichtervelde"
+        description: "7.5% municipal surcharge"
+      liedekerke:
+        label: "Liedekerke"
+        description: "7.8% municipal surcharge"
+      liege:
+        label: "Liège"
+        description: "8% municipal surcharge"
+      lier:
+        label: "Lier"
+        description: "7.2% municipal surcharge"
+      lierde:
+        label: "Lierde"
+        description: "7.3% municipal surcharge"
+      lierneux:
+        label: "Lierneux"
+        description: "7.5% municipal surcharge"
+      lievegem:
+        label: "Lievegem"
+        description: "7% municipal surcharge"
+      lille:
+        label: "Lille"
+        description: "6.5% municipal surcharge"
+      limbourg:
+        label: "Limbourg"
+        description: "8.8% municipal surcharge"
+      lincent:
+        label: "Lincent"
+        description: "8.8% municipal surcharge"
+      linkebeek:
+        label: "Linkebeek"
+        description: "7.8% municipal surcharge"
+      lint:
+        label: "Lint"
+        description: "8% municipal surcharge"
+      linter:
+        label: "Linter"
+        description: "8% municipal surcharge"
+      lobbes:
+        label: "Lobbes"
+        description: "8.5% municipal surcharge"
+      lochristi:
+        label: "Lochristi"
+        description: "6.9% municipal surcharge"
+      lokeren:
+        label: "Lokeren"
+        description: "6.5% municipal surcharge"
+      lommel:
+        label: "Lommel"
+        description: "6% municipal surcharge"
+      londerzeel:
+        label: "Londerzeel"
+        description: "7.9% municipal surcharge"
+      lontzen:
+        label: "Lontzen"
+        description: "6.8% municipal surcharge"
+      lo-reninge:
+        label: "Lo-Reninge"
+        description: "7.7% municipal surcharge"
+      lubbeek:
+        label: "Lubbeek"
+        description: "7.5% municipal surcharge"
+      lummen:
+        label: "Lummen"
+        description: "6.7% municipal surcharge"
+      maarkedal:
+        label: "Maarkedal"
+        description: "7% municipal surcharge"
+      maaseik:
+        label: "Maaseik"
+        description: "8.5% municipal surcharge"
+      maasmechelen:
+        label: "Maasmechelen"
+        description: "7.8% municipal surcharge"
+      machelen:
+        label: "Machelen"
+        description: "5% municipal surcharge"
+      maldegem:
+        label: "Maldegem"
+        description: "6.9% municipal surcharge"
+      malle:
+        label: "Malle"
+        description: "7% municipal surcharge"
+      malmedy:
+        label: "Malmedy"
+        description: "7% municipal surcharge"
+      manage:
+        label: "Manage"
+        description: "8% municipal surcharge"
+      manhay:
+        label: "Manhay"
+        description: "6.5% municipal surcharge"
+      marche-en-famenne:
+        label: "Marche-en-Famenne"
+        description: "8% municipal surcharge"
+      marchin:
+        label: "Marchin"
+        description: "8.8% municipal surcharge"
+      martelange:
+        label: "Martelange"
+        description: "7% municipal surcharge"
+      mechelen:
+        label: "Mechelen"
+        description: "6.5% municipal surcharge"
+      meerhout:
+        label: "Meerhout"
+        description: "8% municipal surcharge"
+      meise:
+        label: "Meise"
+        description: "7.9% municipal surcharge"
+      meix-devant-virton:
+        label: "Meix-devant-Virton"
+        description: "8% municipal surcharge"
+      menen:
+        label: "Menen"
+        description: "8% municipal surcharge"
+      merbes-le-chateau:
+        label: "Merbes-le-Château"
+        description: "8.1% municipal surcharge"
+      merchtem:
+        label: "Merchtem"
+        description: "7.1% municipal surcharge"
+      merelbeke-melle:
+        label: "Merelbeke-Melle"
+        description: "7.5% municipal surcharge"
+      merksplas:
+        label: "Merksplas"
+        description: "6.5% municipal surcharge"
+      mesen:
+        label: "Mesen"
+        description: "9% municipal surcharge"
+      messancy:
+        label: "Messancy"
+        description: "7% municipal surcharge"
+      mettet:
+        label: "Mettet"
+        description: "8% municipal surcharge"
+      middelkerke:
+        label: "Middelkerke"
+        description: "3% municipal surcharge"
+      modave:
+        label: "Modave"
+        description: "8% municipal surcharge"
+      mol:
+        label: "Mol"
+        description: "7.7% municipal surcharge"
+      molenbeek-saint-jean:
+        label: "Molenbeek-Saint-Jean"
+        description: "7% municipal surcharge"
+      momignies:
+        label: "Momignies"
+        description: "8.5% municipal surcharge"
+      mons:
+        label: "Mons"
+        description: "8% municipal surcharge"
+      mont-de-l-enclus:
+        label: "Mont-de-l'Enclus"
+        description: "8% municipal surcharge"
+      montigny-le-tilleul:
+        label: "Montigny-le-Tilleul"
+        description: "8% municipal surcharge"
+      mont-saint-guibert:
+        label: "Mont-Saint-Guibert"
+        description: "7.5% municipal surcharge"
+      moorslede:
+        label: "Moorslede"
+        description: "8% municipal surcharge"
+      morlanwelz:
+        label: "Morlanwelz"
+        description: "8.8% municipal surcharge"
+      mortsel:
+        label: "Mortsel"
+        description: "7.5% municipal surcharge"
+      mouscron:
+        label: "Mouscron"
+        description: "8.8% municipal surcharge"
+      musson:
+        label: "Musson"
+        description: "7.5% municipal surcharge"
+      namur:
+        label: "Namur"
+        description: "8.5% municipal surcharge"
+      nandrin:
+        label: "Nandrin"
+        description: "8.5% municipal surcharge"
+      nassogne:
+        label: "Nassogne"
+        description: "8% municipal surcharge"
+      nazareth-de-pinte:
+        label: "Nazareth-De Pinte"
+        description: "6.9% municipal surcharge"
+      neufchateau:
+        label: "Neufchâteau"
+        description: "7.3% municipal surcharge"
+      neupre:
+        label: "Neupré"
+        description: "8% municipal surcharge"
+      niel:
+        label: "Niel"
+        description: "8% municipal surcharge"
+      nieuwerkerken:
+        label: "Nieuwerkerken"
+        description: "7.7% municipal surcharge"
+      nieuwpoort:
+        label: "Nieuwpoort"
+        description: "5% municipal surcharge"
+      nijlen:
+        label: "Nijlen"
+        description: "7% municipal surcharge"
+      ninove:
+        label: "Ninove"
+        description: "7.5% municipal surcharge"
+      nivelles:
+        label: "Nivelles"
+        description: "7% municipal surcharge"
+      ohey:
+        label: "Ohey"
+        description: "8.3% municipal surcharge"
+      olen:
+        label: "Olen"
+        description: "6.5% municipal surcharge"
+      olne:
+        label: "Olne"
+        description: "7.2% municipal surcharge"
+      onhaye:
+        label: "Onhaye"
+        description: "8% municipal surcharge"
+      oostende:
+        label: "Oostende"
+        description: "6.5% municipal surcharge"
+      oosterzele:
+        label: "Oosterzele"
+        description: "7.8% municipal surcharge"
+      oostkamp:
+        label: "Oostkamp"
+        description: "8% municipal surcharge"
+      oostrozebeke:
+        label: "Oostrozebeke"
+        description: "7.9% municipal surcharge"
+      opwijk:
+        label: "Opwijk"
+        description: "7.8% municipal surcharge"
+      oreye:
+        label: "Oreye"
+        description: "6.9% municipal surcharge"
+      orp-jauche:
+        label: "Orp-Jauche"
+        description: "8% municipal surcharge"
+      ottignies-louvain-la-neuve:
+        label: "Ottignies-Louvain-La- Neuve"
+        description: "7.7% municipal surcharge"
+      oudenaarde:
+        label: "Oudenaarde"
+        description: "7% municipal surcharge"
+      oudenburg:
+        label: "Oudenburg"
+        description: "7.7% municipal surcharge"
+      oud-heverlee:
+        label: "Oud-Heverlee"
+        description: "6.5% municipal surcharge"
+      oudsbergen:
+        label: "Oudsbergen"
+        description: "6.5% municipal surcharge"
+      oud-turnhout:
+        label: "Oud-Turnhout"
+        description: "7% municipal surcharge"
+      ouffet:
+        label: "Ouffet"
+        description: "8% municipal surcharge"
+      oupeye:
+        label: "Oupeye"
+        description: "8% municipal surcharge"
+      overijse:
+        label: "Overijse"
+        description: "7.3% municipal surcharge"
+      pajottegem:
+        label: "Pajottegem"
+        description: "7.3% municipal surcharge"
+      paliseul:
+        label: "Paliseul"
+        description: "8% municipal surcharge"
+      pecq:
+        label: "Pecq"
+        description: "8.8% municipal surcharge"
+      peer:
+        label: "Peer"
+        description: "8% municipal surcharge"
+      pelt:
+        label: "Pelt"
+        description: "6% municipal surcharge"
+      pepingen:
+        label: "Pepingen"
+        description: "7.5% municipal surcharge"
+      pepinster:
+        label: "Pepinster"
+        description: "8.5% municipal surcharge"
+      peruwelz:
+        label: "Péruwelz"
+        description: "8.5% municipal surcharge"
+      perwez:
+        label: "Perwez"
+        description: "7.5% municipal surcharge"
+      philippeville:
+        label: "Philippeville"
+        description: "8% municipal surcharge"
+      pittem:
+        label: "Pittem"
+        description: "7.5% municipal surcharge"
+      plombieres:
+        label: "Plombières"
+        description: "7.3% municipal surcharge"
+      pont-a-celles:
+        label: "Pont-à-Celles"
+        description: "8% municipal surcharge"
+      poperinge:
+        label: "Poperinge"
+        description: "8% municipal surcharge"
+      profondeville:
+        label: "Profondeville"
+        description: "8% municipal surcharge"
+      putte:
+        label: "Putte"
+        description: "7.5% municipal surcharge"
+      puurs-sint-amands:
+        label: "Puurs-Sint-Amands"
+        description: "7.3% municipal surcharge"
+      quaregnon:
+        label: "Quaregnon"
+        description: "8.5% municipal surcharge"
+      quevy:
+        label: "Quévy"
+        description: "8.5% municipal surcharge"
+      quievrain:
+        label: "Quiévrain"
+        description: "8.8% municipal surcharge"
+      raeren:
+        label: "Raeren"
+        description: "7.5% municipal surcharge"
+      ramillies:
+        label: "Ramillies"
+        description: "8.3% municipal surcharge"
+      ranst:
+        label: "Ranst"
+        description: "6.5% municipal surcharge"
+      ravels:
+        label: "Ravels"
+        description: "6% municipal surcharge"
+      rebecq:
+        label: "Rebecq"
+        description: "8.5% municipal surcharge"
+      remicourt:
+        label: "Remicourt"
+        description: "8% municipal surcharge"
+      rendeux:
+        label: "Rendeux"
+        description: "7.7% municipal surcharge"
+      retie:
+        label: "Retie"
+        description: "7.8% municipal surcharge"
+      riemst:
+        label: "Riemst"
+        description: "8% municipal surcharge"
+      rijkevorsel:
+        label: "Rijkevorsel"
+        description: "7.4% municipal surcharge"
+      rixensart:
+        label: "Rixensart"
+        description: "6.6% municipal surcharge"
+      rochefort:
+        label: "Rochefort"
+        description: "8.5% municipal surcharge"
+      roeselare:
+        label: "Roeselare"
+        description: "8.5% municipal surcharge"
+      ronse:
+        label: "Ronse"
+        description: "8% municipal surcharge"
+      roosdaal:
+        label: "Roosdaal"
+        description: "7.5% municipal surcharge"
+      rotselaar:
+        label: "Rotselaar"
+        description: "6.8% municipal surcharge"
+      rouvroy:
+        label: "Rouvroy"
+        description: "6% municipal surcharge"
+      rumes:
+        label: "Rumes"
+        description: "8.5% municipal surcharge"
+      rumst:
+        label: "Rumst"
+        description: "6.5% municipal surcharge"
+      sainte-ode:
+        label: "Sainte-Ode"
+        description: "8% municipal surcharge"
+      saint-georges-sur-meuse:
+        label: "Saint-Georges-sur- Meuse"
+        description: "8% municipal surcharge"
+      saint-ghislain:
+        label: "Saint-Ghislain"
+        description: "7.9% municipal surcharge"
+      saint-gilles:
+        label: "Saint-Gilles"
+        description: "6.3% municipal surcharge"
+      saint-hubert:
+        label: "Saint-Hubert"
+        description: "8% municipal surcharge"
+      saint-josse-ten-noode:
+        label: "Saint-Josse-ten-Noode"
+        description: "6.5% municipal surcharge"
+      saint-leger:
+        label: "Saint-Léger"
+        description: "8% municipal surcharge"
+      saint-nicolas:
+        label: "Saint-Nicolas"
+        description: "8.5% municipal surcharge"
+      sambreville:
+        label: "Sambreville"
+        description: "8% municipal surcharge"
+      sankt-vith:
+        label: "Sankt Vith"
+        description: "6% municipal surcharge"
+      schaerbeek:
+        label: "Schaerbeek"
+        description: "5% municipal surcharge"
+      schelle:
+        label: "Schelle"
+        description: "6.8% municipal surcharge"
+      scherpenheuvel-zichem:
+        label: "Scherpenheuvel- Zichem"
+        description: "8% municipal surcharge"
+      schilde:
+        label: "Schilde"
+        description: "5% municipal surcharge"
+      schoten:
+        label: "Schoten"
+        description: "6.5% municipal surcharge"
+      seneffe:
+        label: "Seneffe"
+        description: "8% municipal surcharge"
+      seraing:
+        label: "Seraing"
+        description: "8.5% municipal surcharge"
+      silly:
+        label: "Silly"
+        description: "7.8% municipal surcharge"
+      sint-genesius-rode:
+        label: "Sint-Genesius-Rode"
+        description: "6% municipal surcharge"
+      sint-gillis-waas:
+        label: "Sint-Gillis-Waas"
+        description: "7.9% municipal surcharge"
+      sint-katelijne-waver:
+        label: "Sint-Katelijne-Waver"
+        description: "7.1% municipal surcharge"
+      sint-laureins:
+        label: "Sint-Laureins"
+        description: "7% municipal surcharge"
+      sint-lievens-houtem:
+        label: "Sint-Lievens-Houtem"
+        description: "7.9% municipal surcharge"
+      sint-martens-latem:
+        label: "Sint-Martens-Latem"
+        description: "5.5% municipal surcharge"
+      sint-niklaas:
+        label: "Sint-Niklaas"
+        description: "7.5% municipal surcharge"
+      sint-pieters-leeuw:
+        label: "Sint-Pieters-Leeuw"
+        description: "7% municipal surcharge"
+      sint-truiden:
+        label: "Sint-Truiden"
+        description: "8% municipal surcharge"
+      sivry-rance:
+        label: "Sivry-Rance"
+        description: "8.8% municipal surcharge"
+      soignies:
+        label: "Soignies"
+        description: "8% municipal surcharge"
+      sombreffe:
+        label: "Sombreffe"
+        description: "8% municipal surcharge"
+      somme-leuze:
+        label: "Somme-Leuze"
+        description: "7.9% municipal surcharge"
+      soumagne:
+        label: "Soumagne"
+        description: "8.4% municipal surcharge"
+      spa:
+        label: "Spa"
+        description: "7% municipal surcharge"
+      spiere-helkijn:
+        label: "Spiere-Helkijn"
+        description: "7% municipal surcharge"
+      sprimont:
+        label: "Sprimont"
+        description: "8.5% municipal surcharge"
+      stabroek:
+        label: "Stabroek"
+        description: "7.3% municipal surcharge"
+      staden:
+        label: "Staden"
+        description: "8% municipal surcharge"
+      stavelot:
+        label: "Stavelot"
+        description: "8.5% municipal surcharge"
+      steenokkerzeel:
+        label: "Steenokkerzeel"
+        description: "6.7% municipal surcharge"
+      stekene:
+        label: "Stekene"
+        description: "8% municipal surcharge"
+      stoumont:
+        label: "Stoumont"
+        description: "8% municipal surcharge"
+      tellin:
+        label: "Tellin"
+        description: "8% municipal surcharge"
+      temse:
+        label: "Temse"
+        description: "8% municipal surcharge"
+      tenneville:
+        label: "Tenneville"
+        description: "7% municipal surcharge"
+      ternat:
+        label: "Ternat"
+        description: "6.9% municipal surcharge"
+      tervuren:
+        label: "Tervuren"
+        description: "6.7% municipal surcharge"
+      tessenderlo-ham:
+        label: "Tessenderlo-Ham"
+        description: "7% municipal surcharge"
+      theux:
+        label: "Theux"
+        description: "7.1% municipal surcharge"
+      thimister-clermont:
+        label: "Thimister-Clermont"
+        description: "7.5% municipal surcharge"
+      thuin:
+        label: "Thuin"
+        description: "8.4% municipal surcharge"
+      tielt:
+        label: "Tielt"
+        description: "7.8% municipal surcharge"
+      tielt-winge:
+        label: "Tielt-Winge"
+        description: "7.9% municipal surcharge"
+      tienen:
+        label: "Tienen"
+        description: "8.6% municipal surcharge"
+      tinlot:
+        label: "Tinlot"
+        description: "8% municipal surcharge"
+      tintigny:
+        label: "Tintigny"
+        description: "7.5% municipal surcharge"
+      tongeren-borgloon:
+        label: "Tongeren-Borgloon"
+        description: "7.1% municipal surcharge"
+      torhout:
+        label: "Torhout"
+        description: "8% municipal surcharge"
+      tournai:
+        label: "Tournai"
+        description: "8.8% municipal surcharge"
+      tremelo:
+        label: "Tremelo"
+        description: "7% municipal surcharge"
+      trois-ponts:
+        label: "Trois-Ponts"
+        description: "8% municipal surcharge"
+      trooz:
+        label: "Trooz"
+        description: "8.5% municipal surcharge"
+      tubize:
+        label: "Tubize"
+        description: "8% municipal surcharge"
+      turnhout:
+        label: "Turnhout"
+        description: "7.5% municipal surcharge"
+      uccle:
+        label: "Uccle"
+        description: "5.6% municipal surcharge"
+      vaux-sur-sure:
+        label: "Vaux-sur-Sûre"
+        description: "7% municipal surcharge"
+      verlaine:
+        label: "Verlaine"
+        description: "7.8% municipal surcharge"
+      verviers:
+        label: "Verviers"
+        description: "8.5% municipal surcharge"
+      veurne:
+        label: "Veurne"
+        description: "7% municipal surcharge"
+      vielsalm:
+        label: "Vielsalm"
+        description: "8.8% municipal surcharge"
+      villers-la-ville:
+        label: "Villers-la-Ville"
+        description: "8% municipal surcharge"
+      villers-le-bouillet:
+        label: "Villers-le-Bouillet"
+        description: "8.4% municipal surcharge"
+      vilvoorde:
+        label: "Vilvoorde"
+        description: "7.2% municipal surcharge"
+      viroinval:
+        label: "Viroinval"
+        description: "8.5% municipal surcharge"
+      virton:
+        label: "Virton"
+        description: "8.5% municipal surcharge"
+      vise:
+        label: "Visé"
+        description: "8.8% municipal surcharge"
+      vleteren:
+        label: "Vleteren"
+        description: "7.4% municipal surcharge"
+      voeren:
+        label: "Voeren"
+        description: "7.5% municipal surcharge"
+      vorselaar:
+        label: "Vorselaar"
+        description: "7.5% municipal surcharge"
+      vosselaar:
+        label: "Vosselaar"
+        description: "7.5% municipal surcharge"
+      vresse-sur-semois:
+        label: "Vresse-sur-Semois"
+        description: "6% municipal surcharge"
+      waasmunster:
+        label: "Waasmunster"
+        description: "7.4% municipal surcharge"
+      waimes:
+        label: "Waimes"
+        description: "7.5% municipal surcharge"
+      walcourt:
+        label: "Walcourt"
+        description: "8% municipal surcharge"
+      walhain:
+        label: "Walhain"
+        description: "8.4% municipal surcharge"
+      wanze:
+        label: "Wanze"
+        description: "8.4% municipal surcharge"
+      waregem:
+        label: "Waregem"
+        description: "6.8% municipal surcharge"
+      waremme:
+        label: "Waremme"
+        description: "8.5% municipal surcharge"
+      wasseiges:
+        label: "Wasseiges"
+        description: "8% municipal surcharge"
+      waterloo:
+        label: "Waterloo"
+        description: "5.7% municipal surcharge"
+      watermael-boitsfort:
+        label: "Watermael-Boitsfort"
+        description: "6.9% municipal surcharge"
+      wavre:
+        label: "Wavre"
+        description: "7.3% municipal surcharge"
+      welkenraedt:
+        label: "Welkenraedt"
+        description: "7.9% municipal surcharge"
+      wellen:
+        label: "Wellen"
+        description: "7.8% municipal surcharge"
+      wellin:
+        label: "Wellin"
+        description: "7.8% municipal surcharge"
+      wemmel:
+        label: "Wemmel"
+        description: "7% municipal surcharge"
+      wervik:
+        label: "Wervik"
+        description: "8% municipal surcharge"
+      westerlo:
+        label: "Westerlo"
+        description: "7% municipal surcharge"
+      wetteren:
+        label: "Wetteren"
+        description: "7.5% municipal surcharge"
+      wevelgem:
+        label: "Wevelgem"
+        description: "6.8% municipal surcharge"
+      wezembeek-oppem:
+        label: "Wezembeek-Oppem"
+        description: "6.5% municipal surcharge"
+      wichelen:
+        label: "Wichelen"
+        description: "7.5% municipal surcharge"
+      wielsbeke:
+        label: "Wielsbeke"
+        description: "7.5% municipal surcharge"
+      wijnegem:
+        label: "Wijnegem"
+        description: "5.5% municipal surcharge"
+      willebroek:
+        label: "Willebroek"
+        description: "7.3% municipal surcharge"
+      wingene:
+        label: "Wingene"
+        description: "7.8% municipal surcharge"
+      woluwe-saint-lambert:
+        label: "Woluwe-Saint-Lambert"
+        description: "5.4% municipal surcharge"
+      woluwe-saint-pierre:
+        label: "Woluwe-Saint-Pierre"
+        description: "5.7% municipal surcharge"
+      wommelgem:
+        label: "Wommelgem"
+        description: "5% municipal surcharge"
+      wortegem-petegem:
+        label: "Wortegem-Petegem"
+        description: "8.1% municipal surcharge"
+      wuustwezel:
+        label: "Wuustwezel"
+        description: "7% municipal surcharge"
+      yvoir:
+        label: "Yvoir"
+        description: "8.5% municipal surcharge"
+      zandhoven:
+        label: "Zandhoven"
+        description: "7% municipal surcharge"
+      zaventem:
+        label: "Zaventem"
+        description: "5% municipal surcharge"
+      zedelgem:
+        label: "Zedelgem"
+        description: "8% municipal surcharge"
+      zele:
+        label: "Zele"
+        description: "7.8% municipal surcharge"
+      zelzate:
+        label: "Zelzate"
+        description: "7.5% municipal surcharge"
+      zemst:
+        label: "Zemst"
+        description: "7% municipal surcharge"
+      zoersel:
+        label: "Zoersel"
+        description: "6.5% municipal surcharge"
+      zonhoven:
+        label: "Zonhoven"
+        description: "8% municipal surcharge"
+      zonnebeke:
+        label: "Zonnebeke"
+        description: "8% municipal surcharge"
+      zottegem:
+        label: "Zottegem"
+        description: "7.5% municipal surcharge"
+      zoutleeuw:
+        label: "Zoutleeuw"
+        description: "8.3% municipal surcharge"
+      zuienkerke:
+        label: "Zuienkerke"
+        description: "7% municipal surcharge"
+      zulte:
+        label: "Zulte"
+        description: "5.9% municipal surcharge"
+      zutendaal:
+        label: "Zutendaal"
+        description: "8% municipal surcharge"
+      zwalm:
+        label: "Zwalm"
+        description: "6.9% municipal surcharge"
+      zwevegem:
+        label: "Zwevegem"
+        description: "7.5% municipal surcharge"
+
+  dependent_children:
+    type: number
+    required: false
+    min: 0
+    max: 10
+    default: 0
+    effect: reduces_tax
+    label: "Dependent Children"
+    description: "Number of dependent children for the increase in tax-free allowance"
+
+  pension_savings_contributions:
+    type: number
+    required: false
+    min: 0
+    default: 0
+    effect: reduces_tax
+    label: "Pension Savings Contributions"
+    description: "Annual personal pension savings payments eligible for the federal tax reduction"
+
+  pension_savings_scheme:
+    type: enum
+    required: false
+    default: "standard"
+    label: "Pension Savings Scheme"
+    description: "Belgian pension savings has a 30% reduction at the standard cap or 25% at the higher cap"
+    options:
+      standard:
+        label: "Standard cap"
+        description: "30% tax reduction, capped at EUR 1,050"
+      increased:
+        label: "Increased cap"
+        description: "25% tax reduction, capped at EUR 1,350"
+
+  service_voucher_region:
+    type: enum
+    required: false
+    default: "flanders"
+    label: "Service Voucher Region"
+    description: "Region of residence for service voucher tax reduction"
+    options:
+      flanders:
+        label: "Flanders"
+        description: "Flemish service voucher tax reduction"
+      wallonia:
+        label: "Wallonia"
+        description: "Walloon service voucher tax reduction"
+      brussels:
+        label: "Brussels"
+        description: "No tax reduction for vouchers bought from 2026"
+
+  service_vouchers_purchased:
+    type: number
+    required: false
+    min: 0
+    default: 0
+    effect: reduces_tax
+    label: "Service Vouchers Purchased"
+    description: "Number of eligible household-service vouchers bought during the year"
+
+  service_voucher_price:
+    type: number
+    required: false
+    min: 0
+    default: 10
+    label: "Service Voucher Price"
+    description: "Price paid per service voucher"
+
+  regional_housing_tax_reduction:
+    type: number
+    required: false
+    min: 0
+    default: 0
+    effect: reduces_tax
+    label: "Mortgage/Housing Tax Reduction"
+    description: "Annual regional housing or mortgage tax reduction from your certificate or prior assessment"
+
+  company_car_taxable_benefit:
+    type: number
+    required: false
+    min: 0
+    default: 0
+    effect: increases_tax
+    label: "Company Car Taxable Benefit"
+    description: "Annual taxable benefit in kind for private use of a company car, after any personal contribution"
+
+  meal_vouchers_per_year:
+    type: number
+    required: false
+    min: 0
+    max: 260
+    default: 0
+    effect: reduces_tax
+    label: "Meal Vouchers Per Year"
+    description: "Number of meal vouchers received for days actually worked"
+
+  meal_voucher_value:
+    type: number
+    required: false
+    min: 0
+    max: 10
+    default: 10
+    label: "Meal Voucher Face Value"
+    description: "Face value per voucher, capped at EUR 10 for the favorable 2026 regime"
+
+  meal_voucher_employee_contribution:
+    type: number
+    required: false
+    min: 0
+    max: 10
+    default: 1.09
+    label: "Meal Voucher Employee Contribution"
+    description: "Employee contribution per voucher; the favorable regime requires at least EUR 1.09"
+
+  mobility_budget_pillar2:
+    type: number
+    required: false
+    min: 0
+    default: 0
+    effect: reduces_tax
+    label: "Mobility Budget Pillar 2"
+    description: "Tax-free mobility budget used for sustainable mobility or eligible housing costs"
+
+  mobility_budget_cash:
+    type: number
+    required: false
+    min: 0
+    default: 0
+    effect: reduces_tax
+    label: "Mobility Budget Cash"
+    description: "Unspent mobility budget paid out in cash; subject to the 38.07% special contribution"
+
+parameters:
+  municipality_tax_rates:
+    manual: 0
+    aalst: 0.0750
+    aalter: 0.0650
+    aarschot: 0.0800
+    aartselaar: 0.0500
+    affligem: 0.0700
+    aiseau-presles: 0.0850
+    alken: 0.0700
+    alveringem: 0.0800
+    amay: 0.0850
+    amel: 0.0600
+    andenne: 0.0860
+    anderlecht: 0.0700
+    anderlues: 0.0880
+    anhee: 0.0850
+    ans: 0.0850
+    anthisnes: 0.0850
+    antoing: 0.0700
+    antwerpen: 0.0700
+    anzegem: 0.0800
+    ardooie: 0.0600
+    arendonk: 0.0750
+    arlon: 0.0700
+    as: 0.0750
+    asse: 0.0690
+    assenede: 0.0700
+    assesse: 0.0850
+    ath: 0.0880
+    attert: 0.0700
+    aubange: 0.0800
+    aubel: 0.0770
+    auderghem: 0.0600
+    avelgem: 0.0700
+    awans: 0.0850
+    aywaille: 0.0850
+    baarle-hertog: 0.0720
+    baelen: 0.0770
+    balen: 0.0800
+    bassenge: 0.0800
+    bastogne: 0.0700
+    beaumont: 0.0880
+    beauraing: 0.0800
+    beauvechain: 0.0700
+    beernem: 0.0780
+    beerse: 0.0690
+    beersel: 0.0690
+    begijnendijk: 0.0790
+    bekkevoort: 0.0760
+    beloeil: 0.0850
+    berchem-sainte-agathe: 0.0650
+    beringen: 0.0760
+    berlaar: 0.0780
+    berlare: 0.0760
+    berloz: 0.0850
+    bernissart: 0.0850
+    bertem: 0.0750
+    bertrix: 0.0800
+    bever: 0.0800
+    beveren-kruibeke-zwijndrecht: 0.0500
+    beyne-heusay: 0.0850
+    bierbeek: 0.0700
+    bievre: 0.0600
+    bilzen-hoeselt: 0.0790
+    binche: 0.0800
+    blankenberge: 0.0600
+    blegny: 0.0850
+    bocholt: 0.0800
+    boechout: 0.0710
+    bonheiden: 0.0750
+    boom: 0.0790
+    boortmeerbeek: 0.0720
+    bornem: 0.0730
+    bouillon: 0.0800
+    boussu: 0.0850
+    boutersem: 0.0760
+    braine-l-alleud: 0.0550
+    braine-le-chateau: 0.0800
+    braine-le-comte: 0.0880
+    braives: 0.0800
+    brakel: 0.0800
+    brasschaat: 0.0600
+    brecht: 0.0700
+    bredene: 0.0700
+    bree: 0.0800
+    brugelette: 0.0850
+    brugge: 0.0690
+    brunehaut: 0.0880
+    bruxelles: 0.0490
+    buggenhout: 0.0780
+    bullingen: 0.0600
+    burdinne: 0.0800
+    burg-reuland: 0.0700
+    butgenbach: 0.0700
+    celles: 0.0820
+    cerfontaine: 0.0750
+    chapelle-lez-herlaimont: 0.0880
+    charleroi: 0.0850
+    chastre: 0.0800
+    chatelet: 0.0800
+    chaudfontaine: 0.0800
+    chaumont-gistoux: 0.0800
+    chievres: 0.0880
+    chimay: 0.0800
+    chiny: 0.0800
+    ciney: 0.0800
+    clavier: 0.0850
+    colfontaine: 0.0850
+    comblain-au-pont: 0.0880
+    comines-warneton: 0.0750
+    courcelles: 0.0880
+    court-saint-etienne: 0.0800
+    couvin: 0.0850
+    crisnee: 0.0800
+    dalhem: 0.0750
+    damme: 0.0800
+    daverdisse: 0.0650
+    de-haan: 0.0500
+    de-panne: 0.0500
+    deerlijk: 0.0800
+    deinze: 0.0690
+    denderleeuw: 0.0730
+    dendermonde: 0.0750
+    dentergem: 0.0750
+    dessel: 0.0600
+    destelbergen: 0.0690
+    diepenbeek: 0.0800
+    diest: 0.0790
+    diksmuide: 0.0800
+    dilbeek: 0.0690
+    dilsen-stokkem: 0.0800
+    dinant: 0.0880
+    dison: 0.0820
+    doische: 0.0800
+    donceel: 0.0880
+    dour: 0.0840
+    drogenbos: 0.0700
+    duffel: 0.0650
+    durbuy: 0.0800
+    ecaussinnes: 0.0760
+    edegem: 0.0650
+    eeklo: 0.0750
+    eghezee: 0.0750
+    ellezelles: 0.0800
+    enghien: 0.0820
+    engis: 0.0800
+    erezee: 0.0800
+    erpe-mere: 0.0700
+    erquelinnes: 0.0850
+    esneux: 0.0810
+    essen: 0.0700
+    estaimpuis: 0.0880
+    estinnes: 0.0850
+    etalle: 0.0700
+    etterbeek: 0.0580
+    eupen: 0.0800
+    evere: 0.0700
+    evergem: 0.0740
+    faimes: 0.0880
+    farciennes: 0.0880
+    fauvillers: 0.0700
+    fernelmont: 0.0750
+    ferrieres: 0.0850
+    fexhe-le-haut-clocher: 0.0880
+    flemalle: 0.0800
+    fleron: 0.0850
+    fleurus: 0.0850
+    flobecq: 0.0800
+    floreffe: 0.0830
+    florennes: 0.0850
+    florenville: 0.0800
+    fontaine-l-eveque: 0.0880
+    forest: 0.0700
+    fosses-la-ville: 0.0850
+    frameries: 0.0860
+    frasnes-lez-anvaing: 0.0780
+    froidchapelle: 0.0850
+    ganshoren: 0.0650
+    gavere: 0.0730
+    gedinne: 0.0650
+    geel: 0.0700
+    geer: 0.0770
+    geetbets: 0.0800
+    gembloux: 0.0760
+    genappe: 0.0800
+    genk: 0.0750
+    gent: 0.0650
+    geraardsbergen: 0.0780
+    gerpinnes: 0.0800
+    gesves: 0.0850
+    gingelom: 0.0800
+    gistel: 0.0700
+    glabbeek: 0.0780
+    gouvy: 0.0800
+    grace-hollogne: 0.0800
+    grez-doiceau: 0.0690
+    grimbergen: 0.0740
+    grobbendonk: 0.0750
+    haacht: 0.0670
+    haaltert: 0.0720
+    habay: 0.0800
+    halen: 0.0800
+    halle: 0.0710
+    hamme: 0.0800
+    hamoir: 0.0880
+    hamois: 0.0800
+    hamont-achel: 0.0700
+    ham-sur-heure-nalinnes: 0.0800
+    hannut: 0.0850
+    harelbeke: 0.0750
+    hasselt: 0.0700
+    hastiere: 0.0820
+    havelange: 0.0880
+    hechtel-eksel: 0.0750
+    heers: 0.0750
+    heist-op-den-berg: 0.0750
+    helecine: 0.0880
+    hemiksem: 0.0750
+    hensies: 0.0850
+    herbeumont: 0.0700
+    herent: 0.0770
+    herentals: 0.0720
+    herenthout: 0.0750
+    herk-de-stad: 0.0700
+    heron: 0.0820
+    herselt: 0.0730
+    herstal: 0.0850
+    herstappe: 0.0500
+    herve: 0.0800
+    herzele: 0.0750
+    heusden-zolder: 0.0750
+    heuvelland: 0.0800
+    hoegaarden: 0.0800
+    hoeilaart: 0.0680
+    holsbeek: 0.0700
+    honnelles: 0.0820
+    hooglede: 0.0790
+    hoogstraten: 0.0570
+    horebeke: 0.0770
+    hotton: 0.0850
+    houffalize: 0.0800
+    houthalen-helchteren: 0.0800
+    houthulst: 0.0750
+    houyet: 0.0800
+    hove: 0.0750
+    huldenberg: 0.0800
+    hulshout: 0.0700
+    huy: 0.0880
+    ichtegem: 0.0770
+    ieper: 0.0800
+    incourt: 0.0800
+    ingelmunster: 0.0800
+    ittre: 0.0790
+    ixelles: 0.0750
+    izegem: 0.0700
+    jabbeke: 0.0770
+    jalhay: 0.0680
+    jemeppe-sur-sambre: 0.0600
+    jette: 0.0740
+    jodoigne: 0.0880
+    juprelle: 0.0750
+    jurbise: 0.0850
+    kalmthout: 0.0750
+    kampenhout: 0.0700
+    kapellen: 0.0550
+    kapelle-op-den-bos: 0.0780
+    kaprijke: 0.0750
+    kasterlee: 0.0700
+    keerbergen: 0.0650
+    kelmis: 0.0750
+    kinrooi: 0.0700
+    kluisbergen: 0.0750
+    knokke-heist: 0.0000
+    koekelare: 0.0700
+    koekelberg: 0.0700
+    koksijde: 0.0500
+    kontich: 0.0570
+    kortemark: 0.0780
+    kortenaken: 0.0780
+    kortenberg: 0.0790
+    kortrijk: 0.0790
+    kraainem: 0.0700
+    kruisem: 0.0750
+    kuurne: 0.0790
+    la-bruyere: 0.0800
+    la-hulpe: 0.0660
+    la-louviere: 0.0880
+    la-roche-en-ardenne: 0.0800
+    laakdal: 0.0750
+    laarne: 0.0780
+    lanaken: 0.0690
+    landen: 0.0790
+    langemark-poelkapelle: 0.0800
+    lasne: 0.0580
+    le-roeulx: 0.0850
+    lebbeke: 0.0750
+    lede: 0.0790
+    ledegem: 0.0750
+    leglise: 0.0800
+    lendelede: 0.0780
+    lennik: 0.0790
+    lens: 0.0800
+    leopoldsburg: 0.0800
+    les-bons-villers: 0.0800
+    lessines: 0.0880
+    leuven: 0.0670
+    leuze-en-hainaut: 0.0880
+    libin: 0.0730
+    libramont-chevigny: 0.0750
+    lichtervelde: 0.0750
+    liedekerke: 0.0780
+    liege: 0.0800
+    lier: 0.0720
+    lierde: 0.0730
+    lierneux: 0.0750
+    lievegem: 0.0700
+    lille: 0.0650
+    limbourg: 0.0880
+    lincent: 0.0880
+    linkebeek: 0.0780
+    lint: 0.0800
+    linter: 0.0800
+    lobbes: 0.0850
+    lochristi: 0.0690
+    lokeren: 0.0650
+    lommel: 0.0600
+    londerzeel: 0.0790
+    lontzen: 0.0680
+    lo-reninge: 0.0770
+    lubbeek: 0.0750
+    lummen: 0.0670
+    maarkedal: 0.0700
+    maaseik: 0.0850
+    maasmechelen: 0.0780
+    machelen: 0.0500
+    maldegem: 0.0690
+    malle: 0.0700
+    malmedy: 0.0700
+    manage: 0.0800
+    manhay: 0.0650
+    marche-en-famenne: 0.0800
+    marchin: 0.0880
+    martelange: 0.0700
+    mechelen: 0.0650
+    meerhout: 0.0800
+    meise: 0.0790
+    meix-devant-virton: 0.0800
+    menen: 0.0800
+    merbes-le-chateau: 0.0810
+    merchtem: 0.0710
+    merelbeke-melle: 0.0750
+    merksplas: 0.0650
+    mesen: 0.0900
+    messancy: 0.0700
+    mettet: 0.0800
+    middelkerke: 0.0300
+    modave: 0.0800
+    mol: 0.0770
+    molenbeek-saint-jean: 0.0700
+    momignies: 0.0850
+    mons: 0.0800
+    mont-de-l-enclus: 0.0800
+    montigny-le-tilleul: 0.0800
+    mont-saint-guibert: 0.0750
+    moorslede: 0.0800
+    morlanwelz: 0.0880
+    mortsel: 0.0750
+    mouscron: 0.0880
+    musson: 0.0750
+    namur: 0.0850
+    nandrin: 0.0850
+    nassogne: 0.0800
+    nazareth-de-pinte: 0.0690
+    neufchateau: 0.0730
+    neupre: 0.0800
+    niel: 0.0800
+    nieuwerkerken: 0.0770
+    nieuwpoort: 0.0500
+    nijlen: 0.0700
+    ninove: 0.0750
+    nivelles: 0.0700
+    ohey: 0.0830
+    olen: 0.0650
+    olne: 0.0720
+    onhaye: 0.0800
+    oostende: 0.0650
+    oosterzele: 0.0780
+    oostkamp: 0.0800
+    oostrozebeke: 0.0790
+    opwijk: 0.0780
+    oreye: 0.0690
+    orp-jauche: 0.0800
+    ottignies-louvain-la-neuve: 0.0770
+    oudenaarde: 0.0700
+    oudenburg: 0.0770
+    oud-heverlee: 0.0650
+    oudsbergen: 0.0650
+    oud-turnhout: 0.0700
+    ouffet: 0.0800
+    oupeye: 0.0800
+    overijse: 0.0730
+    pajottegem: 0.0730
+    paliseul: 0.0800
+    pecq: 0.0880
+    peer: 0.0800
+    pelt: 0.0600
+    pepingen: 0.0750
+    pepinster: 0.0850
+    peruwelz: 0.0850
+    perwez: 0.0750
+    philippeville: 0.0800
+    pittem: 0.0750
+    plombieres: 0.0730
+    pont-a-celles: 0.0800
+    poperinge: 0.0800
+    profondeville: 0.0800
+    putte: 0.0750
+    puurs-sint-amands: 0.0730
+    quaregnon: 0.0850
+    quevy: 0.0850
+    quievrain: 0.0880
+    raeren: 0.0750
+    ramillies: 0.0830
+    ranst: 0.0650
+    ravels: 0.0600
+    rebecq: 0.0850
+    remicourt: 0.0800
+    rendeux: 0.0770
+    retie: 0.0780
+    riemst: 0.0800
+    rijkevorsel: 0.0740
+    rixensart: 0.0660
+    rochefort: 0.0850
+    roeselare: 0.0850
+    ronse: 0.0800
+    roosdaal: 0.0750
+    rotselaar: 0.0680
+    rouvroy: 0.0600
+    rumes: 0.0850
+    rumst: 0.0650
+    sainte-ode: 0.0800
+    saint-georges-sur-meuse: 0.0800
+    saint-ghislain: 0.0790
+    saint-gilles: 0.0630
+    saint-hubert: 0.0800
+    saint-josse-ten-noode: 0.0650
+    saint-leger: 0.0800
+    saint-nicolas: 0.0850
+    sambreville: 0.0800
+    sankt-vith: 0.0600
+    schaerbeek: 0.0500
+    schelle: 0.0680
+    scherpenheuvel-zichem: 0.0800
+    schilde: 0.0500
+    schoten: 0.0650
+    seneffe: 0.0800
+    seraing: 0.0850
+    silly: 0.0780
+    sint-genesius-rode: 0.0600
+    sint-gillis-waas: 0.0790
+    sint-katelijne-waver: 0.0710
+    sint-laureins: 0.0700
+    sint-lievens-houtem: 0.0790
+    sint-martens-latem: 0.0550
+    sint-niklaas: 0.0750
+    sint-pieters-leeuw: 0.0700
+    sint-truiden: 0.0800
+    sivry-rance: 0.0880
+    soignies: 0.0800
+    sombreffe: 0.0800
+    somme-leuze: 0.0790
+    soumagne: 0.0840
+    spa: 0.0700
+    spiere-helkijn: 0.0700
+    sprimont: 0.0850
+    stabroek: 0.0730
+    staden: 0.0800
+    stavelot: 0.0850
+    steenokkerzeel: 0.0670
+    stekene: 0.0800
+    stoumont: 0.0800
+    tellin: 0.0800
+    temse: 0.0800
+    tenneville: 0.0700
+    ternat: 0.0690
+    tervuren: 0.0670
+    tessenderlo-ham: 0.0700
+    theux: 0.0710
+    thimister-clermont: 0.0750
+    thuin: 0.0840
+    tielt: 0.0780
+    tielt-winge: 0.0790
+    tienen: 0.0860
+    tinlot: 0.0800
+    tintigny: 0.0750
+    tongeren-borgloon: 0.0710
+    torhout: 0.0800
+    tournai: 0.0880
+    tremelo: 0.0700
+    trois-ponts: 0.0800
+    trooz: 0.0850
+    tubize: 0.0800
+    turnhout: 0.0750
+    uccle: 0.0560
+    vaux-sur-sure: 0.0700
+    verlaine: 0.0780
+    verviers: 0.0850
+    veurne: 0.0700
+    vielsalm: 0.0880
+    villers-la-ville: 0.0800
+    villers-le-bouillet: 0.0840
+    vilvoorde: 0.0720
+    viroinval: 0.0850
+    virton: 0.0850
+    vise: 0.0880
+    vleteren: 0.0740
+    voeren: 0.0750
+    vorselaar: 0.0750
+    vosselaar: 0.0750
+    vresse-sur-semois: 0.0600
+    waasmunster: 0.0740
+    waimes: 0.0750
+    walcourt: 0.0800
+    walhain: 0.0840
+    wanze: 0.0840
+    waregem: 0.0680
+    waremme: 0.0850
+    wasseiges: 0.0800
+    waterloo: 0.0570
+    watermael-boitsfort: 0.0690
+    wavre: 0.0730
+    welkenraedt: 0.0790
+    wellen: 0.0780
+    wellin: 0.0780
+    wemmel: 0.0700
+    wervik: 0.0800
+    westerlo: 0.0700
+    wetteren: 0.0750
+    wevelgem: 0.0680
+    wezembeek-oppem: 0.0650
+    wichelen: 0.0750
+    wielsbeke: 0.0750
+    wijnegem: 0.0550
+    willebroek: 0.0730
+    wingene: 0.0780
+    woluwe-saint-lambert: 0.0540
+    woluwe-saint-pierre: 0.0570
+    wommelgem: 0.0500
+    wortegem-petegem: 0.0810
+    wuustwezel: 0.0700
+    yvoir: 0.0850
+    zandhoven: 0.0700
+    zaventem: 0.0500
+    zedelgem: 0.0800
+    zele: 0.0780
+    zelzate: 0.0750
+    zemst: 0.0700
+    zoersel: 0.0650
+    zonhoven: 0.0800
+    zonnebeke: 0.0800
+    zottegem: 0.0750
+    zoutleeuw: 0.0830
+    zuienkerke: 0.0700
+    zulte: 0.0590
+    zutendaal: 0.0800
+    zwalm: 0.0690
+    zwevegem: 0.0750
+
+  employee_social_security_rate: 0.1307
+  months_per_year: 12
+  quarters_per_year: 4
+
+  income_tax_brackets:
+    - threshold: 0
+      rate: 0.25
+    - threshold: 16720
+      rate: 0.40
+    - threshold: 29510
+      rate: 0.45
+    - threshold: 51070
+      rate: 0.50
+
+  tax_free_allowance_brackets:
+    - threshold: 0
+      rate: 0.25
+    - threshold: 11750
+      rate: 0.30
+    - threshold: 16720
+      rate: 0.40
+    - threshold: 27860
+      rate: 0.45
+    - threshold: 51070
+      rate: 0.50
+
+  tax_free_allowance_base: 11180
+  child_allowance_one: 2130
+  child_allowance_two: 5230
+  child_allowance_three: 11720
+  child_allowance_four: 18970
+  child_allowance_each_above_four: 7240
+
+  professional_expenses_rate: 0.30
+  professional_expenses_cap: 6070
+
+  work_bonus_a_low_salary_limit: 2777.83
+  work_bonus_a_upper_salary_limit: 3271.48
+  work_bonus_a_max: 120.59
+  work_bonus_a_reduction_rate: 0.2443
+  work_bonus_b_low_salary_limit: 2175.25
+  work_bonus_b_upper_salary_limit: 2777.83
+  work_bonus_b_max: 162.62
+  work_bonus_b_reduction_rate: 0.2699
+
+  special_ssc_q1_threshold: 5836.14
+  special_ssc_q2_threshold: 6570.54
+  special_ssc_q3_threshold: 11211
+  special_ssc_q4_threshold: 12300
+  special_ssc_q5_threshold: 18000
+  special_ssc_monthly_q1_threshold: 1945.38
+  special_ssc_monthly_q2_threshold: 2190.18
+  special_ssc_monthly_q3_threshold: 3737
+  special_ssc_monthly_q4_threshold: 4100
+  special_ssc_q2_base: 30.99
+  special_ssc_q3_base: 82.05
+  special_ssc_q4_base: 118.83
+  special_ssc_q5_base: 182.82
+  special_ssc_rate_q1: 0.0422
+  special_ssc_rate_q2: 0.0110
+  special_ssc_rate_q3: 0.0338
+  special_ssc_rate_q4: 0.0600
+
+  pension_savings_standard_cap: 1050
+  pension_savings_standard_rate: 0.30
+  pension_savings_increased_cap: 1350
+  pension_savings_increased_rate: 0.25
+
+  service_voucher_flanders_credit_per_voucher: 1.80
+  service_voucher_flanders_cap: 198
+  service_voucher_wallonia_rate: 0.10
+  service_voucher_wallonia_cap: 150
+  service_voucher_brussels_rate: 0
+  mobility_budget_cash_contribution_rate: 0.3807
+
+calculations:
+  - id: monthly_gross
+    type: div
+    values:
+      - "@gross_annual"
+      - "$months_per_year"
+
+  - id: quarterly_gross
+    type: div
+    values:
+      - "@gross_annual"
+      - "$quarters_per_year"
+
+  - id: ordinary_social_security_gross
+    type: percent_of
+    base: "@gross_annual"
+    rate: "$employee_social_security_rate"
+
+  - id: work_bonus_a
+    type: conditional
+    condition:
+      type: lte
+      left: "$monthly_gross"
+      right: "$work_bonus_a_low_salary_limit"
+    then: "$work_bonus_a_max"
+    else:
+      type: conditional
+      condition:
+        type: lte
+        left: "$monthly_gross"
+        right: "$work_bonus_a_upper_salary_limit"
+      then:
+        type: max
+        values:
+          - 0
+          - type: sub
+            values:
+              - "$work_bonus_a_max"
+              - type: mul
+                values:
+                  - "$work_bonus_a_reduction_rate"
+                  - type: sub
+                    values:
+                      - "$monthly_gross"
+                      - "$work_bonus_a_low_salary_limit"
+      else: 0
+
+  - id: work_bonus_b
+    type: conditional
+    condition:
+      type: lte
+      left: "$monthly_gross"
+      right: "$work_bonus_b_low_salary_limit"
+    then: "$work_bonus_b_max"
+    else:
+      type: conditional
+      condition:
+        type: lte
+        left: "$monthly_gross"
+        right: "$work_bonus_b_upper_salary_limit"
+      then:
+        type: max
+        values:
+          - 0
+          - type: sub
+            values:
+              - "$work_bonus_b_max"
+              - type: mul
+                values:
+                  - "$work_bonus_b_reduction_rate"
+                  - type: sub
+                    values:
+                      - "$monthly_gross"
+                      - "$work_bonus_b_low_salary_limit"
+      else: 0
+
+  - id: work_bonus_annual_uncapped
+    type: mul
+    values:
+      - type: sum
+        values:
+          - "$work_bonus_a"
+          - "$work_bonus_b"
+      - "$months_per_year"
+
+  - id: work_bonus_annual
+    type: min
+    values:
+      - "$work_bonus_annual_uncapped"
+      - "$ordinary_social_security_gross"
+    category: credit
+    label: "Work Bonus"
+    description: "Low-wage reduction of employee social security contributions"
+
+  - id: employee_social_security
+    type: sub
+    values:
+      - "$ordinary_social_security_gross"
+      - "$work_bonus_annual"
+    category: contribution
+    label: "Employee Social Security (ONSS/RSZ)"
+    description: "13.07% ordinary employee contribution after work bonus"
+
+  - id: inbound_tax_free_allowance
+    type: identity
+    value: 0
+    category: deduction
+    label: "Inbound Tax-Free Allowance"
+    description: "Tax-free employer expense allowance under an approved inbound taxpayer/researcher regime"
+
+  - id: taxable_before_expenses
+    type: sub
+    values:
+      - type: sum
+        values:
+          - "@gross_annual"
+          - "@company_car_taxable_benefit"
+      - "$employee_social_security"
+
+  - id: professional_expenses
+    type: min
+    values:
+      - type: percent_of
+        base: "$taxable_before_expenses"
+        rate: "$professional_expenses_rate"
+      - "$professional_expenses_cap"
+    category: deduction
+    label: "Flat-Rate Professional Expenses"
+    description: "30% flat-rate employee professional expenses capped at EUR 6,070"
+
+  - id: taxable_income
+    type: sub
+    values:
+      - "$taxable_before_expenses"
+      - "$professional_expenses"
+
+  - id: child_allowance
+    type: conditional
+    condition:
+      type: gt
+      left: "@dependent_children"
+      right: 4
+    then:
+      type: sum
+      values:
+        - "$child_allowance_four"
+        - type: mul
+          values:
+            - type: sub
+              values:
+                - "@dependent_children"
+                - 4
+            - "$child_allowance_each_above_four"
+    else:
+      type: switch
+      on: "@dependent_children"
+      cases:
+        "0": 0
+        "1": "$child_allowance_one"
+        "2": "$child_allowance_two"
+        "3": "$child_allowance_three"
+        "4": "$child_allowance_four"
+      default: 0
+
+  - id: tax_free_allowance
+    type: sum
+    values:
+      - "$tax_free_allowance_base"
+      - "$child_allowance"
+
+  - id: gross_income_tax
+    type: bracket_tax
+    base: "$taxable_income"
+    brackets: "$income_tax_brackets"
+
+  - id: tax_free_allowance_tax_value
+    type: bracket_tax
+    base: "$tax_free_allowance"
+    brackets: "$tax_free_allowance_brackets"
+    category: credit
+    label: "Tax-Free Allowance"
+    description: "Tax reduction for the Belgian personal tax-free allowance"
+
+  - id: pension_savings_cap
+    type: switch
+    on: "@pension_savings_scheme"
+    cases:
+      standard: "$pension_savings_standard_cap"
+      increased: "$pension_savings_increased_cap"
+    default: "$pension_savings_standard_cap"
+
+  - id: pension_savings_rate
+    type: switch
+    on: "@pension_savings_scheme"
+    cases:
+      standard: "$pension_savings_standard_rate"
+      increased: "$pension_savings_increased_rate"
+    default: "$pension_savings_standard_rate"
+
+  - id: pension_savings_eligible
+    type: min
+    values:
+      - "@pension_savings_contributions"
+      - "$pension_savings_cap"
+
+  - id: pension_savings_tax_reduction
+    type: percent_of
+    base: "$pension_savings_eligible"
+    rate: "$pension_savings_rate"
+    category: credit
+    label: "Pension Savings Tax Reduction"
+    description: "Federal tax reduction for eligible pension savings contributions"
+
+  - id: service_voucher_cap
+    type: switch
+    on: "@service_voucher_region"
+    cases:
+      flanders: "$service_voucher_flanders_cap"
+      wallonia: "$service_voucher_wallonia_cap"
+      brussels: 0
+    default: "$service_voucher_flanders_cap"
+
+  - id: service_vouchers_eligible
+    type: min
+    values:
+      - "@service_vouchers_purchased"
+      - "$service_voucher_cap"
+
+  - id: service_voucher_tax_reduction
+    type: switch
+    on: "@service_voucher_region"
+    cases:
+      flanders:
+        type: mul
+        values:
+          - "$service_vouchers_eligible"
+          - "$service_voucher_flanders_credit_per_voucher"
+      wallonia:
+        type: mul
+        values:
+          - "$service_vouchers_eligible"
+          - "@service_voucher_price"
+          - "$service_voucher_wallonia_rate"
+      brussels: 0
+    default: 0
+    category: credit
+    label: "Service Voucher Tax Reduction"
+    description: "Regional tax reduction for eligible household service vouchers"
+
+  - id: regional_housing_tax_reduction_applied
+    type: min
+    values:
+      - "@regional_housing_tax_reduction"
+      - type: max
+        values:
+          - 0
+          - type: sub
+            values:
+              - "$gross_income_tax"
+              - type: sum
+                values:
+                  - "$tax_free_allowance_tax_value"
+                  - "$pension_savings_tax_reduction"
+                  - "$service_voucher_tax_reduction"
+    category: credit
+    label: "Mortgage/Housing Tax Reduction"
+    description: "Regional housing or mortgage tax reduction applied against income tax"
+
+  - id: income_tax_before_municipal
+    type: max
+    values:
+      - 0
+      - type: sub
+        values:
+          - "$gross_income_tax"
+          - type: sum
+            values:
+              - "$tax_free_allowance_tax_value"
+              - "$pension_savings_tax_reduction"
+              - "$service_voucher_tax_reduction"
+              - "$regional_housing_tax_reduction_applied"
+
+  - id: selected_municipality_tax_rate
+    type: lookup
+    table: "$municipality_tax_rates"
+    key: "@municipality"
+    default: 0
+
+  - id: municipal_tax
+    type: percent_of
+    base: "$income_tax_before_municipal"
+    rate: "$selected_municipality_tax_rate"
+    category: surtax
+    label: "Municipal Surcharge"
+    description: "Local surcharge on personal income tax"
+
+  - id: income_tax
+    type: sum
+    values:
+      - "$income_tax_before_municipal"
+      - "$municipal_tax"
+    category: income_tax
+    label: "Personal Income Tax"
+    description: "Federal income tax after tax-free allowance, plus municipal surcharge"
+
+  - id: special_ssc_quarterly
+    type: conditional
+    condition:
+      type: lte
+      left: "$quarterly_gross"
+      right: "$special_ssc_q1_threshold"
+    then: 0
+    else:
+      type: conditional
+      condition:
+        type: lte
+        left: "$quarterly_gross"
+        right: "$special_ssc_q2_threshold"
+      then:
+        type: mul
+        values:
+          - 3
+          - "$special_ssc_rate_q1"
+          - type: sub
+            values:
+              - "$monthly_gross"
+              - "$special_ssc_monthly_q1_threshold"
+      else:
+        type: conditional
+        condition:
+          type: lte
+          left: "$quarterly_gross"
+          right: "$special_ssc_q3_threshold"
+        then:
+          type: sum
+          values:
+            - "$special_ssc_q2_base"
+            - type: mul
+              values:
+                - 3
+                - "$special_ssc_rate_q2"
+                - type: sub
+                  values:
+                    - "$monthly_gross"
+                    - "$special_ssc_monthly_q2_threshold"
+        else:
+          type: conditional
+          condition:
+            type: lte
+            left: "$quarterly_gross"
+            right: "$special_ssc_q4_threshold"
+          then:
+            type: sum
+            values:
+              - "$special_ssc_q3_base"
+              - type: mul
+                values:
+                  - 3
+                  - "$special_ssc_rate_q3"
+                  - type: sub
+                    values:
+                      - "$monthly_gross"
+                      - "$special_ssc_monthly_q3_threshold"
+          else:
+            type: conditional
+            condition:
+              type: lte
+              left: "$quarterly_gross"
+              right: "$special_ssc_q5_threshold"
+            then:
+              type: sum
+              values:
+                - "$special_ssc_q4_base"
+                - type: mul
+                  values:
+                    - 3
+                    - "$special_ssc_rate_q4"
+                    - type: sub
+                      values:
+                        - "$monthly_gross"
+                        - "$special_ssc_monthly_q4_threshold"
+            else: "$special_ssc_q5_base"
+
+  - id: special_social_security
+    type: mul
+    values:
+      - "$special_ssc_quarterly"
+      - "$quarters_per_year"
+    category: contribution
+    label: "Special Social Security Contribution"
+    description: "Estimated ONSS payroll withholding for the special social security contribution"
+
+  - id: meal_voucher_net_benefit
+    type: mul
+    values:
+      - "@meal_vouchers_per_year"
+      - type: max
+        values:
+          - 0
+          - type: sub
+            values:
+              - "@meal_voucher_value"
+              - "@meal_voucher_employee_contribution"
+    category: credit
+    label: "Meal Voucher Net Benefit"
+    description: "Tax-exempt meal voucher purchasing power after employee contribution"
+
+  - id: mobility_budget_cash_contribution
+    type: percent_of
+    base: "@mobility_budget_cash"
+    rate: "$mobility_budget_cash_contribution_rate"
+    category: contribution
+    label: "Mobility Budget Cash Contribution"
+    description: "38.07% special contribution on mobility budget cash payout"
+
+  - id: mobility_budget_cash_net
+    type: sub
+    values:
+      - "@mobility_budget_cash"
+      - "$mobility_budget_cash_contribution"
+
+  - id: tax_free_benefits
+    type: sum
+    values:
+      - "$meal_voucher_net_benefit"
+      - "@mobility_budget_pillar2"
+      - "$mobility_budget_cash_net"
+    category: credit
+    label: "Tax-Free Benefits"
+    description: "Meal vouchers and mobility budget benefits paid outside taxable cash salary"
+
+  - id: total_deductions
+    type: sum
+    values:
+      - "$employee_social_security"
+      - "$special_social_security"
+      - "$income_tax"
+
+  - id: net_annual
+    type: sub
+    values:
+      - type: sum
+        values:
+          - "@gross_annual"
+          - "$tax_free_benefits"
+      - "$total_deductions"
+
+outputs:
+  gross: "@gross_annual"
+  net: "$net_annual"
+  effective_rate:
+    type: div
+    values:
+      - "$total_deductions"
+      - "@gross_annual"
+  breakdown:
+    taxes:
+      - "$income_tax"
+    contributions:
+      - "$employee_social_security"
+      - "$special_social_security"
+      - "$mobility_budget_cash_contribution"
+    credits:
+      - "$work_bonus_annual"
+      - "$tax_free_allowance_tax_value"
+      - "$pension_savings_tax_reduction"
+      - "$service_voucher_tax_reduction"
+      - "$regional_housing_tax_reduction_applied"
+      - "$meal_voucher_net_benefit"
+      - "$tax_free_benefits"
+    deductions:
+      - "$professional_expenses"
+      - "$inbound_tax_free_allowance"
+    surtaxes:
+      - "$municipal_tax"

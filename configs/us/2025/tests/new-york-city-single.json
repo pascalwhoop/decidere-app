@@ -1,0 +1,31 @@
+{
+  "name": "New York City - Single filer $150k",
+  "description": "Single filer earning $150,000 in New York City with Federal + NY State + NYC local tax",
+  "inputs": {
+    "gross_annual": 150000,
+    "filing_status": "single",
+    "state": "new_york",
+    "locality": "nyc"
+  },
+  "expected": {
+    "net": 99902,
+    "effective_rate": 0.33399,
+    "breakdown": {
+      "federal_income_tax": 25067.00,
+      "state_income_tax": 7951.75,
+      "local_income_tax": 5379.09,
+      "social_security_tax": 9300.00,
+      "medicare_tax": 2175.00
+    }
+  },
+  "tolerance": 250,
+  "tolerance_percent": 0.02,
+  "sources": [
+    {
+      "description": "Official 2025 NY State and NYC Tax Rate Schedules (Form IT-201-I)",
+      "url": "https://www.tax.ny.gov/forms/html/instructions/2025/it201i-2025.htm",
+      "date": "2026-03-07",
+      "notes": "NYC taxable income: $150,000 - $8,000 NY standard deduction = $142,000. NYC tax brackets: 3.078% up to $12k ($369.36) + 3.762% $12k-$25k ($489.06) + 3.819% $25k-$50k ($954.75) + 3.876% above $50k ($3,565.92) = $5,379.09."
+    }
+  ]
+}

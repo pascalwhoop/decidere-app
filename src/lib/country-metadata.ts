@@ -195,7 +195,7 @@ export function formatCountryLabel(
     be: ["municipality"],
     ch: ["region_level_1"],
     it: ["region_level_1"],
-    us: ["state"],
+    us: ["locality", "state"],
   }
   const locationFields = locationFieldsByCountry[normalizedCountry] ?? []
 
@@ -205,7 +205,7 @@ export function formatCountryLabel(
 
   for (const field of locationFields) {
     const value = formValues?.[field]
-    if (value) {
+    if (value && value !== "none") {
       regionKey = value
       regionInputKey = field
       break
@@ -220,9 +220,20 @@ export function formatCountryLabel(
     return `${flag} ${code}`
   }
 
-  // Try to get the label from input definitions, fallback to formatted key
-  let regionLabel = inputDefs?.[regionInputKey]?.options?.[regionKey]?.label
-    || regionKey.split(/[-_]/).map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
+  // Try to get the label from options or options_by_parent in input definitions, fallback to formatted key
+  const fieldDef = inputDefs?.[regionInputKey] as { options?: Record<string, { label: string }>; options_by_parent?: Record<string, Record<string, { label: string }>>; depends_on?: string } | undefined
+  let regionLabel: string | undefined
+
+  if (fieldDef?.depends_on && fieldDef?.options_by_parent && formValues?.[fieldDef.depends_on]) {
+    const parentVal = formValues[fieldDef.depends_on]
+    regionLabel = fieldDef.options_by_parent[parentVal]?.[regionKey]?.label
+  }
+  if (!regionLabel) {
+    regionLabel = fieldDef?.options?.[regionKey]?.label
+  }
+  if (!regionLabel) {
+    regionLabel = regionKey.split(/[-_]/).map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
+  }
 
   // Clean up labels like "California (CA)" to just "California"
   regionLabel = regionLabel.replace(/\s*\([^)]+\)$/, '')

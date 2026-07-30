@@ -1,0 +1,153 @@
+meta:
+  variant: "owr"
+  label: "Overseas Workday Relief (OWR)"
+  description: |
+    Tax relief for qualifying new UK residents on employment income earned for
+    duties performed overseas. Relief is the overseas proportion of employment
+    income, capped at the lower of 30% of qualifying income or £300,000.
+    Claiming OWR forfeits the Personal Allowance (£12,570) and CGT annual exemption.
+  base: "../base.yaml"
+  sources:
+    - url: "https://www.gov.uk/government/publications/globally-mobile-employees/overseas-workday-relief"
+      description: "HMRC guidance on Overseas Workday Relief (post-April 2025)"
+      retrieved_at: "2026-04-19"
+    - url: "https://taxscape.deloitte.com/measures-autumn-budget-2024/overseas-workdays-relief-reformed.aspx"
+      description: "Deloitte analysis of reformed OWR rules from Autumn Budget 2024"
+      retrieved_at: "2026-04-19"
+  updated_at: "2026-04-19"
+  notes: |
+    Overseas Workday Relief (OWR) — reformed from 6 April 2025 under the new
+    Foreign Income and Gains (FIG) regime, replacing the old remittance basis.
+
+    Eligibility:
+    - Must be UK tax resident
+    - Must have been non-UK resident for at least 10 consecutive tax years
+      immediately prior to becoming UK resident
+    - Available for up to 4 consecutive tax years of UK residence
+    - Must make a formal election on self-assessment tax return
+
+    How it works:
+    - Employment income is apportioned based on workdays: overseas vs total
+    - The overseas portion is relieved from UK income tax
+    - Relief is capped at the LOWER of 30% of qualifying employment income
+      or £300,000 per tax year
+    - Claiming OWR forfeits the income tax Personal Allowance (£12,570)
+      and the CGT Annual Exempt Amount for that tax year
+    - National Insurance is unaffected — calculated on full gross as normal
+
+    Key trade-off:
+    - At lower salaries or low overseas proportions, losing the Personal
+      Allowance may outweigh the OWR benefit. The calculator shows the
+      net effect so users can compare with the base (non-OWR) result.
+
+    Transitional provisions:
+    - Employees who claimed OWR before 6 April 2025 under the old remittance
+      basis may have different rules (no £300k/30% cap). This variant models
+      the new post-April-2025 regime only.
+
+notices:
+  - id: "owr_eligibility"
+    title: "OWR Eligibility Requirements"
+    body: |
+      This variant assumes you qualify for Overseas Workday Relief. To qualify:
+      - You must be UK tax resident
+      - You must have been non-UK resident for at least 10 consecutive tax years
+        immediately before becoming UK resident
+      - You must be within your first 4 tax years of UK residence
+      - You must make a formal OWR election on your self-assessment tax return
+
+      Consult a tax advisor to confirm eligibility.
+    severity: "warning"
+
+  - id: "owr_pa_forfeited"
+    title: "Personal Allowance Forfeited"
+    body: |
+      Claiming OWR means you lose your income tax Personal Allowance (£12,570)
+      and your Capital Gains Tax Annual Exempt Amount for the tax year.
+
+      At lower salaries or with few overseas workdays, losing the Personal Allowance
+      may cost more than the OWR saves. Compare with the standard (non-OWR) result.
+    severity: "warning"
+
+  - id: "owr_calculation"
+    title: "How OWR is Calculated"
+    body: |
+      1. Your overseas workday proportion is calculated:
+         overseas days ÷ total work days
+
+      2. Raw relief = gross salary × overseas proportion
+
+      3. Relief is capped at the lower of:
+         - 30% of your gross salary, or
+         - £300,000
+
+      4. The capped relief is deducted from your gross before income tax
+      5. National Insurance is still calculated on your full gross salary
+    severity: "info"
+
+inputs:
+  days_worked_overseas:
+    type: number
+    required: true
+    min: 0
+    label: "Overseas Work Days"
+    description: "Number of work days performing duties outside the UK in the tax year"
+
+  total_work_days:
+    type: number
+    required: true
+    min: 1
+    default: 230
+    label: "Total Work Days"
+    description: "Total work days in the tax year (typically 220-240, excluding weekends, holidays, and leave)"
+
+parameters:
+  owr_cap_percentage: 0.30
+  owr_cap_absolute: 300000
+
+calculations:
+  # Repurpose personal_allowance_reduction slot to compute raw OWR relief
+  # (gross × overseas proportion). This runs before personal_allowance in
+  # the base evaluation order, so downstream nodes see it in time.
+  - id: personal_allowance_reduction
+    type: mul
+    values:
+      - "@gross_annual"
+      - type: div
+        values:
+          - "@days_worked_overseas"
+          - type: max
+            values:
+              - "@total_work_days"
+              - 1
+    description: "Raw OWR relief = gross × (overseas days ÷ total days)"
+
+  # Repurpose personal_allowance slot to hold capped OWR relief.
+  # Base taxable_income already does max(0, gross - $personal_allowance),
+  # so this slots in perfectly: PA is forfeited, replaced by OWR relief.
+  - id: personal_allowance
+    type: min
+    values:
+      - "$personal_allowance_reduction"
+      - type: min
+        values:
+          - type: mul
+            values:
+              - "@gross_annual"
+              - "$owr_cap_percentage"
+          - "$owr_cap_absolute"
+    description: "OWR relief capped at min(30% of gross, £300,000)"
+
+  # Display node for the breakdown — shows OWR relief as a deduction
+  - id: owr_relief
+    type: sum
+    values:
+      - "$personal_allowance"
+    category: deduction
+    label: "Overseas Workday Relief"
+    description: "Tax relief on employment income for duties performed overseas"
+
+outputs:
+  breakdown:
+    deductions:
+      - "$owr_relief"

@@ -1,0 +1,30 @@
+{
+  "name": "OWR moderate earner — overseas proportion is binding constraint",
+  "description": "£200k salary, 30/230 overseas days (13%). Raw relief £26,087 is below 30% cap (£60k). Proportion is the binding constraint. PA forfeited but already zero at this income.",
+  "variant": "owr",
+  "inputs": {
+    "gross_annual": 200000,
+    "filing_status": "single",
+    "days_worked_overseas": 30,
+    "total_work_days": 230
+  },
+  "expected": {
+    "net": 128897,
+    "effective_rate": 0.35551,
+    "breakdown": {
+      "income_tax": 65092,
+      "national_insurance": 6011,
+      "owr_relief": 26087
+    }
+  },
+  "tolerance": 50,
+  "tolerance_percent": 0.005,
+  "sources": [
+    {
+      "description": "Calculated from first principles using official 2026/27 HMRC rates and OWR rules from GOV.UK guidance",
+      "url": "https://www.gov.uk/government/publications/globally-mobile-employees/overseas-workday-relief",
+      "date": "2026-04-19",
+      "notes": "OWR relief: min(200000×30/230, min(200000×0.30, 300000)) = min(26086.96, 60000) = £26,086.96. Taxable: 200000-26087=173913. Tax: 37700×0.20+74870×0.40+61343×0.45 = 7540+29948+27604.37 = £65,092.37. NI: 37700×0.08+149730×0.02 = 3016+2994.60 = £6,010.60."
+    }
+  ]
+}

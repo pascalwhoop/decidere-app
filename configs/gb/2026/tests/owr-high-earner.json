@@ -1,0 +1,30 @@
+{
+  "name": "OWR high earner — 30% cap binds",
+  "description": "£350k salary, 180/230 overseas days (78%). Raw relief £273,913 exceeds 30% cap (£105,000). PA forfeited but already zero at this income. NI unchanged on full gross.",
+  "variant": "owr",
+  "inputs": {
+    "gross_annual": 350000,
+    "filing_status": "single",
+    "days_worked_overseas": 180,
+    "total_work_days": 230
+  },
+  "expected": {
+    "net": 243908,
+    "effective_rate": 0.30312,
+    "breakdown": {
+      "income_tax": 97082,
+      "national_insurance": 9011,
+      "owr_relief": 105000
+    }
+  },
+  "tolerance": 50,
+  "tolerance_percent": 0.005,
+  "sources": [
+    {
+      "description": "Calculated from first principles using official 2026/27 HMRC rates and OWR rules from GOV.UK guidance",
+      "url": "https://www.gov.uk/government/publications/globally-mobile-employees/overseas-workday-relief",
+      "date": "2026-04-19",
+      "notes": "OWR relief: min(350000×180/230, min(350000×0.30, 300000)) = min(273913, 105000) = £105,000. PA forfeited (zero). Taxable: 350000-105000=245000. Tax: 37700×0.20+74870×0.40+132430×0.45 = 7540+29948+59593.50 = £97,081.50. NI: 37700×0.08+299730×0.02 = 3016+5994.60 = £9,010.60."
+    }
+  ]
+}

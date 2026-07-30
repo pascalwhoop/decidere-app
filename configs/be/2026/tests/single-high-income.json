@@ -1,0 +1,40 @@
+{
+  "name": "Single high income employee",
+  "description": "Belgium 2026 single regular employee with EUR 100,000 gross salary and Antwerp municipal surcharge.",
+  "inputs": {
+    "gross_annual": 100000,
+    "municipality": "antwerpen",
+    "dependent_children": 0
+  },
+  "expected": {
+    "net": 52923.86,
+    "effective_rate": 0.4707614,
+    "breakdown": {
+      "employee_social_security": 13070,
+      "work_bonus_annual": 0,
+      "special_social_security": 731.28,
+      "professional_expenses": 6070,
+      "income_tax": 33274.86,
+      "municipal_tax": 2176.86
+    }
+  },
+  "tolerance": 1,
+  "tolerance_percent": 0.0001,
+  "sources": [
+    {
+      "url": "scripts/verify-be-2026.py",
+      "description": "Independent verifier implementing FPS Finance and ONSS 2026 formulas; not derived from the TypeScript engine",
+      "retrieved_at": "2026-05-26"
+    },
+    {
+      "url": "https://fin.belgium.be/en/private-individuals/tax-return/tax-rates-income/tax-rates",
+      "description": "FPS Finance official 2026 income tax brackets and personal tax allowance",
+      "retrieved_at": "2026-05-26"
+    },
+    {
+      "url": "https://www.socialsecurity.be/employer/instructions/dmfa/fr/latest/instructions/special_contributions/other_specialcontributions/specialsocialsecuritycontribution.html",
+      "description": "ONSS 2026/1 special social security contribution withholding",
+      "retrieved_at": "2026-05-26"
+    }
+  ]
+}

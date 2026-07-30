@@ -1,0 +1,40 @@
+{
+  "name": "Single median income employee with two children",
+  "description": "Belgium 2026 single regular employee with EUR 50,000 gross salary, two dependent children, and Antwerp municipal surcharge.",
+  "inputs": {
+    "gross_annual": 50000,
+    "municipality": "antwerpen",
+    "dependent_children": 2
+  },
+  "expected": {
+    "net": 33837.32,
+    "effective_rate": 0.32325365,
+    "breakdown": {
+      "employee_social_security": 6535,
+      "work_bonus_annual": 0,
+      "special_social_security": 523.32,
+      "professional_expenses": 6070,
+      "income_tax": 9104.36,
+      "municipal_tax": 595.61
+    }
+  },
+  "tolerance": 1,
+  "tolerance_percent": 0.0001,
+  "sources": [
+    {
+      "url": "scripts/verify-be-2026.py",
+      "description": "Independent verifier implementing FPS Finance and ONSS 2026 formulas; not derived from the TypeScript engine",
+      "retrieved_at": "2026-05-26"
+    },
+    {
+      "url": "https://www.bdo.be/en-gb/insights/news-alerts/2026/key-figures-indexed-amounts-of-income-tax-for-the-2025-2026-2027-tax-year",
+      "description": "Indexed 2026 dependent-child allowance and professional expenses cap",
+      "retrieved_at": "2026-05-26"
+    },
+    {
+      "url": "https://fin.belgium.be/en/private-individuals/tax-return/tax-rates-income/tax-rates",
+      "description": "FPS Finance official 2026 income tax brackets and personal tax allowance",
+      "retrieved_at": "2026-05-26"
+    }
+  ]
+}

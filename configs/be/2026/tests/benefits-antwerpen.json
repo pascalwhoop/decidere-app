@@ -1,0 +1,51 @@
+{
+  "name": "Antwerp employee with common Belgian benefits",
+  "description": "Belgium 2026 employee using municipality lookup plus pension savings, service vouchers, housing credit, company car benefit in kind, meal vouchers, and mobility budget.",
+  "inputs": {
+    "gross_annual": 50000,
+    "municipality": "antwerpen",
+    "dependent_children": 1,
+    "pension_savings_contributions": 1050,
+    "pension_savings_scheme": "standard",
+    "service_voucher_region": "flanders",
+    "service_vouchers_purchased": 100,
+    "service_voucher_price": 10,
+    "regional_housing_tax_reduction": 1200,
+    "company_car_taxable_benefit": 2400,
+    "meal_vouchers_per_year": 220,
+    "meal_voucher_value": 10,
+    "meal_voucher_employee_contribution": 1.09,
+    "mobility_budget_pillar2": 3000,
+    "mobility_budget_cash": 2000
+  },
+  "expected": {
+    "net": 39699.07,
+    "effective_rate": 0.32999465,
+    "breakdown": {
+      "employee_social_security": 6535,
+      "special_social_security": 523.32,
+      "mobility_budget_cash_contribution": 761.4,
+      "pension_savings_tax_reduction": 315,
+      "service_voucher_tax_reduction": 180,
+      "regional_housing_tax_reduction_applied": 1200,
+      "meal_voucher_net_benefit": 1960.2,
+      "tax_free_benefits": 6198.8,
+      "income_tax": 9441.41,
+      "municipal_tax": 617.66
+    }
+  },
+  "tolerance": 1,
+  "tolerance_percent": 0.0001,
+  "sources": [
+    {
+      "url": "scripts/verify-be-2026.py",
+      "description": "Independent verifier implementing FPS Finance, ONSS, and benefit formulas; not derived from the TypeScript engine",
+      "retrieved_at": "2026-05-26"
+    },
+    {
+      "url": "https://fin.belgium.be/sites/default/files/media/documents/taux-taxe-communale-2026.pdf",
+      "description": "FPS Finance official 2026 municipal surcharge rates; Antwerp 7.0%",
+      "retrieved_at": "2026-05-26"
+    }
+  ]
+}

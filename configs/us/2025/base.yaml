@@ -263,6 +263,29 @@ inputs:
         label: "District of Columbia (DC)"
         description: "Progressive tax: 4% to 10.75%"
 
+  locality:
+    type: enum
+    required: false
+    default: "none"
+    label: "City / Locality"
+    description: "Select local city or county taxation if applicable"
+    depends_on: "state"
+    options:
+      none:
+        label: "None (Standard State Rate)"
+        description: "No additional local city income tax"
+    options_by_parent:
+      new_york:
+        none:
+          label: "None (Rest of NY State)"
+          description: "Outside New York City and Yonkers"
+        nyc:
+          label: "New York City (NYC)"
+          description: "NYC personal income tax (3.078% - 3.876%)"
+        yonkers:
+          label: "Yonkers"
+          description: "Yonkers resident income tax surcharge (16.75% of state tax)"
+
 parameters:
   # Standard deductions by filing status (2025)
   standard_deduction_single: 15750
@@ -817,6 +840,38 @@ parameters:
   ny_standard_deduction_married_joint: 16050
   ny_standard_deduction_married_separate: 8000
   ny_standard_deduction_head_of_household: 11200
+
+  # New York City (NYC) Tax Brackets
+  nyc_tax_brackets_single:
+    - threshold: 0
+      rate: 0.03078
+    - threshold: 12000
+      rate: 0.03762
+    - threshold: 25000
+      rate: 0.03819
+    - threshold: 50000
+      rate: 0.03876
+  nyc_tax_brackets_married_joint:
+    - threshold: 0
+      rate: 0.03078
+    - threshold: 21600
+      rate: 0.03762
+    - threshold: 45000
+      rate: 0.03819
+    - threshold: 90000
+      rate: 0.03876
+  nyc_tax_brackets_head_of_household:
+    - threshold: 0
+      rate: 0.03078
+    - threshold: 14400
+      rate: 0.03762
+    - threshold: 30000
+      rate: 0.03819
+    - threshold: 60000
+      rate: 0.03876
+
+  # Yonkers Resident Surcharge Rate
+  yonkers_surcharge_rate: 0.1675
   ny_tax_brackets_single:
     - threshold: 0
       rate: 0.04
@@ -1699,6 +1754,39 @@ calculations:
     base: "$ny_taxable_income"
     brackets: "$ny_tax_brackets"
 
+  # New York City Local Income Tax
+  - id: nyc_tax_brackets
+    type: switch
+    on: "@filing_status"
+    cases:
+      single: "$nyc_tax_brackets_single"
+      married_joint: "$nyc_tax_brackets_married_joint"
+      married_separate: "$nyc_tax_brackets_single"
+      head_of_household: "$nyc_tax_brackets_head_of_household"
+  - id: nyc_income_tax
+    type: bracket_tax
+    base: "$ny_taxable_income"
+    brackets: "$nyc_tax_brackets"
+
+  # Yonkers Resident Income Tax Surcharge
+  - id: yonkers_income_tax
+    type: mul
+    values:
+      - "$ny_income_tax"
+      - "$yonkers_surcharge_rate"
+
+  # Local City / Municipal Income Tax
+  - id: local_income_tax
+    type: switch
+    on: "@locality"
+    cases:
+      nyc: "$nyc_income_tax"
+      yonkers: "$yonkers_income_tax"
+    default: 0
+    category: income_tax
+    label: "Local City Income Tax"
+    description: "City or municipal income tax (e.g. NYC, Yonkers)"
+
   # North Carolina
   - id: nc_income_tax
     type: percent_of
@@ -2141,6 +2229,7 @@ calculations:
     values:
       - "$federal_income_tax"
       - "$state_income_tax"
+      - "$local_income_tax"
       - "$total_fica"
 
   # Net annual income
@@ -2164,6 +2253,7 @@ outputs:
     taxes:
       - "$federal_income_tax"
       - "$state_income_tax"
+      - "$local_income_tax"
     contributions:
       - "$social_security_tax"
       - "$medicare_tax"

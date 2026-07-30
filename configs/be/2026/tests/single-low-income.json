@@ -1,0 +1,40 @@
+{
+  "name": "Single low income employee",
+  "description": "Belgium 2026 single regular employee with EUR 24,000 gross salary and Antwerp municipal surcharge.",
+  "inputs": {
+    "gross_annual": 24000,
+    "municipality": "antwerpen",
+    "dependent_children": 0
+  },
+  "expected": {
+    "net": 21972.51,
+    "effective_rate": 0.08447873,
+    "breakdown": {
+      "employee_social_security": 0,
+      "work_bonus_annual": 3136.8,
+      "special_social_security": 27.66,
+      "professional_expenses": 6070,
+      "income_tax": 1999.83,
+      "municipal_tax": 130.83
+    }
+  },
+  "tolerance": 1,
+  "tolerance_percent": 0.0001,
+  "sources": [
+    {
+      "url": "scripts/verify-be-2026.py",
+      "description": "Independent verifier implementing FPS Finance and ONSS 2026 formulas; not derived from the TypeScript engine",
+      "retrieved_at": "2026-05-26"
+    },
+    {
+      "url": "https://fin.belgium.be/en/private-individuals/tax-return/tax-rates-income/tax-rates",
+      "description": "FPS Finance official 2026 income tax brackets and personal tax allowance",
+      "retrieved_at": "2026-05-26"
+    },
+    {
+      "url": "https://www.socialsecurity.be/employer/instructions/dmfa/fr/latest/instructions/deductions/workers_reductions/workbonus.html",
+      "description": "ONSS 2026/1 work bonus instructions",
+      "retrieved_at": "2026-05-26"
+    }
+  ]
+}

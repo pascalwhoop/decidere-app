@@ -1,0 +1,18 @@
+{
+  "version": "0.4.0",
+  "date": "2026-03-07",
+  "highlight": "New York City (NYC) & Yonkers local personal income tax support for US 2025/2026, UK Overseas Workplace Relief (OWR) variant, and Belgium tax configurations.",
+  "new_countries": [
+    { "code": "be", "name": "Belgium" }
+  ],
+  "new_variants": [
+    { "country_code": "gb", "country": "United Kingdom", "label": "Overseas Workplace Relief (OWR)" },
+    { "country_code": "be", "country": "Belgium", "label": "Inbound Taxpayer Regime" }
+  ],
+  "improvements": [
+    "Added US New York City (NYC) local personal income tax (3.078% - 3.876%) and Yonkers resident surcharge (16.75%) support for 2025 and 2026",
+    "Added sub-region dropdown selection (`locality`) using dependent input schema (`depends_on: state`)",
+    "Updated country column headers to display selected city sub-regions (e.g. US - New York (NYC))",
+    "Enhanced Netherlands 30% ruling calculations and deduction handling"
+  ]
+}

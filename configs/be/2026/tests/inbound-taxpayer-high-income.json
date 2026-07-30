@@ -1,0 +1,41 @@
+{
+  "name": "Inbound taxpayer high income with tax-free allowance",
+  "description": "Belgium 2026 inbound taxpayer variant with 35% of gross remuneration treated as tax-free, Gent municipal tax rate, and meal vouchers.",
+  "variant": "inbound-taxpayer",
+  "inputs": {
+    "gross_annual": 80000,
+    "municipality": "gent",
+    "dependent_children": 0,
+    "meal_vouchers_per_year": 220,
+    "meal_voucher_value": 10,
+    "meal_voucher_employee_contribution": 1.09,
+    "inbound_tax_free_allowance_rate": 0.35
+  },
+  "expected": {
+    "net": 60991.11,
+    "effective_rate": 0.26211365,
+    "breakdown": {
+      "employee_social_security": 10456,
+      "special_social_security": 731.28,
+      "inbound_tax_free_allowance": 28000,
+      "meal_voucher_net_benefit": 1960.2,
+      "tax_free_benefits": 1960.2,
+      "income_tax": 9781.81,
+      "municipal_tax": 597.01
+    }
+  },
+  "tolerance": 1,
+  "tolerance_percent": 0.0001,
+  "sources": [
+    {
+      "url": "scripts/verify-be-2026.py",
+      "description": "Independent verifier implementing FPS Finance, ONSS, and inbound allowance formulas; not derived from the TypeScript engine",
+      "retrieved_at": "2026-05-26"
+    },
+    {
+      "url": "https://kpmg.com/be/en/insights/my-tax-compass/people-services-insights/new-circular-letter-on-special-tax-regime-for-incoming-taxpayers-bbib-rsici.html",
+      "description": "Belgian inbound taxpayer/researcher regime 35% tax-free allowance summary",
+      "retrieved_at": "2026-05-26"
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "name": "Yonkers - Single filer $150k",
+  "description": "Single filer earning $150,000 in Yonkers NY with 16.75% resident tax surcharge",
+  "inputs": {
+    "gross_annual": 150000,
+    "filing_status": "single",
+    "state": "new_york",
+    "locality": "yonkers"
+  },
+  "expected": {
+    "net": 103949,
+    "effective_rate": 0.30701,
+    "breakdown": {
+      "federal_income_tax": 25067.00,
+      "state_income_tax": 7951.75,
+      "local_income_tax": 1331.92,
+      "social_security_tax": 9300.00,
+      "medicare_tax": 2175.00
+    }
+  },
+  "tolerance": 250,
+  "tolerance_percent": 0.02,
+  "sources": [
+    {
+      "description": "Official 2025 NY State and Yonkers Tax Rate Instructions (Form IT-201-I)",
+      "url": "https://www.tax.ny.gov/forms/html/instructions/2025/it201i-2025.htm",
+      "date": "2026-03-07",
+      "notes": "Yonkers surcharge: 16.75% of NY State net income tax ($7,951.75 * 0.1675 = $1,331.92)."
+    }
+  ]
+}

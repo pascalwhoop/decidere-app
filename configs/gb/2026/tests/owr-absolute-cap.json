@@ -1,0 +1,30 @@
+{
+  "name": "OWR very high earner — £300k absolute cap binds",
+  "description": "£1.2M salary, 200/230 overseas days (87%). 30% of gross = £360k exceeds £300k absolute cap. Relief capped at £300,000.",
+  "variant": "owr",
+  "inputs": {
+    "gross_annual": 1200000,
+    "filing_status": "single",
+    "days_worked_overseas": 200,
+    "total_work_days": 230
+  },
+  "expected": {
+    "net": 782158,
+    "effective_rate": 0.34820,
+    "breakdown": {
+      "income_tax": 391832,
+      "national_insurance": 26011,
+      "owr_relief": 300000
+    }
+  },
+  "tolerance": 50,
+  "tolerance_percent": 0.005,
+  "sources": [
+    {
+      "description": "Calculated from first principles using official 2026/27 HMRC rates and OWR rules from GOV.UK guidance",
+      "url": "https://www.gov.uk/government/publications/globally-mobile-employees/overseas-workday-relief",
+      "date": "2026-04-19",
+      "notes": "OWR relief: min(1200000×200/230, min(1200000×0.30, 300000)) = min(1043478, 300000) = £300,000. Taxable: 1200000-300000=900000. Tax: 37700×0.20+74870×0.40+787430×0.45 = 7540+29948+354343.50 = £391,831.50. NI: 37700×0.08+1149730×0.02 = 3016+22994.60 = £26,010.60."
+    }
+  ]
+}

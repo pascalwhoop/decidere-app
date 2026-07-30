@@ -1,0 +1,51 @@
+meta:
+  variant: "inbound-taxpayer"
+  label: "Inbound Taxpayer/Researcher"
+  description: "Belgian special tax regime for qualifying inbound taxpayers or researchers with a tax-free employer cost allowance."
+  base: "base.yaml"
+  sources:
+    - url: "https://kpmg.com/be/en/insights/my-tax-compass/people-services-insights/new-circular-letter-on-special-tax-regime-for-incoming-taxpayers-bbib-rsici.html"
+      description: "Belgian special tax regime 2026 circular summary, 35% tax-free allowance"
+      retrieved_at: "2026-05-26"
+    - url: "https://www.claeysengels.be/en-gb/news-events/special-tax-regime-inpatriate-taxpayers-and-researchers-clarifications-provided-tax"
+      description: "Special tax regime clarification: 35% tax exemption and social security uncertainty for the additional 5%"
+      retrieved_at: "2026-05-26"
+
+notices:
+  - id: "inbound_taxpayer_eligibility"
+    title: "Inbound Regime Eligibility Required"
+    body: |
+      This variant assumes your employer has approval for the Belgian special tax
+      regime for inbound taxpayers or researchers. It models the recurring
+      employer expense allowance as a tax-free portion of gross remuneration.
+    severity: "warning"
+
+inputs:
+  inbound_tax_free_allowance_rate:
+    type: number
+    required: false
+    min: 0
+    max: 0.35
+    default: 0.35
+    effect: reduces_tax
+    label: "Inbound Tax-Free Allowance Rate"
+    description: "Tax-free recurring employer expense allowance, up to 35% of gross remuneration for approved cases"
+
+calculations:
+  - id: inbound_tax_free_allowance
+    type: percent_of
+    base: "@gross_annual"
+    rate: "@inbound_tax_free_allowance_rate"
+    category: deduction
+    label: "Inbound Tax-Free Allowance"
+    description: "Tax-free portion of gross remuneration under the Belgian inbound taxpayer/researcher regime"
+
+  - id: taxable_before_expenses
+    type: sub
+    values:
+      - type: sum
+        values:
+          - "@gross_annual"
+          - "@company_car_taxable_benefit"
+      - "$employee_social_security"
+      - "$inbound_tax_free_allowance"

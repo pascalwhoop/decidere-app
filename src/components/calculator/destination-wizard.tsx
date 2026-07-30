@@ -477,39 +477,51 @@ export function DestinationWizard({
             {/* Enum inputs */}
             {enumInputs.length > 0 && (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {enumInputs.map(([key, def]) => (
-                  <div key={key} className="space-y-1.5">
-                    <Label className="text-xs text-muted-foreground">{def.label || key}</Label>
-                    <Select
-                      value={
-                        formValues[key]
-                        || (def.default !== undefined
-                          ? String(def.default)
-                          : def.required
-                            ? ""
-                            : "__none__")
+                {enumInputs.map(([key, def]) => {
+                  const optionsToRender = (() => {
+                    if (def.depends_on && def.options_by_parent) {
+                      const parentVal = formValues[def.depends_on]
+                      if (parentVal && def.options_by_parent[parentVal]) {
+                        return def.options_by_parent[parentVal]
                       }
-                      onValueChange={v => updateFormValue(key, v === "__none__" ? "" : v)}
-                    >
-                      <SelectTrigger className="h-9">
-                        <SelectValue placeholder="Select" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {!def.required && (
-                          <SelectItem value="__none__">
-                            <span className="text-muted-foreground">None</span>
-                          </SelectItem>
-                        )}
-                        {def.options &&
-                          Object.entries(def.options).map(([optKey, opt]) => (
-                            <SelectItem key={optKey} value={optKey}>
-                              {(opt as { label: string }).label}
+                    }
+                    return def.options
+                  })()
+
+                  return (
+                    <div key={key} className="space-y-1.5">
+                      <Label className="text-xs text-muted-foreground">{def.label || key}</Label>
+                      <Select
+                        value={
+                          formValues[key]
+                          || (def.default !== undefined
+                            ? String(def.default)
+                            : def.required
+                              ? ""
+                              : "__none__")
+                        }
+                        onValueChange={v => updateFormValue(key, v === "__none__" ? "" : v)}
+                      >
+                        <SelectTrigger className="h-9">
+                          <SelectValue placeholder="Select" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {!def.required && !optionsToRender?.none && (
+                            <SelectItem value="__none__">
+                              <span className="text-muted-foreground">None</span>
                             </SelectItem>
-                          ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                ))}
+                          )}
+                          {optionsToRender &&
+                            Object.entries(optionsToRender).map(([optKey, opt]) => (
+                              <SelectItem key={optKey} value={optKey}>
+                                {(opt as { label: string }).label}
+                              </SelectItem>
+                            ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )
+                })}
               </div>
             )}
 
