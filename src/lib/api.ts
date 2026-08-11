@@ -53,6 +53,8 @@ export interface InputDefinition {
   group?: string // If set, this is a secondary field belonging to the named primary input's group
   // For enum inputs
   options?: Record<string, EnumOption>
+  depends_on?: string
+  options_by_parent?: Record<string, Record<string, EnumOption>>
 }
 
 export interface Notice {
